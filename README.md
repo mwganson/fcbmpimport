@@ -13,4 +13,13 @@ While the macro does not impose any size/complexity limitations, there are pract
 
 <h3>Usage Instructions</h3>
 
+<h4>Screenshot</h4>
+
+<img src= "screenshot.png" alt="screenshot">
+
+<h4>Image Preview Panel</h4>
+
+In the upper right corner of the user interface you will find the image preview panel.  While it is not, strictly speaking, necessary to first preview the image before importing it, you will find it is often useful to do so.  When an image is being previewed a red and green axis cross, very similar to the one used in FreeCAD to mark the origin, will be superimposed over the image.  This axis cross marks the position the objects created to represent the image will be placed relative to the origin.  Other features of the image preview panel include the ability to zoom in/out with the mouse scrollwheel.  If the zoom level is too high for a particular image to fit entirely within the image preview panel, the image can be dragged around inside the image preview panel with the left mouse button.
+
+<img src="screenshot2.png" alt="butterfly-preview">
 
