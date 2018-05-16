@@ -155,6 +155,163 @@ Cheat Factor is used in all import types except for solid.  You can disable it b
 
 Cheat factor is used to either separate or fuse 2 pixels that are diagonally adjacent.  With mesh imports cheat factor is applied to all building blocks in their length direction (along x axis), shortening them by cheat factor millimeters.  This prevents the next block on top of the current block from becoming diagonally adjacent.  With sketch, wire, face, and extruded imports cheat factor is applied more elaborately using a "smarter" algorithm.  In these import types the macro looks for instances where 4 line segments converge to a single point, which is a no no.  There should only ever be 2 line segments meeting at any single point.  When it finds 4 line segments meeting at a single point it separates that point into 2 points, one of which is cheat factor millimeters from the nearest integer coordinate on the x and y axes.  Thus, the 2 points are 2 * cheat factor * sqrt(2) millimeters from each other after cheat factor is applied.  The current default (as of version 0.2018.05.16) is 7e-5 (= .00007 millimeters).  Thus the 2 points would be 2 * 7e-5 * sqrt(2) = 0.000197989898732 millimeters or about 198 nanometers apart.  To put this into context an atom might be about 1/2 nanometer in size, so cheat factor is very, very tiny, and not something you will notice at normal zoom levels and beyond the precision that a 3d printer or cnc mill would be able to work with.  In other words, it won't affect the nominal size of the model in any non-negligible way.  We'll revisit cheat factor when we get to the sketch imports.
 
+<h4>Zero XYZ Button</h4>
+
+The Zero XYZ button will zero out the X Offset, Y Offset, and Z Offset edit boxes.
+
+<h4>Defaults Button</h4>
+
+The Defaults button will reset all of the Various Options boxes to their default values, along with resetting the Black Foreground checkbox and the Keep Window On Top checkbox to their default values.
+
+If you would like to change any of the defaults you will need to modify the FCBmpImport.FCMacro.py file mannually.  Defaults are variables in ALL CAPS in a special section of the above file.  The current defaults (as of version 0.2018.05.16a) are as follows:
+
+#default constant defines
+#change these for different ui starting values
+
+BLACK_FOREGROUND = True  #foreground color will be black if True, else white
+PART_HEIGHT = 1 #pixel height (z axis) for solid/mesh/extruded import types 
+SHAPE_BASENAME = 'Imported'                   
+IMPORT_X_OFFSET = 0 
+IMPORT_Y_OFFSET = 0 
+IMPORT_Z_OFFSET = 0 
+SCALE_FACTOR = 1 
+RECOMPUTE_INTERVAL = 100 
+CHEAT_FACTOR = 7e-5 
+WINDOW_STAYS_ON_TOP = False
+SEPARATOR = locale.localeconv()['decimal_point']
+SEPARATOR_STANDIN = 'p'
+DEGREES_INDICATOR = 'd'
+RADIANS_INDICATOR = 'r'
+
+Note: if the SEPARATOR ('.' or ',', depending on your locale) isn't correct (or isn't what you would prefer) you can change it manually to something like:
+
+SEPARATOR = '.'
+
+or
+
+SEPARATOR = ','
+
+Where possible I've avoided hard coding decimals, preferring instead a more generic e-notation format, such as 2e-5 instead of 0.00002 or 0,00002.  The only time SEPARATOR comes into play is in using math functions within the edit boxes, such as entering cos32p5r, where the p gets replaced by SEPARATOR.
+
+<h3>Keep Window On Top</h3>
+
+As the name implies, this provides a hint to the operating system to keep this window on top of other windows. (It can still be minimized.)  It is only a hint, but should work unless perhaps there are other windows giving the same hint.  This option can be useful when using the macro after importing an image, for some post import processing (such as using the Wire Point Editing tools or the Select Objects tool).  Keeping the window on top can also be a nuisance because it can block modal popups from FreeCAD, which then cannot be accessed because the macro window is in the way and the macro window can't be moved because there is a modal dialog active in FreeCAD (such as a popup dialog asking if you wish to save a file you just closed).  Sometimes you can just press the Esc button to dismiss the dialog, but other times the only alternative might be to kill FreeCAD with a task manager and restart.  If you use Always on Top you should move the window off to the side to prevent this from happening.
+
+<h3>Black Foreground</h3>
+
+When checked black pixels will be interpreted as foreground pixels during the import.  When unchecked the white pixels will be interpreted as foreground.  This is an important distinction because the foreground pixels are the ones will be represented as FreeCAD objects whereas the background pixels are only used for spacing and sizing said objects.
+
+<h3>Progress Bar</h3>
+
+Some processes can take some time to complete.  When the time required is estimated to be more than 4 seconds a progress bar is displayed.  You can press the Abort button to abort an ongoing process (but at times FreeCAD might be slow to respond, so be patient).  If you exit (either by closing the window using the X icon or by exiting via the Exit button) the ongoing process might still continue.  If you wish to stop the ongoing process and exit you should Abort first, and then Exit.  I've decided to leave this like it is because there could be times when the user exits believing the ongoing process to be complete when in fact there are still a few steps remaining.
+
+<h3>Select Objects Button</h3>
+
+When you press the Select Objects button it will ask for an axis to use, the default is Z.  The first thing it does then is check for any currently selected objects (these can be points, edges, or faces).  The most recently selected object is used as the template for then parsing over the remaining objects and adding those with the same ZMin and ZMax bounding box values to the current selection.  (This would be the same XMin and XMax if you use the X axis instead of the Z, and similarly YMin and YMax if using the Y axis.)
+
+This can be a very useful tool for selecting all the faces in preparation for creating pocket paths in the Path workbench.  Provided all the desired faces are at the same ZMin and ZMax levels, all the faces can be selected by first selecting one face to use as the template, and then hitting the Select Objects button. (This process might take some time with complex objects containing many faces.)
+
+This can also be potential of some use with selecting edges when, for example, you wish to apply a chamfer or fillet to all the edges.  This tool, along with the Wire Point Editing Tools can be of use even when not using the macro for its main purpose, which is importing images into FreeCAD as FreeCAD objects.
+
+<h3>Wire Point Editing Tools</h3>
+
+FreeCAD already offers some wire point editing tools in the Draft workbench.  These tools will supplement those already existing tools.  These tools only work with DWire objects, which are produced during the wire and face import types.  You can also create new DWire objects in the Draft workbench using the multi-line tool, which said new objects can then be manipulated using these Wire Point Editing Tools.  To access the pre-existing Draft workbench wire editor, simply double-click a DWire object in the combo view while in the Draft workbench.
+
+It is anticipated these tools will be used mostly for "cleaning up" jagged (pixelated) edges by removing some of the points along the DWire and moving other points.
+
+<h4>Select</h4>
+
+The select button is used for selecting points on a DWire object preparatory to performing an additional operation, such as a Cut or Move operation.  Keyboard modifier keys are monitored when the Select button is pressed.  CTRL + CLICK for a "smart select", SHIFT + CLICK for selecting all points (all select), and CLICK by itself for regular select, which selects every other point.  You must first have at least one point selected (but not the entire DWire selected).
+
+If you have 2 points selected prior to pressing Select, the points in between those 2 points (ordered by Vertex number) will be acted upon.  If it's a regular select, the process begins with the lower-numbered Vertex and selects every other point up to the higher-numbered Vertex.  So, for example, if you first select Vertex20 and Vertex 40, and then hit Select (no keyboard modifier) when it finishes you will have Vertex20, Vertex22, Vertex24, Vertex26...Vertex36, Vertex38, and Vertex40 all selected.  With smart select (CTRL key modifier) an attempt is made (no guarantees) to stay either on the outside or the inside of the DWire object, depending on whether the lower-numbered Vertex (Vertex20 in this example) is on the outside or the inside of the DWire object.
+
+<img src="screenshot-butterfly-selected.png" alt="screenshot of butterfly selected">
+
+In the above screenshot we have the butterfly image that has been imported as DWire objects using the wire import type.  The outer points of DWire051 have been selected using the Select tool (along with manually selecting a few additional points).  Notice how jagged the edges are before cutting the selected points.  Compare this to the screenshot taken after applying the Cut operation:
+
+<img src="screenshot-butterfly-cut.png" alt="screenshot butterfly after cut">
+
+There still remains some additional cleanup work to be done on this DWire051 object, but the edges are now much smoother and less pixelated than they were.
+
+<h4>Cut Button</h4>
+
+The Cut button will cut previously selected points out of a DWire object.  This was done in the 2 above screenshots, showing the before and after.  If a cut operation doesn't come out the way you had hoped it would you can undo the operation by SHIFT+CLICKING the Cut button a 2nd time (but this must be done immediately before conducting any other operation).  
+
+Caveat: if ALL points are selected and Cut from a DWire object, the operation cannot be undone.  Moral of the story: Save your work and save often.
+
+<h4>Move Button</h4>
+
+The Move button is used to move selected points.  For this operation we are repurposing the X Offset, Y Offset, and Z Offset edit boxes.  These boxes will now contain the offsets to be used for moving the selected points.  For example, if you wish to move a selected point "up" in the positive Y direction, you would enter 1 into the Y Offset box and click Move.  To undo the operation, SHIFT+CLICK Move immediately afterwards before performing any other operation (even before selecting another object).  (SHIFT+CLICK merely moves the selected points in the opposite direction.)
+
+<h5>Control Move</h5>
+
+A Control Move is done by holding CTRL while CLICKING the Move button.  Control Moves can only be done with a single selected point.  If multiple points are selected the operation will not be performed.  The Control Move operation sets up a mouse click observer, which calls the function back after the user clicks the desired destination point for the move.  The Move button changes its label to "Waiting..." to indicate to the user the macro is waiting for the next click.  The user can click the Move button (now labeled "Waiting...") again to cancel the operation at this time.
+
+After the user clicks a destination point in 3d space the selected point gets moved to that destination.  The X Offset and Y Offset boxes are also setup along that same vector in preparation for selecting and moving additional points in the same direction and distance and also for undoing the move operation with a SHIFT+MOVE.
+
+Note: the Z Offset is not set for Control Move operations, and must be set manually.  This is to prevent accidental moves in the Z direction, which would result in a DWire object that is no longer coplanar.  Users should ensure they are viewing the DWire object from directly above (or below) rather than the axonometric view when performing Control Move operations for best results.
+
+<h4>Insert Button</h4>
+
+The Insert button is used for inserting new points into an existing DWire object.  If there are cuts in the Cut buffer these points can be inserted into the DWire object, but care must be taken to ensure the operation is setup properly.  The user must select 2 points, and then press the Insert button.  If the presses Insert (without any keyboard modifiers) a single new point is created at the midpoint between the 2 selected points.  If SHIFT + CLICK is used the points in the Cut buffer, if any, are inserted between the 2 selected points.
+
+<h5>Inserting multiple points</h5>
+
+These are steps to be used when inserting a new set of points into a DWire object.
+
+<ol>
+  <li>Determine the 2 ADJACENT points on the existing DWire that you would like to connect the new points to.</li>
+  <li>Determine which of these 2 points has the higher Vertex number, e.g. Vertex34, by examining the information in the FreeCAD status bar at the lower left corner of the screen while pre-selecting the vertices.  At the higher of the 2 Vertex numbers is where you should begin drawing the new set of points using the mult-line tool in the Draft workbench.  For example, if the 2 vertices are Vertex32 and Vertex33 you would begin drawing the new object near Vertex33.</li>
+  <li>Place the first of the new points very close to (but not exactly on) the higher Vertex, and then when finishing up the new DWire object, place the final point very close to (but not exactly on) the lower Vertex.</li>
+  <li>Select all of the points on the new object and cut them out using the Cut button.  (Easiest way to select them all is to select any of the points on the new DWire object, and then press SHIFT+SELECT to select all the remaining points.)</li>
+  <li>Now select the same 2 ADJACENT points on the existing DWire object and press SHIFT+Insert to connect the points in the Cut buffer to the existing DWire object.</li>
+</ol>
+
+<h3>Converting Images</h3>
+
+The only image format support for importing (although previewing will work with just about any image format) is black and white windows bmp format.  In other words, 1 bit-per-pixel monochrome bmp.  A good tool for converting just about any image to this format is <a href="https://www.gimp.org">GIMP2</a>.  Windows Paint will also work, but the quality is often not suitable for our purposes.
+
+In GIMP2, with your original image already loaded, go to the Colors menu and select Threshold.  There will be a slider control you can use to control (at least to a degree) which colors get interpreted as white and which as black.  Once you have it where you want it, exit that dialog.  You now have a black and white image.  The next step is to export it as a .bmp file using the File -> Export As menu item in GIMP2.  Make sure you have Windows bmp format selected in the drop down list at the bottom of that dialog and also make sure bmp is being appended to the filename to be exported.
+
+Alternatively, in GIMP2, you can do the black and white conversion from this menu: Image -> Mode -> Indexed, and by selecting 1 bit-per-pixel and hitting the Convert button.  Dithering options are available on this screen, but dithering is generally not recommended for importing into FreeCAD, but feel free to experiment.
+
+You should also consider scaling the image: Image -> Scale within GIMP2.  The order of operation of scaling first, and then converting, will probably give the best overall results in most cases.  The macro can handle higher resolutions, but FreeCAD cannot, at least not with any thing approaching reasonable performance levels.  It's not a FreeCAD's fault since we are putting it to a use for which it was not designed.  My recommendation is to start off with some very small images and work your way up to higher resolutions.  You will quickly get a feel for what FreeCAD can handle on your machine.
+
+Tip: FCBmpImport applies scale factor equally to both the x and y axes.  If you wish to use a different scaling for x and y, you can do the scaling in GIMP2 before doing the import.
+
+<h3>Importing</h3>
+
+First step is to press the Preview Image button, and then navigate to and select the desired bmp image.  It will appear in the preview panel where you may then set offets and scaling options.  Press one of the import buttons to begin the import process.
+
+<h4>Sketch</h4>
+
+Bring up the macro and click the Preview Image button.  Select the <a href="adjacencies.bmp">adjacencies.bmp</a> file.  This is a very tiny file consisting of only 7 pixels per line and 5 raster lines.
+
+<img src="screenshot-adjacencies.png" alt="screenshot adjacencies.bmp being previewed">
+
+Close any currently open FreeCAD document (not counting the FCBmpImport.FCMacro.py file, if open in the editor, and not counting the Start page).  Click the Sketch button to import.  Select the XY_PLANE, when prompted.
+
+<img src="screenshot-adjacencies-sketch.png" alt="screenshot adjacencies.bmp imported into the sketcher">
+
+Veteran users of the FreeCAD sketcher might think this sketch will not pad, and by appearances they would be correct in that assumption, but because we are using cheat factor this particular sketch will, in fact, pad.  Close the sketch, and double-click the Body object in the combo view to make it the active body (should already be since it's the only active body in the document, but this step is needed if importing into a document with a pre-existing body object) and also to switch to the Part Design workbench, if it's not already open.  Select the pad icon to try to pad the sketch.  If you are not sure which one is the pad operation icon, hover over the yellow ones with the mouse and view the tool tips.  You might need to center the pad object by zooming in and out (with mouse scrollwheel) or pressing V, followed by F, on the keyboard.
+
+Now press CTRL+Z to undo the pad operation, find the sketch in the combo view, and double-click it to bring it back up on the sketcher.  Enable the Show Grid option.  I also recommend disable auto-constraints while working with imported sketches, and instead of using constraints, use the Snap to Grid function (enable grid snap option).
+
+All imported sketches consist exclusively of unconstrained line segments.  There are a number of reasons why I opted to not constrain the line segments.  For starters, FreeCAD already struggles with all the objects (line segments) being created to represent most images. Performance will suffer even more if constraints (4 per line segment) were added.  For the butterfly image, for example, there are 2613 line segments created to represent that image in the sketcher, which is way too many for it.  If we add 4 constraints per line segment we'd be looking at north of 12,000 objects (line segments + constraints).  All of these constraints would also block much of the sketch, making it more difficult to see and edit it.  Adding constraints would also add to the complexity of the macro code (which is already complex enough to be getting on with).  Furthermore, I really don't believe (my opinion) constraints are necessary in this situation where we are using a script to exactly place and size each line segment.
+
+If you zoom in on one of the 4 internal points of the adjacencies import sketch, and keep zooming in, eventually you will see the point diverging into 2 separate points.  This is an illustration of cheat factor at work.  Play around with importing this image using different values for cheat factor, including zero.  I recommend you try 500 * cheat.  This will distort the image, but it will still be recognizable and you will be able to see better how the cheat factor works.  Pad the object and see how cheat factor affects it.  Try setting Black Background checkbox to false (unchecking it) and importing this image.  Notice that the foreground pixels are always bridged together while the background pixels are always isolated from each other wherever there is a diagonal adjacency.
+
+When editing an imported sketch remember that, although they appear to be vertical or horizontal, line segments to which cheat factor has been applied, will not actually be horizontal or vertical.  Applying a horizontal or vertical constraint to such line segments will cause problems when attempting to do further operations on the sketch, such as a pad, pocket, revolve, etc. operation.
+
+Tip: Uncheck the Auto Update checkbox in the sketcher when working with larger imported sketches to improve performance.
+
+<h4>Solid</h4>
+
+Close any open FreeCAD documents (not counting the macro itself if open in the editor or the Start page) and select the Solid button with the adjacencies.bmp image in the image preview panel.
+
+To be continued...
+
+
 
 
 
