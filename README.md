@@ -41,6 +41,21 @@ But usually the desired scaling will be for the entire image or for some subset 
 
 Notice a few things here.  First of all, we can enter mathematical expressions into these edit boxes.  Secondly, we can access some useful mathematical constants (the constant value "inches" = 25.4).  Thirdly, we can dymanically access some global variables being kept in macro memory, in this case width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the above "(6 * inches) / width" gets replaced with 0.762, which is the numerical evaluation of that expression.  Note: if you select a different size image to preview after doing this, the value in the scale factor edit box DOES NOT CHANGE.  There is no permanent reference to "width" being created.  The current value for "width" is used, and then immediately discarded.  It is equivalent to simply entering 0.762 into the box in the first place.
 
+The following operators are supported within the Various Options edit boxes:
+<ul>
+  <li>+ - Plus sign can be used in the usual way, e.g. 3 + 2 (produces 5)</li>
+  <li>- - Minus sign can be used in the usual way, either to subtract or as a negative number assignment.</li>
+  <li>* - Muliplication sign can be sued in the usualy way, to multiply two values.</li>
+  <li>/ - Performs floating point division.</li>
+  <li>** - Exponents.  E.g. 2**3 reads 2 to the power of 3,  2**(1/2) produces square root of 2.</li>
+  <li>^ - Bitwise exclusive or (xor).  NOT an exponent.  E.g. 0b1111^0b1100 produces 0b0011 (= 3 in decimal)</li>
+  <li>0bNNN - Binary format input, e.g. 0b11111111 (= 255 in decimal)</li>
+  <li>0xNNN - Hexadecimal base 16 input, e.g. 0xff (=255 in decimal)</li>
+  <li>() - Parentheses may be used for readability or for forcing order of evaluation.
+  
+</ul>
+
+
 The following constant values are accessible within the Various Options edit boxes:
 <ul>
   <li>pi - the constant defined in python as math.pi, 3.14159265359</li>
