@@ -201,6 +201,32 @@ As the name implies, this provides a hint to the operating system to keep this w
 
 When checked black pixels will be interpreted as foreground pixels during the import.  When unchecked the white pixels will be interpreted as foreground.  This is an important distinction because the foreground pixels are the ones will be represented as FreeCAD objects whereas the background pixels are only used for spacing and sizing said objects.
 
+<h3>Progress Bar</h3>
+
+Some processes can take some time to complete.  When the time required is estimated to be more than 4 seconds a progress bar is displayed.  You can press the Abort button to abort an ongoing process (but at times FreeCAD might be slow to respond, so be patient).  If you exit (either by closing the window using the X icon or by exiting via the Exit button) the ongoing process might still continue.  If you wish to stop the ongoing process and exit you should Abort first, and then Exit.  I've decided to leave this like it is because there could be times when the user exits believing the ongoing process to be complete when in fact there are still a few steps remaining.
+
+<h3>Select Objects Button</h3>
+
+When you press the Select Objects button it will ask for an axis to use, the default is Z.  The first thing it does then is check for any currently selected objects (these can be points, edges, or faces).  The most recently selected object is used as the template for then parsing over the remaining objects and adding those with the same ZMin and ZMax bounding box values to the current selection.  (This would be the same XMin and XMax if you use the X axis instead of the Z, and similarly YMin and YMax if using the Y axis.)
+
+This can be a very useful tool for selecting all the faces in preparation for creating pocket paths in the Path workbench.  Provided all the desired faces are at the same ZMin and ZMax levels, all the faces can be selected by first selecting one face to use as the template, and then hitting the Select Objects button. (This process might take some time with complex objects containing many faces.)
+
+This can also be potential of some use with selecting edges when, for example, you wish to apply a chamfer or fillet to all the edges.  This tool, along with the Wire Point Editing Tools can be of use even when not using the macro for its main purpose, which is importing images into FreeCAD as FreeCAD objects.
+
+<h3>Wire Point Editing Tools</h3>
+
+FreeCAD already offers some wire point editing tools in the Draft workbench.  These tools will supplement those already existing tools.  These tools only work with DWire objects, which are produced during the wire and face import types.  You can also create new DWire objects in the Draft workbench using the multi-line tool, which said new objects can then be manipulated using these Wire Point Editing Tools.  To access the pre-existing Draft workbench wire editor, simply double-click a DWire object in the combo view while in the Draft workbench.
+
+It is anticipated these tools will be used mostly for "cleaning up" jagged (pixelated) edges by removing some of the points along the DWire and moving other points.
+
+<h4>Select</h4>
+
+The select button is used for selecting points on a DWire object preparatory to performing an additional operation, such as a Cut or Move operation.  Keyboard modifier keys are monitored when the Select button is pressed.  CTRL + CLICK for a "smart select", SHIFT + CLICK for selecting all points (all select), and CLICK by itself for regular select, which selects every other point.  You must first have at least one point selected (but not the entire DWire selected).
+
+If you have 2 points selected prior to pressing Select, the points in between those 2 points (ordered by Vertex number) will be acted upon.  If it's a regular select, the process begins with the lower-numbered Vertex and selects every other point up to the higher-numbered Vertex.  So, for example, if you first select Vertex20 and Vertex 40, and then hit Select (no keyboard modifier) when it finishes you will have Vertex20, Vertex22, Vertex24, Vertex26...Vertex36, Vertex38, and Vertex40 all selected.  With smart select (CTRL key modifier) an attempt is made (no guarantees) to stay either on the outside or the inside of the DWire object, depending on whether the lower-numbered Vertex (Vertex20 in this example) is on the outside or the inside of the DWire object.
+
+
+
 
 
 
