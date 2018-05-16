@@ -293,8 +293,23 @@ Close any currently open FreeCAD document (not counting the FCBmpImport.FCMacro.
 
 <img src="screenshot-adjacencies-sketch.png" alt="screenshot adjacencies.bmp imported into the sketcher">
 
+Veteran users of the FreeCAD sketcher might think this sketch will not pad, and by appearances they would be correct in that assumption, but because we are using cheat factor this particular sketch will, in fact, pad.  Close the sketch, and double-click the Body object in the combo view to make it the active body (should already be since it's the only active body in the document, but this step is needed if importing into a document with a pre-existing body object) and also to switch to the Part Design workbench, if it's not already open.  Select the pad icon to try to pad the sketch.  If you are not sure which one is the pad operation icon, hover over the yellow ones with the mouse and view the tool tips.  You might need to center the pad object by zooming in and out (with mouse scrollwheel) or pressing V, followed by F, on the keyboard.
 
+Now press CTRL+Z to undo the pad operation, find the sketch in the combo view, and double-click it to bring it back up on the sketcher.  Enable the Show Grid option.  I also recommend disable auto-constraints while working with imported sketches, and instead of using constraints, use the Snap to Grid function (enable grid snap option).
 
+All imported sketches consist exclusively of unconstrained line segments.  There are a number of reasons why I opted to not constrain the line segments.  For starters, FreeCAD already struggles with all the objects (line segments) being created to represent most images. Performance will suffer even more if constraints (4 per line segment) were added.  For the butterfly image, for example, there are 2613 line segments created to represent that image in the sketcher, which is way too many for it.  If we add 4 constraints per line segment we'd be looking at north of 12,000 objects (line segments + constraints).  All of these constraints would also block much of the sketch, making it more difficult to see and edit it.  Adding constraints would also add to the complexity of the macro code (which is already complex enough to be getting on with).  Furthermore, I really don't believe (my opinion) constraints are necessary in this situation where we are using a script to exactly place and size each line segment.
+
+If you zoom in on one of the 4 internal points of the adjacencies import sketch, and keep zooming in, eventually you will see the point diverging into 2 separate points.  This is an illustration of cheat factor at work.  Play around with importing this image using different values for cheat factor, including zero.  I recommend you try 500 * cheat.  This will distort the image, but it will still be recognizable and you will be able to see better how the cheat factor works.  Pad the object and see how cheat factor affects it.  Try setting Black Background checkbox to false (unchecking it) and importing this image.  Notice that the foreground pixels are always bridged together while the background pixels are always isolated from each other wherever there is a diagonal adjacency.
+
+When editing an imported sketch remember that, although they appear to be vertical or horizontal, line segments to which cheat factor has been applied, will not actually be horizontal or vertical.  Applying a horizontal or vertical constraint to such line segments will cause problems when attempting to do further operations on the sketch, such as a pad, pocket, revolve, etc. operation.
+
+Tip: Uncheck the Auto Update checkbox in the sketcher when working with larger imported sketches to improve performance.
+
+<h4>Solid</h4>
+
+Close any open FreeCAD documents (not counting the macro itself if open in the editor or the Start page) and select the Solid button with the adjacencies.bmp image in the image preview panel.
+
+To be continued...
 
 
 
