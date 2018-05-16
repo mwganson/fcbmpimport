@@ -231,10 +231,59 @@ In the above screenshot we have the butterfly image that has been imported as DW
 
 <img src="screenshot-butterfly-cut.png" alt="screenshot butterfly after cut">
 
-There still remains some additional cleanup work to be done, but the edges are now much smoother and less pixelated than they were.
+There still remains some additional cleanup work to be done on this DWire051 object, but the edges are now much smoother and less pixelated than they were.
 
+<h4>Cut Button</h4>
 
+The Cut button will cut previously selected points out of a DWire object.  This was done in the 2 above screenshots, showing the before and after.  If a cut operation doesn't come out the way you had hoped it would you can undo the operation by SHIFT+CLICKING the Cut button a 2nd time (but this must be done immediately before conducting any other operation).  
 
+Caveat: if ALL points are selected and Cut from a DWire object, the operation cannot be undone.  Moral of the story: Save your work and save often.
+
+<h4>Move Button</h4>
+
+The Move button is used to move selected points.  For this operation we are repurposing the X Offset, Y Offset, and Z Offset edit boxes.  These boxes will now contain the offsets to be used for moving the selected points.  For example, if you wish to move a selected point "up" in the positive Y direction, you would enter 1 into the Y Offset box and click Move.  To undo the operation, SHIFT+CLICK Move immediately afterwards before performing any other operation (even before selecting another object).  (SHIFT+CLICK merely moves the selected points in the opposite direction.)
+
+<h5>Control Move</h5>
+
+A Control Move is done by holding CTRL while CLICKING the Move button.  Control Moves can only be done with a single selected point.  If multiple points are selected the operation will not be performed.  The Control Move operation sets up a mouse click observer, which calls the function back after the user clicks the desired destination point for the move.  The Move button changes its label to "Waiting..." to indicate to the user the macro is waiting for the next click.  The user can click the Move button (now labeled "Waiting...") again to cancel the operation at this time.
+
+After the user clicks a destination point in 3d space the selected point gets moved to that destination.  The X Offset and Y Offset boxes are also setup along that same vector in preparation for selecting and moving additional points in the same direction and distance and also for undoing the move operation with a SHIFT+MOVE.
+
+Note: the Z Offset is not set for Control Move operations, and must be set manually.  This is to prevent accidental moves in the Z direction, which would result in a DWire object that is no longer coplanar.  Users should ensure they are viewing the DWire object from directly above (or below) rather than the axonometric view when performing Control Move operations for best results.
+
+<h4>Insert Button</h4>
+
+The Insert button is used for inserting new points into an existing DWire object.  If there are cuts in the Cut buffer these points can be inserted into the DWire object, but care must be taken to ensure the operation is setup properly.  The user must select 2 points, and then press the Insert button.  If the presses Insert (without any keyboard modifiers) a single new point is created at the midpoint between the 2 selected points.  If SHIFT + CLICK is used the points in the Cut buffer, if any, are inserted between the 2 selected points.
+
+<h5>Inserting multiple points</h5>
+
+These are steps to be used when inserting a new set of points into a DWire object.
+
+<ol>
+  <li>Determine the 2 ADJACENT points on the existing DWire that you would like to connect the new points to.</li>
+  <li>Determine which of these 2 points has the higher Vertex number, e.g. Vertex34, by examining the information in the FreeCAD status bar at the lower left corner of the screen while pre-selecting the vertices.  At the higher of the 2 Vertex numbers is where you should begin drawing the new set of points using the mult-line tool in the Draft workbench.  For example, if the 2 vertices are Vertex32 and Vertex33 you would begin drawing the new object near Vertex33.</li>
+  <li>Place the first of the new points very close to (but not exactly on) the higher Vertex, and then when finishing up the new DWire object, place the final point very close to (but not exactly on) the lower Vertex.</li>
+  <li>Select all of the points on the new object and cut them out using the Cut button.  (Easiest way to select them all is to select any of the points on the new DWire object, and then press SHIFT+SELECT to select all the remaining points.)</li>
+  <li>Now select the same 2 ADJACENT points on the existing DWire object and press SHIFT+Insert to connect the points in the Cut buffer to the existing DWire object.</li>
+</ol>
+
+<h3>Converting Images</h3>
+
+The only image format support for importing (although previewing will work with just about any image format) is black and white windows bmp format.  In other words, 1 bit-per-pixel monochrome bmp.  A good tool for converting just about any image to this format is <a href="https://www.gimp.org">GIMP2</a>.  Windows Paint will also work, but the quality is often not suitable for our purposes.
+
+In GIMP2, with your original image already loaded, go to the Colors menu and select Threshold.  There will be a slider control you can use to control (at least to a degree) which colors get interpreted as white and which as black.  Once you have it where you want it, exit that dialog.  You now have a black and white image.  The next step is to export it as a .bmp file using the File -> Export As menu item in GIMP2.  Make sure you have Windows bmp format selected in the drop down list at the bottom of that dialog and also make sure bmp is being appended to the filename to be exported.
+
+Alternatively, in GIMP2, you can do the black and white conversion from this menu: Image -> Mode -> Indexed, and by selecting 1 bit-per-pixel and hitting the Convert button.  Dithering options are available on this screen, but dithering is generally not recommended for importing into FreeCAD, but feel free to experiment.
+
+You should also consider scaling the image: Image -> Scale within GIMP2.  The order of operation of scaling first, and then converting, will probably give the best overall results in most cases.  The macro can handle higher resolutions, but FreeCAD cannot, at least not with any thing approaching reasonable performance levels.  It's not a FreeCAD's fault since we are putting it to a use for which it was not designed.  My recommendation is to start off with some very small images and work your way up to higher resolutions.  You will quickly get a feel for what FreeCAD can handle on your machine.
+
+Tip: FCBmpImport applies scale factor equally to both the x and y axes.  If you wish to use a different scaling for x and y, you can do the scaling in GIMP2 before doing the import.
+
+<h3>Importing</h3>
+
+First step is to press the Preview Image button, and then navigate to and select the desired bmp image.  It will appear in the preview panel where you may then set offets and scaling options.  Press one of the import buttons to begin the import process.
+
+<h4>Sketch</h4>
 
 
 
