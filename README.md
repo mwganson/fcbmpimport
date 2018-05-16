@@ -287,7 +287,15 @@ First step is to press the Preview Image button, and then navigate to and select
 
 Bring up the macro and click the Preview Image button.  Select the <a href="adjacencies.bmp">adjacencies.bmp</a> file.  This is a very tiny file consisting of only 7 pixels per line and 5 raster lines.
 
-<img src="screenshot-adjacencies" alt="screenshot adjacencies.bmp being previewed">
+<img src="screenshot-adjacencies.png" alt="screenshot adjacencies.bmp being previewed">
+
+Close any currently open FreeCAD document (not counting the FCBmpImport.FCMacro.py file, if open in the editor, and not counting the Start page).  Click the Sketch button to import.  Select the XY_PLANE, when prompted.
+
+<img src="screenshot-adjacencies-sketch.png" alt="screenshot adjacencies.bmp imported into the sketcher">
+
+
+
+
 
 
 
