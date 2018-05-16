@@ -91,16 +91,13 @@ The following mathematical functions can be called from within the Various Optio
 </ul>
 
 Note: a special syntax is required for calling the mathematical functions.  Only immediate values (numbers) can be used as parameters for these functions (none of the above constants are references can be used as parameters to the math functions).  The format to be used is best illustrated by giving a few examples:
-
+<pre>
 log32 -> returns value from call to math.log(32) = 3.4657359028, the natural logarithm of 32.
 tlog17p52 -> returns value from call to math.log10(17.52) = 1.24353410183, notice the p is a stand in for the decimal point (or comma)
 cos177p25d -> returns value from call to math.cos(177.25 * math.pi / 180.0) = -0.998848386485, the d denotes 177.25 is in degrees.
 tan41r -> returns value from call to math.tan(41) = 0.160656698681, the r denotes 41 is in radians.
 asin72 -> returns value from call to math.asin(72) = 0 because this is an error (produces a complex number 1.5708 - 4.96977 * i)
 sin13 -> returns value from call to math.sin(13) = 0.420167036827 (notice no r or d at the end defaults to radians)
-
-More examples:
-
 tan40d * x -> same as math.tan(40 * math.pi / 180.0) * value currently in X Offset box.
 z ** 3 -> the value in the Z Offset box raised to the power of 3.
 z ** (1/3) -> cube root of value in Z Offset box.
@@ -108,7 +105,7 @@ part_height ** scale -> value in part height box raised to the power of the valu
 pi * (part/2) ** 2 -> math.pi * the square of the value in part height box divided by 2.
 12 * inches / width -> if used in the scale factor box would scale created object to be 12 inches wide.
 200 / w -> if used in the scale factor box would scale created object to be 200 mm wide.
-
+</pre>
 Note: It is permissible to reference an edit box value from within the same box.  For example, you could enter 2 into the X Offset box, and then enter x * 2 into the same box (after it has been evaluated) to get 4.  References are not retained after the initial evaluation.  In other words, no dependencies are created when referencing boxes.
 
 Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
