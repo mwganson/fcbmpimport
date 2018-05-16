@@ -225,6 +225,12 @@ The select button is used for selecting points on a DWire object preparatory to 
 
 If you have 2 points selected prior to pressing Select, the points in between those 2 points (ordered by Vertex number) will be acted upon.  If it's a regular select, the process begins with the lower-numbered Vertex and selects every other point up to the higher-numbered Vertex.  So, for example, if you first select Vertex20 and Vertex 40, and then hit Select (no keyboard modifier) when it finishes you will have Vertex20, Vertex22, Vertex24, Vertex26...Vertex36, Vertex38, and Vertex40 all selected.  With smart select (CTRL key modifier) an attempt is made (no guarantees) to stay either on the outside or the inside of the DWire object, depending on whether the lower-numbered Vertex (Vertex20 in this example) is on the outside or the inside of the DWire object.
 
+<img src="screenshot-butterfly-selected.png" alt="screenshot of butterfly selected">
+
+In the above screenshot we have the butterfly image that has been imported as DWire objects using the wire import type.  The outer points of DWire051 have been selected using the Select tool (along with manually selecting a few additional points).  Notice how jagged the edges are before cutting the selected points.  Compare this to the screenshot taken after applying the Cut operation:
+
+
+
 
 
 
