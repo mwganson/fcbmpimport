@@ -103,3 +103,6 @@ But suppose we wanted this in millimeters.  Suppose we want 300 mm as the final 
 
 300 / width
 
+<img src="screenshot3.png" alt="zoomed butterfly">
+
+
