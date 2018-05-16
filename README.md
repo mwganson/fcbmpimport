@@ -155,6 +155,54 @@ Cheat Factor is used in all import types except for solid.  You can disable it b
 
 Cheat factor is used to either separate or fuse 2 pixels that are diagonally adjacent.  With mesh imports cheat factor is applied to all building blocks in their length direction (along x axis), shortening them by cheat factor millimeters.  This prevents the next block on top of the current block from becoming diagonally adjacent.  With sketch, wire, face, and extruded imports cheat factor is applied more elaborately using a "smarter" algorithm.  In these import types the macro looks for instances where 4 line segments converge to a single point, which is a no no.  There should only ever be 2 line segments meeting at any single point.  When it finds 4 line segments meeting at a single point it separates that point into 2 points, one of which is cheat factor millimeters from the nearest integer coordinate on the x and y axes.  Thus, the 2 points are 2 * cheat factor * sqrt(2) millimeters from each other after cheat factor is applied.  The current default (as of version 0.2018.05.16) is 7e-5 (= .00007 millimeters).  Thus the 2 points would be 2 * 7e-5 * sqrt(2) = 0.000197989898732 millimeters or about 198 nanometers apart.  To put this into context an atom might be about 1/2 nanometer in size, so cheat factor is very, very tiny, and not something you will notice at normal zoom levels and beyond the precision that a 3d printer or cnc mill would be able to work with.  In other words, it won't affect the nominal size of the model in any non-negligible way.  We'll revisit cheat factor when we get to the sketch imports.
 
+<h4>Zero XYZ Button</h4>
+
+The Zero XYZ button will zero out the X Offset, Y Offset, and Z Offset edit boxes.
+
+<h4>Defaults Button</h4>
+
+The Defaults button will reset all of the Various Options boxes to their default values, along with resetting the Black Foreground checkbox and the Keep Window On Top checkbox to their default values.
+
+If you would like to change any of the defaults you will need to modify the FCBmpImport.FCMacro.py file mannually.  Defaults are variables in ALL CAPS in a special section of the above file.  The current defaults (as of version 0.2018.05.16a) are as follows:
+
+#default constant defines
+#change these for different ui starting values
+
+BLACK_FOREGROUND = True  #foreground color will be black if True, else white
+PART_HEIGHT = 1 #pixel height (z axis) for solid/mesh/extruded import types 
+SHAPE_BASENAME = 'Imported'                   
+IMPORT_X_OFFSET = 0 
+IMPORT_Y_OFFSET = 0 
+IMPORT_Z_OFFSET = 0 
+SCALE_FACTOR = 1 
+RECOMPUTE_INTERVAL = 100 
+CHEAT_FACTOR = 7e-5 
+WINDOW_STAYS_ON_TOP = False
+SEPARATOR = locale.localeconv()['decimal_point']
+SEPARATOR_STANDIN = 'p'
+DEGREES_INDICATOR = 'd'
+RADIANS_INDICATOR = 'r'
+
+Note: if the SEPARATOR ('.' or ',', depending on your locale) isn't correct (or isn't what you would prefer) you can change it manually to something like:
+
+SEPARATOR = '.'
+
+or
+
+SEPARATOR = ','
+
+Where possible I've avoided hard coding decimals, preferring instead a more generic e-notation format, such as 2e-5 instead of 0.00002 or 0,00002.  The only time SEPARATOR comes into play is in using math functions within the edit boxes, such as entering cos32p5r, where the p gets replaced by SEPARATOR.
+
+<h3>Keep Window On Top</h3>
+
+As the name implies, this provides a hint to the operating system to keep this window on top of other windows. (It can still be minimized.)  It is only a hint, but should work unless perhaps there are other windows giving the same hint.  This option can be useful when using the macro after importing an image, for some post import processing (such as using the Wire Point Editing tools or the Select Objects tool).  Keeping the window on top can also be a nuisance because it can block modal popups from FreeCAD, which then cannot be accessed because the macro window is in the way and the macro window can't be moved because there is a modal dialog active in FreeCAD (such as a popup dialog asking if you wish to save a file you just closed).  Sometimes you can just press the Esc button to dismiss the dialog, but other times the only alternative might be to kill FreeCAD with a task manager and restart.  If you use Always on Top you should move the window off to the side to prevent this from happening.
+
+<h3>Black Foreground</h3>
+
+When checked black pixels will be interpreted as foreground pixels during the import.  When unchecked the white pixels will be interpreted as foreground.  This is an important distinction because the foreground pixels are the ones will be represented as FreeCAD objects whereas the background pixels are only used for spacing and sizing said objects.
+
+
+
 
 
 
