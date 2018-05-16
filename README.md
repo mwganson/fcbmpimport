@@ -11,13 +11,9 @@ The only image file format supported is Black and White (1 bit per pixel) Window
 
 While the macro does not impose any size/complexity limitations, there are practical limitations in what FreeCAD is able to handle in terms of the number and types of FreeCAD objects in the same document.  FreeCAD was not designed for hundreds, or thousands, or even 10's of thousands of objects, which can easily be produced when importing images even of modest resolution.  The macro is best used with relatively simple images, such as cartoon type drawings, clipart, etc., rather than more complex images, such as photographs.
 
-<h3>Usage Instructions</h3>
-
-<h4>Screenshot</h4>
-
 <img src= "screenshot.png" alt="screenshot">
 
-<h4>Image Preview Panel</h4>
+<h3>Image Preview Panel</h3>
 
 In the upper right corner of the user interface you will find the image preview panel.  While it is not, strictly speaking, necessary to first preview the image before importing it, you will find it is often useful to do so.  When an image is being previewed a red and green axis cross, very similar to the one used in FreeCAD to mark the origin, will be superimposed over the image.  This axis cross marks the position the objects created to represent the image will be placed relative to the origin.  Other features of the image preview panel include the ability to zoom in/out with the mouse scrollwheel.  If the zoom level is too high for a particular image to fit entirely within the image preview panel, the image can be dragged around inside the image preview panel with the left mouse button.
 
@@ -29,9 +25,9 @@ Image Preview (200x137), px,py = 210.53,163.04 Zoom = 1.8953x
 
 The (200x137) tells us the image resolution is 200x137 pixels (including white background pixels).  Notice the image preview panel has a gray background in order to contrast with the white background for this image.  px,py = 210.53,163.04 means that at this particular zoom (1.8953x) the image preview panel can (but not always will) contain 210.53x163.04 pixels.  This can be useful information when scaling an image (read more about scaling below) so that it will be represented in FreeCAD with a FreeCAD object of the desired size.  If you press Shift while moving the mouse scrollwheel vertical grid lines will be displayed to aid in counting the number of pixels between 2 points on the image.  This will also cause the zoom value to be one such that px will be equal to an integer value.  Thus by alternating between dragging the image around inside the image preview panel and Shift+scrollwheel movements one can measure (using the px value) distances (in pixels) between various points on the image.  Ctrl+scrollwheel movements can be used to help measure vertical distances.  Ctrl+Shift+scrollwheel movements will behave the same as Shift+scrollwheel except no grid lines will be shown.
 
-<h4>Various Options</h4>
+<h3>Various Options</h3>
 
-<h5>Scale Factor</h5>
+<h4>Scale Factor</h4>
 
 Below the image preview panel is a group of line edit widgets that can be used to set various options and preferences, including scaling and offsets.  The scale factor edit box is used to set the scale of the FreeCAD object created to represent the image in FreeCAD.  By default, each pixel is 1mm x 1mm x 1mm for solid, extruded, and mesh import types, and 1mm x 1mm for wire, face, and sketch import types.  The value entered as the scale factor will be multiplied against those default 1mm values (except for part height), and used to size the object(s).  As an example, if you wish each pixel to be 3.5mm x 3.5mm x 3.5mm you would simply enter 3.5 into the scale factor edit box (or 3,5 depending on your locale) and 3.5 in the part height edit box. (Note: part height is only applicable to mesh, solid, and extruded import types.)
 
@@ -40,6 +36,8 @@ But usually the desired scaling will be for the entire image or for some subset 
 (6 * inches) / width
 
 Notice a few things here.  First of all, we can enter mathematical expressions into these edit boxes.  Secondly, we can access some useful mathematical constants (the constant value "inches" = 25.4).  Thirdly, we can dymanically access some global variables being kept in macro memory, in this case width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the above "(6 * inches) / width" gets replaced with 0.762, which is the numerical evaluation of that expression.  Note: if you select a different size image to preview after doing this, the value in the scale factor edit box DOES NOT CHANGE.  There is no permanent reference to "width" being created.  The current value for "width" is used, and then immediately discarded.  It is equivalent to simply entering 0.762 into the box in the first place.
+
+<h4>Edit Box Feature Details</h4>
 
 The following operators are supported within the Various Options edit boxes:
 <ul>
@@ -52,9 +50,7 @@ The following operators are supported within the Various Options edit boxes:
   <li>0bNNN - Binary format input, e.g. 0b11111111 (= 255 in decimal)</li>
   <li>0xNNN - Hexadecimal base 16 input, e.g. 0xff (=255 in decimal)</li>
   <li>() - Parentheses may be used for readability or for forcing order of evaluation.
-  
 </ul>
-
 
 The following constant values are accessible within the Various Options edit boxes:
 <ul>
@@ -103,13 +99,26 @@ tan41r -> returns value from call to math.tan(41) = 0.160656698681, the r denote
 asin72 -> returns value from call to math.asin(72) = 0 because this is an error (produces a complex number 1.5708 - 4.96977 * i)
 sin13 -> returns value from call to math.sin(13) = 0.420167036827 (notice no r or d at the end defaults to radians)
 
+More examples:
+
+tan40d * x -> same as math.tan(40 * math.pi / 180.0) * value currently in X Offset box.
+z ** 3 -> the value in the Z Offset box raised to the power of 3.
+z ** (1/3) -> cube root of value in Z Offset box.
+part_height ** scale -> value in part height box raised to the power of the value in the scale factor box.
+pi * (part/2) ** 2 -> math.pi * the square of the value in part height box divided by 2.
+12 * inches / width -> if used in the scale factor box would scale created object to be 12 inches wide.
+200 / w -> if used in the scale factor box would scale created object to be 200 mm wide.
+
+Note: It is permissible to reference an edit box value from within the same box.  For example, you could enter 2 into the X Offset box, and then enter x * 2 into the same box (after it has been evaluated) to get 4.  References are not retained after the initial evaluation.  In other words, no dependencies are created when referencing boxes.
+
 Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
 
-<h5>Setting up the X, Y, and Z offset values</h5>
+<h4>Setting up the X, Y, and Z offset values</h4>
 
 You will notice in the above screenshot there is a red and green axis cross centered between the two butterfly antennae.  This axis cross marks the location the FreeCAD objects created to represent this image will be positioned relative to the origin at (0,0,0) in 3d space, or (0,0) in 2d space if importing as a sketch.  I positioned this by entering "-w/2" in the X Offset box and "-h * 8/10" in the Y Offset box.  (Recall, w and h refer to the image width and height, respectively.)  By default, the axis cross is set to the lower left corner of the image.  To move it to the right, enter a negative value in the X Offset.  To move it up, enter a negative value in the Y Offset.  Actually, what's happening is the image is moving left and down, then getting re-centered as the image preview is updated.  This is why negative numbers are needed.
 
-<h5>Scaling</h5>
+<h4>More on Scaling</h4>
+
 The easiest way to scale the FreeCAD object to be created to represent the image is to enter the desired final size (in mm) into the scale factor box, and then divide that number by horizontal size (width) of the image (in pixels).  I gave the previous example of 6 inches above.  If we wish to scale the butterfly object such that it is 6 inches, we can enter this into the scale factor box:
 
 (6 * inch) / width
@@ -127,5 +136,10 @@ In the above image we have zoomed in on the butterfly so that the antennae fit e
 into the scale factor box to achieve this result.  Or, alternatively:
 
 100 / 43
+
+<h4>Part Height</h4>
+
+The value placed into the Part Height box will be the final height (thickness) of the object created in FreeCAD to represent the image being imported for mesh, solid, and extruded import types.  All images are imported to the XY plane, thus this value always gets applied to the Z axis. (Exception: sketch imports may be mapped to the YZ or XZ planes during import, but part height is not applicable to those import types.)  Scale Factor is not applied to part height as of version 0.2018.05.16.
+
 
 
