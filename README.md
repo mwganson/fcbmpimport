@@ -1,4 +1,4 @@
-# fcbmpimport
+# FCBmpImport
 FreeCAD Macro for importing black and white bmp images as FreeCAD objects.
 
 <h3>Installation</h3>
@@ -307,9 +307,51 @@ Tip: Uncheck the Auto Update checkbox in the sketcher when working with larger i
 
 <h4>Solid</h4>
 
-Close any open FreeCAD documents (not counting the macro itself if open in the editor or the Start page) and select the Solid button with the adjacencies.bmp image in the image preview panel.
+Close any open FreeCAD documents (not counting the macro itself if open in the editor or the Start page) and select the Solid button with the adjacencies.bmp image in the image preview panel.  You will be prompted with 3 options: MULTIPLE WEDGES, MAKE COMPOUND SOLID, and MAKE ONE SOLID.  Select MULTIPLE WEDGES.
 
-To be continued...
+The image will be imported as 4 wedge objects, which are Part workbench primitive wedge objects.  Each wedge object, labeled Imported0 through Imported3 by default, can be individually modified in the combo view data tab with 8 different parameters: Xmin, Ymin, Zmin, X2min, Z2min, Xmax, Ymax, Zmax, X2max, and Z2max.  When viewed from overhead Xmin and X2min control the left side of the wedge, while Xmax and X2max control the right side.  Ymin controls the bottom while Ymax controls the top.  Experiment with changing these values.  These can be useful for smoothing out jagged edges and for tweaking the object post import.
+
+The MAKE COMPOUND SOLID option combines these individual wedges into a single compound object.  The advantage is, presumably, FreeCAD will be able to more easily manage one complex object as opposed to hundreds, thousands, or tens of thousands of individual wedges.  The disadvantage is you can no longer individually manipulate the wedges using the 8 parameters referenced in the preceding paragraph.
+
+The MAKE ONE SOLID option fuses the individual wedges into a single fusion object.  In practice, this object is very similar to the compound object created above, but the faces will be smoother (no lines showing where multiple wedges have been butted up against one another).  This same effect can be achieved merely by performing a boolean fusion on the compound object in the Part workbench.
+
+Note: solid imports are the only import types where cheat factor is not used.
+
+<h4>Mesh</h4>
+
+Mesh imports require the use of an additional binary, <a href="https://www.openscad.org">OpenSCAD</a>, which must be installed separately as it is not included with FreeCAD.  Go to their website to download the binary for Windows and/or Macintosh.  If you are on linux you should be able to install it using your distribution's repository.  See the <a href="https://www.openscad.org">OpenSCAD</a> website for details.
+
+The reason we need the additional binary is because we make use of the fusion boolean operation found in the OpenSCAD workbench during mesh imports.  The import algorithm is actually very similar to the solid import algorithm, only we use mesh cube objects rather than wedges.  The mesh cubes are fused using the OpenSCAD fusion function.  Because there is considerable overhead in calling the binary (FreeCAD has to create temporary files) the process is probably the longest of all import types.
+
+When selecting the Mesh import button you have the option of creating a MAKE ONE SOLID object or a mesh object.  If you select the solid option you will get a solid object very similar to the one created with the solid import -> MAKE ONE SOLID option except it will have been created from mesh objects rather than from wedges.
+
+Another option for creating a mesh object would be to import as a solid, export it to a .STL file, and then import that file back into FreeCAD.  I do not believe that technique (but I could be mistaken) would require the OpenSCAD binary.  You can also, of course, export the mesh to .STL and use it in another CAD/CAM package that does not have an image import feature.
+
+Note: if a mesh import fails, try using a larger value for cheat factor.
+
+Once you have the mesh object imported go to the Mesh Design workbench and select the Analyze -> Evaluate and Repair mesh... tool from the Meshes menu.  If all went well it should report no problems with the mesh and it should pass all of the tests.  You can now use the mesh object as you would any other mesh object in FreeCAD.  For example, you can perform boolean operations on the mesh object with mesh primitives.  But you should test the mesh after each operation.  My experience has been the OpenSCAD boolean operations are generally more successful than the ones in the Mesh Design workbench, but your mileage may vary.
+
+To convert the mesh to a solid, you can do this from the Part workbench, selecting Create Shape from Mesh item in the Part menu.  The created shape will be ready to use in the Path workbench.  The idea behind the mesh import option is to hopefully be able to import larger (higher resolution) and more complex images due to the lightweight nature of mesh objects as compared to "smart" objects, like wedges.
+
+<h4>Extruded</h4>
+
+Wire, face, and extruded imports use the same import function as the sketch import uses, only some additional steps are taken.  In fact, wire and face objects are the same objects (DWire) with the only difference being the makeFace parameter is set to True for face objects.  Extruded imports take the additional step of extruding the faces to part height.
+
+With an extruded import you will need to take the additional step of cutting the interior (Part workbench boolean cut) out of the object.  Just remember to select the base object first, and then the part to be cut out of it last, before using the boolean cut operation.
+
+The extruded object is a solid object and can be used like any other solid, such as mapping a sketch to a face for pocketing operations, for example.  The advantage is you have fewer objects being created in FreeCAD than when imported as multiple wedges, and so the performance should be better.
+
+<h4>Wire and Face</h4>
+
+Since these are basically the same we will treat them together in this section.  The only difference between wire and face imports is the DWire objects produced have their makeFace parameters set to True for face objects.  This can be toggled back and forth within the combo view, data tab.  The Wire Point Editing Tools can be used on both face and wire objects, but in my opinion it is easier to see what you are doing when editing wire objects as opposed to face objects.
+
+This import type is perhaps the most flexible when it comes to post import processing, but also requires additional work (extruding, etc.) to end up with a final solid object.  With relatively complex images the process of extruding, cutting, fusing, etc. can become confusing.  It is probably better to start with smaller, simpler images and work your way up from there.
+
+<h3>Final Thoughts</h3>
+
+It is hoped some users will find this macro to be of some usefulness.  I developed it with the idea of using it for importing images to be engraved with a cnc engraver / miniature mill to create signs and such.  It works reasonably well for that purpose, but it is somewhat disappointing that FreeCAD does not perform well in terms of speed when working with images beyond low resolution examples, such as the butterfly image, and even with that one it can be a struggle.
+
+Still, it's another option, another tool, something we can never have too many of.  Even if you never use it to import images, consider looking at the Select Objects and Wire Point Editing Tools, which can potentially come in handy in other contexts while using FreeCAD.
 
 
 
