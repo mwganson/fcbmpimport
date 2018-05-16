@@ -1,4 +1,4 @@
-# fcbmpimport
+# FCBmpImport
 FreeCAD Macro for importing black and white bmp images as FreeCAD objects.
 
 <h3>Installation</h3>
