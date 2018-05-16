@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "http://www.freecadweb.org/"
 __Wiki__ = "http://www.freecadweb.org/wiki/index.php"
-__date__ = "2018.05.16" #year.month.date
+__date__ = "2018.05.16a" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = "0."+__date__
 
 VERSION_STRING = __title__ + ' Macro v' + __version__
@@ -2311,7 +2311,7 @@ def defaults():
     ui.blackForegroundCheckbox.setChecked(BLACK_FOREGROUND)
     ui.scaleEdit.setText(str(SCALE_FACTOR))
     ui.recomputeIntervalEdit.setText(str(RECOMPUTE_INTERVAL))
-    ui.cheatFactorEdit.setText(str(eval_expr(CHEAT_FACTOR)))
+    ui.cheatFactorEdit.setText(str(eval_expr(str(CHEAT_FACTOR))))
     ui.shapeHeightEdit.setText(str(PART_HEIGHT))
     ui.zOffsetEdit.setText(str(IMPORT_Z_OFFSET))
     ui.yOffsetEdit.setText(str(IMPORT_Y_OFFSET))
