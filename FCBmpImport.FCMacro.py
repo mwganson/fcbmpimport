@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "http://www.freecadweb.org/"
 __Wiki__ = "http://www.freecadweb.org/wiki/index.php"
-__date__ = "2018.05.12" #year.month.date
+__date__ = "2018.05.16" #year.month.date
 __version__ = "0."+__date__
 
 VERSION_STRING = __title__ + ' Macro v' + __version__
@@ -338,7 +338,6 @@ iambTip = u'Imports image as Mesh object'
 importAsFaceButtonTip = u'Imports image as 2D Face objects'
 importAsWireButtonTip = u'Imports image as DWire objects'
 importAsShapeButtonTip = u'Imports as Extruded Shapes'
-foregroundColorGroupBoxText = u'Foreground Color Options'
 blackForegroundCheckboxText = u'Black Foreground'
 imagePreviewLabelText = u'Image Preview'
 offsetsGroupBoxText = u'Various Options (mouse over for tool tip help)'
@@ -359,7 +358,7 @@ riTip = u'Shapes are inserted multiple times in between calls to recompute().  T
 Lower values will call recompute() more often, resulting in reduced performance during import.'
 yoeTip = zoeTip = xoeTip = u'Offset image to desired position relative to the origin, also used for wire point editing moves.'
 bneTip = u'Base name applied to labels for most import types, e.g. Imported, Imported1, etc.'
-cheTip = u'Z height for some import types. Scale Factor other than 1 will affect overall part height.  Example: 10 here and 2 in Scale Factor results in height = 20.'
+cheTip = u'Z height for some import types. Scale Factor is NOT applied to part height, so this will be the final height.'
 wirePointEditingText = u'Wire Point Editing'
 selectErrorMessage = u'You must first select an existing face, edge, or vertex, so we know which x/y/zmin and x/y/zmax to look for'
 abortedText = u'Aborted by user'
@@ -470,14 +469,14 @@ defaultsButtonTipText = u'Resets all UI elements to default values (same as clos
 #change these for different ui starting values
 
 BLACK_FOREGROUND = True  #foreground color will be black if True, else white
-PART_HEIGHT = 1 #pixel height (z axis) for some import types (scale factor gets applied to this during import, e.g. part height = 1 and scale factor = 2 means you get height of 2)
+PART_HEIGHT = 1 #pixel height (z axis) for solid/mesh/extruded import types 
 SHAPE_BASENAME = 'Imported'                   
 IMPORT_X_OFFSET = 0 
 IMPORT_Y_OFFSET = 0 
 IMPORT_Z_OFFSET = 0 
 SCALE_FACTOR = 1 
 RECOMPUTE_INTERVAL = 100 
-CHEAT_FACTOR = 2e-5 
+CHEAT_FACTOR = 7e-5 
 WINDOW_STAYS_ON_TOP = False
 SEPARATOR = locale.localeconv()['decimal_point']
 SEPARATOR_STANDIN = 'p'
@@ -1231,7 +1230,7 @@ def makeOurPart(l,w,h,x1,y1,z1,last_part=False):
             b.z *= SF
             b.length *= SF
             b.width *= SF
-            b.height *= SF
+            #b.height *= SF #no longer apply scale_factor to part_height as of version 2018.05.16
             
             if import_as_mesh == True:
                 x = float(b.x)
