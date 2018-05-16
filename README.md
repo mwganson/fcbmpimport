@@ -34,3 +34,72 @@ The (200x137) tells us the image resolution is 200x137 pixels (including white b
 <h5>Scale Factor</h5>
 
 Below the image preview panel is a group of line edit widgets that can be used to set various options and preferences, including scaling and offsets.  The scale factor edit box is used to set the scale of the FreeCAD object created to represent the image in FreeCAD.  By default, each pixel is 1mm x 1mm x 1mm for solid, extruded, and mesh import types, and 1mm x 1mm for wire, face, and sketch import types.  The value entered as the scale factor will be multiplied against those default 1mm values, and used to size the object(s).  As an example, if you wish each pixel to be 3.5mm x 3.5mm x 3.5mm you would simply enter 3.5 into the scale factor edit box (or 3,5 depending on your locale).
+
+But usually the desired scaling will be for the entire image or for some subset of that image rather than per pixel.  For example, you might wish to engrave this butterfly into a 6 inch x 6 inch plaque.  Assuming you are content with the white background as a border or margin, the way to go about scaling this particular image would be to enter this into the scale factor edit box:
+
+(6 * inches) / width
+
+Notice a few things here.  First of all, we can enter mathematical expressions into these edit boxes.  Secondly, we can access some useful mathematical constants (the constant value "inches" = 25.4).  Thirdly, we can dymanically access some global variables being kept in macro memory, in this case width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the above "(6 * inches) / width" gets replaced with 0.762, which is the numerical evaluation of that expression.  Note: if you select a different size image to preview after doing this, the value in the scale factor edit box DOES NOT CHANGE.  There is no permanent reference to "width" being created.  The current value for "width" is used, and then immediately discarded.  It is equivalent to simply entering 0.762 into the box in the first place.
+
+The following constant values are accessible within the Various Options edit boxes:
+<ul>
+  <li>pi - the constant defined in python as math.pi, 3.14159265359</li>
+  <li>e - Euler's constant, math.e, the base of the natural logarithms, 2.71828182846</li>
+  <li>phi (alias golden, alias golden_ratio) - 1.6180339887</li>
+  <li>inch (alias inches) - the number of millimeters in an inch = 25.4</li>
+  <li>thou - the number of millimeters in a thousandth of an inch = .0254</li>
+</ul>
+
+The following reference values can be accessed within the Various Options edit boxes:
+<ul>
+  <li>width (alias w) - width (in pixels) of currently previewed image</li>
+  <li>height (alias h) - height (in pixels) of currently previewed image</li>
+  <li>vx - width (in pixels) of the image preview panel</li>
+  <li>vy - height (in pixels) of the image preview panel</li>
+  <li>px - the number of horizontal pixels that will fit in the image preview panel at the current zoom level</li>
+  <li>py - the number of vertical pixels that will fit in the image preview panel at the current zoom level</li>
+  <li>zoom - the current zoom level, e.g. 1.89525 in the above screenshot</li>
+  <li>x - current value contained in the X Offset box</li>
+  <li>y - current value contained in the Y Offset box</li>
+  <li>z - current value contained in the Z Offset box</li>
+  <li>part (alias part_height) - current value contained in the Part Height box</li>
+  <li>cheat (alias cheat_factor) - current value contained in the Cheat Factor box</li>
+  <li>scale (alias scale_factor) - current value contained in the Scale Factor box</li>
+</ul>
+
+The following mathematical functions can be called from within the Various Options edit boxes:
+<ul>
+  <li>cos - cosine - math.cos()</li>
+  <li>acos - arc cosine - math.acos()</li>
+  <li>sin - sine - math.sin()</li>
+  <li>asin - arc sine - math.asin()</li>
+  <li>tan - tangent - math.tan()</li>
+  <li>atan - arc tangent - math.atan()</li>
+  <li>log - natural logarithm to base e - math.log()</li>
+  <li>tlog - base 10 logarithm - math.log10()</li>
+</ul>
+
+Note: a special syntax is required for calling the mathematical functions.  Only immediate values (numbers) can be used as parameters for these functions (none of the above constants are references can be used as parameters to the math functions).  The format to be used is best illustrated by giving a few examples:
+
+log32 -> returns value from call to math.log(32) = 3.4657359028, the natural logarithm of 32.
+tlog17p52 -> returns value from call to math.log10(17.52) = 1.24353410183, notice the p is a stand in for the decimal point (or comma)
+cos177p25d -> returns value from call to math.cos(177.25 * math.pi / 180.0) = -0.998848386485, the d denotes 177.25 is in degrees.
+tan41r -> returns value from call to math.tan(41) = 0.160656698681, the r denotes 41 is in radians.
+asin72 -> returns value from call to math.asin(72) = 0 because this is an error (produces a complex number 1.5708 - 4.96977 * i)
+sin13 -> returns value from call to math.sin(13) = 0.420167036827 (notice no r or d at the end defaults to radians)
+
+Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
+
+<h5>Setting up the X,Y, and Z offset values</h5>
+
+You will notice in the above screenshot there is a red and green axis cross centered between the two butterfly antennae.  This axis cross marks the location the FreeCAD objects created to represent this image will be positioned relative to the origin at (0,0,0) in 3d space, or (0,0) in 2d space if importing as a sketch.  I positioned this by entering "-w/2" in the X Offset box and "-h * 8/10" in the Y Offset box.  (Recall, w and h refer to the image width and height, respectively.)  By default, the axis cross is set to the lower left corner of the image.  To move it to the right, enter a negative value in the X Offset.  To move it up, enter a negative value in the Y Offset.  Actually, what's happening is the image is moving left and down, then getting re-centered as the image preview is updated.  This is why negative numbers are needed.
+
+<h5>Scaling</h5>
+The easiest way to scale the FreeCAD object to be created to represent the image is to enter the desired final size (in mm) into the scale factor box, and then divide that number by horizontal size (width) of the image (in pixels).  I gave the previous example of 6 inches above.  If we wish to scale the butterfly object such that it is 6 inches, we can enter this into the scale factor box:
+
+(6 * inch) / width
+
+But suppose we wanted this in millimeters.  Suppose we want 300 mm as the final width:
+
+300 / width
+
