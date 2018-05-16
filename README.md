@@ -229,8 +229,9 @@ If you have 2 points selected prior to pressing Select, the points in between th
 
 In the above screenshot we have the butterfly image that has been imported as DWire objects using the wire import type.  The outer points of DWire051 have been selected using the Select tool (along with manually selecting a few additional points).  Notice how jagged the edges are before cutting the selected points.  Compare this to the screenshot taken after applying the Cut operation:
 
+<img src="screenshot-butterfly-cut.png" alt="screenshot butterfly after cut">
 
-
+There still remains some additional cleanup work to be done, but the edges are now much smoother and less pixelated than they were.
 
 
 
