@@ -285,6 +285,10 @@ First step is to press the Preview Image button, and then navigate to and select
 
 <h4>Sketch</h4>
 
+Bring up the macro and click the Preview Image button.  Select the <a href="adjacencies.bmp">adjacencies.bmp</a> file.  This is a very tiny file consisting of only 7 pixels per line and 5 raster lines.
+
+<img src="screenshot-adjacencies" alt="screenshot adjacencies.bmp being previewed">
+
 
 
 
