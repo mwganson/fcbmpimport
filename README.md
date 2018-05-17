@@ -7,9 +7,9 @@ To install place FCBmpImport.FCMacro.py in your macros folder in FreeCAD.  If yo
 
 <h3>Limitations</h3>
 
-The only image file format supported is Black and White (1 bit per pixel) Windows BMP.
+The only image file format supported is Black and White (1 bit-per-pixel) Windows BMP.
 
-While the macro does not impose any size/complexity limitations, there are practical limitations in what FreeCAD is able to handle in terms of the number and types of FreeCAD objects in the same document.  FreeCAD was not designed for hundreds, or thousands, or even 10's of thousands of objects, which can easily be produced when importing images even of modest resolution.  The macro is best used with relatively simple images, such as cartoon type drawings, clipart, etc., rather than more complex images, such as photographs.
+While the macro does not impose any size/complexity limitations, there are practical limitations in what FreeCAD is able to handle in terms of the number and types of FreeCAD objects in the same document.  FreeCAD was not designed for hundreds, thousands, or even 10's of thousands of objects, which can easily be produced when importing images even of modest resolution.  The macro is best used with relatively simple images, such as cartoon type drawings, clipart, etc., rather than more complex images, such as photographs.
 
 <img src= "screenshot.png" alt="screenshot">
 
@@ -43,7 +43,7 @@ The following operators are supported within the Various Options edit boxes:
 <ul>
   <li>+ - Plus sign can be used in the usual way, e.g. 3 + 2 (produces 5)</li>
   <li>- - Minus sign can be used in the usual way, either to subtract or as a negative number assignment.</li>
-  <li>* - Muliplication sign can be sued in the usualy way, to multiply two values.</li>
+  <li>* - Muliplication sign can be used in the usual way, to multiply two values.</li>
   <li>/ - Performs floating point division.</li>
   <li>** - Exponents.  E.g. 2**3 reads 2 to the power of 3,  2**(1/2) produces square root of 2.</li>
   <li>^ - Bitwise exclusive or (xor).  NOT an exponent.  E.g. 0b1111^0b1100 produces 0b0011 (= 3 in decimal)</li>
