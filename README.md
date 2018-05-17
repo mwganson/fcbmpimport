@@ -160,7 +160,7 @@ The Zero XYZ button will zero out the X Offset, Y Offset, and Z Offset edit boxe
 
 The Defaults button will reset all of the Various Options boxes to their default values, along with resetting the Black Foreground checkbox and the Keep Window On Top checkbox to their default values.
 
-If you would like to change any of the defaults you will need to modify the FCBmpImport.FCMacro.py file mannually.  Defaults are variables in ALL CAPS in a special section of the above file.  The current defaults (as of version 0.2018.05.16a) are as follows:
+If you would like to change any of the defaults you will need to modify the FCBmpImport.FCMacro.py file manually.  Defaults are variables in ALL CAPS in a special section of the above file.  The current defaults (as of version 0.2018.05.16a) are as follows:
 
 #default constant defines
 #change these for different ui starting values
