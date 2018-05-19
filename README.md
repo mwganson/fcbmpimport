@@ -7,6 +7,13 @@ FreeCAD Macro for importing black and white bmp images as FreeCAD objects.
   <li><a href='#Various Options Boxes'>Various Options Boxes</a></li>
   <ul>
     <li><a href='#ebf'>Edit Box Features</a></li>
+    <ul>
+      <li><a href='#Operators'>Operators</a></li>
+      <li><a href='#Constants'>Constants</a></li>
+      <li><a href='#References'>References</a></li>
+      <li><a href='#Math Functions'>Math Functions</a></li>
+      <li><a href='#Examples'>Examples</a></li>    
+    </ul>
     <li><a href='#Scale Factor'>Scale Factor</a></li>
     <li><a href='#Using Offsets'>Using Offsets</a></li>
     <li><a href='#Part Height'>Part Height</a></li>
