@@ -6,10 +6,10 @@ FreeCAD Macro for importing black and white bmp images as FreeCAD objects.
   <li><a href='#ipv'>Image Preview Panel</a></li>
   <li><a href='#Various Options Boxes'>Various Options Boxes</a></li>
   <ul>
-    <li><a href='#Scale Factor'>Scale Factor</a></li>
+ 
     <li><a href='#ebf'>Edit Box Features</a></li>
+    <li><a href='#Scale Factor'>Scale Factor</a></li>
     <li><a href='#Using Offsets'>Using Offsets</a></li>
-    <li><a href='#More on Scaling'>More on Scaling</a></li>
     <li><a href='#Part Height'>Part Height</a></li>
     <li><a href='#Base Name Label'>Base Name Label</a></li>
     <li><a href='#Recompute Interval'>Recompute Interval</a></li>
@@ -67,18 +67,10 @@ The (200x137) tells us the image resolution is 200x137 pixels (including white b
 
 <h3 id='Various Options Boxes'>Various Options Boxes</h3>
 
-<h4 id='Scale Factor'>Scale Factor</h4>
-
-Below the image preview panel is a group of line edit widgets that can be used to set various options and preferences, including scaling and offsets.  The scale factor edit box is used to set the scale of the FreeCAD object created to represent the image in FreeCAD.  By default, each pixel is 1mm x 1mm x 1mm for solid, extruded, and mesh import types, and 1mm x 1mm for wire, face, and sketch import types.  The value entered as the scale factor will be multiplied against those default 1mm values (except for part height), and used to size the object(s).  As an example, if you wish each pixel to be 3.5mm x 3.5mm x 3.5mm you would simply enter 3.5 into the scale factor edit box (or 3,5 depending on your locale) and 3.5 in the part height edit box. (Note: part height is only applicable to mesh, solid, and extruded import types.)
-
-But usually the desired scaling will be for the entire image or for some subset of that image rather than per pixel.  For example, you might wish to engrave this butterfly into a 6 inch x 6 inch plaque.  Assuming you are content with the white background as a border or margin, the way to go about scaling this particular image would be to enter this into the scale factor edit box:
-
-(6 * inches) / width
-
-Notice a few things here.  First of all, we can enter mathematical expressions into these edit boxes.  Secondly, we can access some useful mathematical constants (the constant value "inches" = 25.4).  Thirdly, we can access some global variables being kept in macro memory, in this case width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the above "(6 * inches) / width" gets replaced with 0.762, which is the numerical evaluation of that expression.  Note: if you select a different size image to preview after doing this, the value in the scale factor edit box DOES NOT CHANGE.  There is no permanent reference to "width" being created.  The current value for "width" is used, and then immediately discarded.  It is equivalent to simply entering 0.762 into the box in the first place.
+Below the image preview panel is a group of line edit widgets that can be used to set various options and preferences, including scaling and offsets, etc..  In addition to being able to enter numerical values into these boxes we can also enter various mathematical expressions.  Secondly, we can access some useful mathematical constants (the constant value "inches" = 25.4).  Thirdly, we can access some global variables being kept in macro memory, in this case width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the above mathematical expression gets replaced with a numerical value, which is the numerical evaluation of that expression.  
 
 <h4 id='ebf'>Edit Box Features</h4>
-
+<h5 id='Operators'>Operators</h5>
 The following operators are supported within the Various Options edit boxes:
 <ul>
   <li>+ - Plus sign can be used in the usual way, e.g. 3 + 2 (produces 5)</li>
@@ -91,7 +83,7 @@ The following operators are supported within the Various Options edit boxes:
   <li>0xNNN - Hexadecimal base 16 input, e.g. 0xff (=255 in decimal)</li>
   <li>() - Parentheses may be used for readability or for forcing order of evaluation.
 </ul>
-
+<h5 id='Constants'>Constants</h5>
 The following constant values are accessible within the Various Options edit boxes:
 <ul>
   <li>pi - the constant defined in python as math.pi, 3.14159265359</li>
@@ -100,7 +92,7 @@ The following constant values are accessible within the Various Options edit box
   <li>inch (alias inches) - the number of millimeters in an inch = 25.4</li>
   <li>thou - the number of millimeters in a thousandth of an inch = .0254</li>
 </ul>
-
+<h5 id='References'>References</h5>
 The following reference values can be accessed within the Various Options edit boxes:
 <ul>
   <li>width (alias w) - width (in pixels) of currently previewed image</li>
@@ -117,7 +109,7 @@ The following reference values can be accessed within the Various Options edit b
   <li>cheat (alias cheat_factor) - current value contained in the Cheat Factor box</li>
   <li>scale (alias scale_factor) - current value contained in the Scale Factor box</li>
 </ul>
-
+<h5 id='Math Functions'>Math Functions</h5>
 The following mathematical functions can be called from within the Various Options edit boxes:
 <ul>
   <li>cos - cosine - math.cos()</li>
@@ -129,7 +121,7 @@ The following mathematical functions can be called from within the Various Optio
   <li>log - natural logarithm to base e - math.log()</li>
   <li>tlog - base 10 logarithm - math.log10()</li>
 </ul>
-
+<h5 id='Examples'>Examples</h5>
 Note: a special syntax is required for calling the mathematical functions.  Only immediate values (numbers) can be used as parameters for these functions (none of the above constants are references can be used as parameters to the math functions).  The format to be used is best illustrated by giving a few examples:
 <pre>
 log32 -> returns value from call to math.log(32) = 3.4657359028, the natural logarithm of 32.
@@ -150,15 +142,13 @@ Note: It is permissible to reference an edit box value from within the same box.
 
 Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
 
-<h4 id='Using Offsets'>Using Offsets</h4>
+<h4 id='Scale Factor'>Scale Factor</h4>
 
-You will notice in the above screenshot there is a red and green axis cross centered between the two butterfly antennae.  This axis cross marks the location the FreeCAD objects created to represent this image will be positioned relative to the origin at (0,0,0) in 3d space, or (0,0) in 2d space if importing as a sketch.  I positioned this by entering "-w/2" in the X Offset box and "-h * 8/10" in the Y Offset box.  (Recall, w and h refer to the image width and height, respectively.)  By default, the axis cross is set to the lower left corner of the image.  To move it to the right, enter a negative value in the X Offset.  To move it up, enter a negative value in the Y Offset.  Actually, what's happening is the image is moving left and down, then getting re-centered as the image preview is updated.  This is why negative numbers are needed.
+The scale factor edit box is used to set the scale of the FreeCAD object created to represent the image in FreeCAD.  By default, each pixel is 1mm x 1mm x 1mm for solid, extruded, and mesh import types, and 1mm x 1mm for wire, face, and sketch import types.  The value entered as the scale factor will be multiplied against those default 1mm values (except for part height), and used to size the object(s).  As an example, if you wish each pixel to be 3.5mm x 3.5mm x 3.5mm you would simply enter 3.5 into the scale factor edit box (or 3,5 depending on your locale) and 3.5 in the part height edit box. (Note: part height is only applicable to mesh, solid, and extruded import types.)
 
-<h4 id='More on Scaling'>More on Scaling</h4>
+But usually the desired scaling will be for the entire image or for some subset of that image rather than per pixel.  For example, you might wish to engrave this butterfly into a 6 inch x 6 inch plaque.  The easiest way to scale the FreeCAD object to be created to represent the image is to enter the desired final size (in mm) into the scale factor box, and then divide that number by horizontal size (width) of the image (in pixels). Assuming you are content with the white background as a border or margin, the way to go about scaling this particular image would be to enter this into the scale factor edit box:
 
-The easiest way to scale the FreeCAD object to be created to represent the image is to enter the desired final size (in mm) into the scale factor box, and then divide that number by horizontal size (width) of the image (in pixels).  I gave the previous example of 6 inches above.  If we wish to scale the butterfly object such that it is 6 inches, we can enter this into the scale factor box:
-
-(6 * inch) / width
+(6 * inches) / width
 
 But suppose we wanted this in millimeters.  Suppose we want 300 mm as the final width:
 
@@ -173,6 +163,10 @@ In the above image we have zoomed in on the butterfly so that the antennae fit e
 into the scale factor box to achieve this result.  Or, alternatively:
 
 100 / 43
+
+<h4 id='Using Offsets'>Using Offsets</h4>
+
+You will notice in the above screenshot there is a red and green axis cross centered between the two butterfly antennae.  This axis cross marks the location the FreeCAD objects created to represent this image will be positioned relative to the origin at (0,0,0) in 3d space, or (0,0) in 2d space if importing as a sketch.  I positioned this by entering "-w/2" in the X Offset box and "-h * 8/10" in the Y Offset box.  (Recall, w and h refer to the image width and height, respectively.)  By default, the axis cross is set to the lower left corner of the image.  To move it to the right, enter a negative value in the X Offset.  To move it up, enter a negative value in the Y Offset.  Actually, what's happening is the image is moving left and down, then getting re-centered as the image preview is updated.  This is why negative numbers are needed.
 
 <h4 id='Part Height'>Part Height</h4>
 
