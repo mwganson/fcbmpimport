@@ -1,11 +1,57 @@
 # FCBmpImport
-FreeCAD Macro for importing black and white bmp images as FreeCAD objects.
+<a href="https://www.freecadweb.org">FreeCAD</a> Macro for importing black and white bmp images as FreeCAD objects.
+<ul>
+  <li><a href='#Installation'>Installation</a></li>
+  <li><a href='#Limitations'>Limitations</a></li>
+  <li><a href='#ipv'>Image Preview Panel</a></li>
+  <li><a href='#Various Options Boxes'>Various Options Boxes</a></li>
+  <ul>
+    <li><a href='#ebf'>Edit Box Features</a></li>
+    <ul>
+      <li><a href='#Operators'>Operators</a></li>
+      <li><a href='#Constants'>Constants</a></li>
+      <li><a href='#References'>References</a></li>
+      <li><a href='#Math Functions'>Math Functions</a></li>
+      <li><a href='#Examples'>Examples</a></li>    
+    </ul>
+    <li><a href='#Scale Factor'>Scale Factor</a></li>
+    <li><a href='#Using Offsets'>Using Offsets</a></li>
+    <li><a href='#Part Height'>Part Height</a></li>
+    <li><a href='#Base Name Label'>Base Name Label</a></li>
+    <li><a href='#Recompute Interval'>Recompute Interval</a></li>
+    <li><a href='#Cheat Factor'>Cheat Factor</a></li>
+    <li><a href='#Zero XYZ Button'>Zero XYZ Button</a></li>
+    <li><a href='#Defaults Button'>Defaults Button</a></li>
+   </ul>
+  <li><a href='#Keep Window On Top'>Keep Window On Top</a></li>
+  <li><a href='#Black Foreground'>Black Foreground</a></li>
+  <li><a href='#Progress Bar'>Progress Bar</a></li>
+  <li><a href='#Select Objects Button'>Select Objects Button</a></li>
+  <li><a href='#Wire Point Editing Tools'>Wire Point Editing Tools</a></li>
+  <ul>
+    <li><a href='#Select Button'>Select Button</a></li>
+    <li><a href='#Cut Button'>Cut Button</a></li>
+    <li><a href='#Move Button'>Move Button</a></li>
+    <li><a href='#Insert Button'>Insert Button</a></li>
+  </ul>
+  <li><a href='#Converting Images'>Converting Images</a></li>
+  <li><a href='#Importing'>Importing</a></li>
+  <ul>
+    <li><a href='#Sketch'>Sketch</a></li>
+    <li><a href='#Solid'>Solid</a></li>
+    <li><a href='#Mesh'>Mesh</a></li>
+    <li><a href='#Extruded'>Extruded</a></li>
+    <li><a href='#Wire And Face'>Wire And Face</a></li>
+  </ul>
+  <li><a href='#Final Thoughts'>Final Thoughts</a></li>
+</ul>
 
-<h3>Installation</h3>
 
-To install place FCBmpImport.FCMacro.py in your macros folder in FreeCAD.  If you don't know the location of the macros folder, go to the Macros menu, select Macros... and you will find at the bottom of the dialog your user macros location.  You may also simply create a new macro using the Macro -> Macros.. -> Create button, name the new file FCBmpImport.FCMacro.py, and copy/paste the macro code from FCBmpImport.FCMacro.py into your new file.  Don't forget to save the changes before exiting FreeCAD.
+<h3 id='Installation'>Installation</h3>
 
-<h3>Limitations</h3>
+To install place FCBmpImport.FCMacro.py in your macros folder in FreeCAD.  If you don't know the location of the macros folder, go to the Macros menu, select Macros... and you will find at the bottom of the dialog your user macros location.  You may also simply create a new macro using the Macro -> Macros.. -> Create button, name the new file FCBmpImport.FCMacro.py, and copy/paste the macro code from FCBmpImport.FCMacro.py into your new file.  Don't forget to save the file.
+
+<h3 id='Limitations'>Limitations</h3>
 
 The only image file format supported is Black and White (1 bit-per-pixel) Windows BMP.
 
@@ -13,7 +59,7 @@ While the macro does not impose any size/complexity limitations, there are pract
 
 <img src= "screenshot.png" alt="screenshot">
 
-<h3>Image Preview Panel</h3>
+<h3 id='ipv'>Image Preview Panel</h3>
 
 In the upper right corner of the user interface you will find the image preview panel.  While it is not, strictly speaking, necessary to first preview the image before importing it, you will find it is often useful to do so.  When an image is being previewed a red and green axis cross, very similar to the one used in FreeCAD to mark the origin, will be superimposed over the image.  This axis cross marks the position the objects created to represent the image will be placed relative to the origin.  Other features of the image preview panel include the ability to zoom in/out with the mouse scrollwheel.  If the zoom level is too high for a particular image to fit entirely within the image preview panel, the image can be dragged around inside the image preview panel with the left mouse button.
 
@@ -25,20 +71,12 @@ Image Preview (200x137), px,py = 210.53,163.04 Zoom = 1.8953x
 
 The (200x137) tells us the image resolution is 200x137 pixels (including white background pixels).  Notice the image preview panel has a gray background in order to contrast with the white background for this image.  px,py = 210.53,163.04 means that at this particular zoom (1.8953x) the image preview panel can (but not always will) contain 210.53x163.04 pixels.  This can be useful information when scaling an image (read more about scaling below) so that it will be represented in FreeCAD with a FreeCAD object of the desired size.  If you press Shift while moving the mouse scrollwheel vertical grid lines will be displayed to aid in counting the number of pixels between 2 points on the image.  This will also cause the zoom value to be one such that px will be equal to an integer value.  Thus by alternating between dragging the image around inside the image preview panel and Shift+scrollwheel movements one can measure (using the px value) distances (in pixels) between various points on the image.  Ctrl+scrollwheel movements can be used to help measure vertical distances.  Ctrl+Shift+scrollwheel movements will behave the same as Shift+scrollwheel except no grid lines will be shown.
 
-<h3>Various Options</h3>
+<h3 id='Various Options Boxes'>Various Options Boxes</h3>
 
-<h4>Scale Factor</h4>
+Below the image preview panel is a group of line edit widgets that can be used to set various options and preferences, including scaling and offsets, etc.  In addition to being able to enter numerical values into these boxes we can also enter various mathematical expressions, we can access some useful mathematical constants (example, the constant value "inches" = 25.4), and we can access some global variables being kept in macro memory, such as width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the mathematical expression gets replaced with a numerical value, which is the numerical evaluation of that expression.  After the expression is evaluated any references used in the evaluation will not be retained.  As an example, we can refer to the width (in pixels) of the currently previewed image as "width" or "w" (without the quotes).  Thus we might enter something like -w/2 or -width/2 in the X Offsets box.  The thing to keep in mind is if we preview a different image with a different width the value in X Offsets DOES NOT get updated.
 
-Below the image preview panel is a group of line edit widgets that can be used to set various options and preferences, including scaling and offsets.  The scale factor edit box is used to set the scale of the FreeCAD object created to represent the image in FreeCAD.  By default, each pixel is 1mm x 1mm x 1mm for solid, extruded, and mesh import types, and 1mm x 1mm for wire, face, and sketch import types.  The value entered as the scale factor will be multiplied against those default 1mm values (except for part height), and used to size the object(s).  As an example, if you wish each pixel to be 3.5mm x 3.5mm x 3.5mm you would simply enter 3.5 into the scale factor edit box (or 3,5 depending on your locale) and 3.5 in the part height edit box. (Note: part height is only applicable to mesh, solid, and extruded import types.)
-
-But usually the desired scaling will be for the entire image or for some subset of that image rather than per pixel.  For example, you might wish to engrave this butterfly into a 6 inch x 6 inch plaque.  Assuming you are content with the white background as a border or margin, the way to go about scaling this particular image would be to enter this into the scale factor edit box:
-
-(6 * inches) / width
-
-Notice a few things here.  First of all, we can enter mathematical expressions into these edit boxes.  Secondly, we can access some useful mathematical constants (the constant value "inches" = 25.4).  Thirdly, we can access some global variables being kept in macro memory, in this case width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the above "(6 * inches) / width" gets replaced with 0.762, which is the numerical evaluation of that expression.  Note: if you select a different size image to preview after doing this, the value in the scale factor edit box DOES NOT CHANGE.  There is no permanent reference to "width" being created.  The current value for "width" is used, and then immediately discarded.  It is equivalent to simply entering 0.762 into the box in the first place.
-
-<h4>Edit Box Feature Details</h4>
-
+<h4 id='ebf'>Edit Box Features</h4>
+<h5 id='Operators'>Operators</h5>
 The following operators are supported within the Various Options edit boxes:
 <ul>
   <li>+ - Plus sign can be used in the usual way, e.g. 3 + 2 (produces 5)</li>
@@ -51,7 +89,7 @@ The following operators are supported within the Various Options edit boxes:
   <li>0xNNN - Hexadecimal base 16 input, e.g. 0xff (=255 in decimal)</li>
   <li>() - Parentheses may be used for readability or for forcing order of evaluation.
 </ul>
-
+<h5 id='Constants'>Constants</h5>
 The following constant values are accessible within the Various Options edit boxes:
 <ul>
   <li>pi - the constant defined in python as math.pi, 3.14159265359</li>
@@ -60,7 +98,7 @@ The following constant values are accessible within the Various Options edit box
   <li>inch (alias inches) - the number of millimeters in an inch = 25.4</li>
   <li>thou - the number of millimeters in a thousandth of an inch = .0254</li>
 </ul>
-
+<h5 id='References'>References</h5>
 The following reference values can be accessed within the Various Options edit boxes:
 <ul>
   <li>width (alias w) - width (in pixels) of currently previewed image</li>
@@ -77,7 +115,7 @@ The following reference values can be accessed within the Various Options edit b
   <li>cheat (alias cheat_factor) - current value contained in the Cheat Factor box</li>
   <li>scale (alias scale_factor) - current value contained in the Scale Factor box</li>
 </ul>
-
+<h5 id='Math Functions'>Math Functions</h5>
 The following mathematical functions can be called from within the Various Options edit boxes:
 <ul>
   <li>cos - cosine - math.cos()</li>
@@ -90,7 +128,9 @@ The following mathematical functions can be called from within the Various Optio
   <li>tlog - base 10 logarithm - math.log10()</li>
 </ul>
 
-Note: a special syntax is required for calling the mathematical functions.  Only immediate values (numbers) can be used as parameters for these functions (none of the above constants are references can be used as parameters to the math functions).  The format to be used is best illustrated by giving a few examples:
+Note: a special syntax is required for calling the mathematical functions.  Only immediate values (numbers) can be used as parameters for these functions (none of the above constants are references can be used as parameters to the math functions).  The format to be used is best illustrated as examples, included among the examples below.
+
+<h5 id='Examples'>Examples</h5>
 <pre>
 log32 -> returns value from call to math.log(32) = 3.4657359028, the natural logarithm of 32.
 tlog17p52 -> returns value from call to math.log10(17.52) = 1.24353410183, notice the p is a stand in for the decimal point (or comma)
@@ -100,25 +140,24 @@ asin72 -> returns value from call to math.asin(72) = 0 because this is an error 
 sin13 -> returns value from call to math.sin(13) = 0.420167036827 (notice no r or d at the end defaults to radians)
 tan40d * x -> same as math.tan(40 * math.pi / 180.0) * value currently in X Offset box.
 z ** 3 -> the value in the Z Offset box raised to the power of 3.
-z ** (1/3) -> cube root of value in Z Offset box.
+z ** (1/2) -> square root of value in Z Offset box.
 part_height ** scale -> value in part height box raised to the power of the value in the scale factor box.
 pi * (part/2) ** 2 -> math.pi * the square of the value in part height box divided by 2.
 12 * inches / width -> if used in the scale factor box would scale created object to be 12 inches wide.
 200 / w -> if used in the scale factor box would scale created object to be 200 mm wide.
 </pre>
-Note: It is permissible to reference an edit box value from within the same box.  For example, you could enter 2 into the X Offset box, and then enter x * 2 into the same box (after it has been evaluated) to get 4.  References are not retained after the initial evaluation.  In other words, no dependencies are created when referencing boxes.
+Note: It is permissible to reference an edit box value from within the same box.  For example, you could enter 2 into the X Offset box, and then enter x * 2 into the same box (after it has been evaluated) to get 4.  References are not retained after the initial evaluation.  In other words, no dependencies are created when referencing boxes.  Whatever value is in the box is all that matters, not which expression was used to create it, whether it was an immediate numerical value or a complext mathematical expression.
 
-Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
 
-<h4>Setting up the X, Y, and Z offset values</h4>
+Tip: Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
 
-You will notice in the above screenshot there is a red and green axis cross centered between the two butterfly antennae.  This axis cross marks the location the FreeCAD objects created to represent this image will be positioned relative to the origin at (0,0,0) in 3d space, or (0,0) in 2d space if importing as a sketch.  I positioned this by entering "-w/2" in the X Offset box and "-h * 8/10" in the Y Offset box.  (Recall, w and h refer to the image width and height, respectively.)  By default, the axis cross is set to the lower left corner of the image.  To move it to the right, enter a negative value in the X Offset.  To move it up, enter a negative value in the Y Offset.  Actually, what's happening is the image is moving left and down, then getting re-centered as the image preview is updated.  This is why negative numbers are needed.
+<h4 id='Scale Factor'>Scale Factor</h4>
 
-<h4>More on Scaling</h4>
+The scale factor edit box is used to set the scale of the FreeCAD object created to represent the image.  By default, each pixel is 1mm x 1mm x 1mm for solid, extruded, and mesh import types, and 1mm x 1mm for wire, face, and sketch import types.  The value entered as the scale factor will be multiplied against those default 1mm values (except for part height), and used to size the object(s).  As an example, if you wish each pixel to be 3.5mm x 3.5mm x 3.5mm you would simply enter 3.5 into the scale factor edit box (or 3,5 depending on your locale) and 3.5 in the part height edit box. (Note: part height is only applicable to mesh, solid, and extruded import types.)
 
-The easiest way to scale the FreeCAD object to be created to represent the image is to enter the desired final size (in mm) into the scale factor box, and then divide that number by horizontal size (width) of the image (in pixels).  I gave the previous example of 6 inches above.  If we wish to scale the butterfly object such that it is 6 inches, we can enter this into the scale factor box:
+But usually the desired scaling will be for the entire image or for some subset of that image rather than per pixel.  For example, you might wish to engrave this butterfly into a 6 inch x 6 inch plaque.  The easiest way to scale the FreeCAD object is to enter the desired final size (in mm) into the scale factor box, and then divide that number by horizontal size (width) of the image (in pixels) (or you could also use height if you'd prefer to scale via the vertical size). Assuming you are content with the white background as a border or margin, the way to go about scaling this particular image would be to enter this into the scale factor edit box:
 
-(6 * inch) / width
+(6 * inches) / width
 
 But suppose we wanted this in millimeters.  Suppose we want 300 mm as the final width:
 
@@ -134,29 +173,33 @@ into the scale factor box to achieve this result.  Or, alternatively:
 
 100 / 43
 
-<h4>Part Height</h4>
+<h4 id='Using Offsets'>Using Offsets</h4>
+
+You will notice in the above screenshot there is a red and green axis cross centered between the two butterfly antennae.  This axis cross marks the location the FreeCAD objects created to represent this image will be positioned relative to the origin at (0,0,0) in 3d space, or (0,0) in 2d space if importing as a sketch.  I positioned this by entering "-w/2" in the X Offset box and "-h * 8/10" in the Y Offset box.  (Recall, w and h refer to the image width and height, respectively.)  By default, the axis cross is set to the lower left corner of the image.  To move it to the right, enter a negative value in the X Offset.  To move it up, enter a negative value in the Y Offset.  Actually, what's happening is the image is moving left and down, then getting re-centered as the image preview is updated.  This is why negative numbers are needed.
+
+<h4 id='Part Height'>Part Height</h4>
 
 The value placed into the Part Height box will be the final height (thickness) of the object created in FreeCAD to represent the image being imported for mesh, solid, and extruded import types.  All images are imported to the XY plane, thus this value always gets applied to the Z axis. (Exception: sketch imports may be mapped to the YZ or XZ planes during import, but part height is not applicable to those import types.)  Scale Factor is not applied to part height as of version 0.2018.05.16.
 
-<h4> Base Name Label </h4>
+<h4 id='Base Name Label'> Base Name Label </h4>
 
 This is a label applied to the objects created during most import types.  It is only a label and does not impact the object in any way except that if an object already exists with the same label there is the possibility of a naming conflict, resulting in the existing object getting replaced by the new object of the same name.  The only time this can happen is when you are importing multiple images (or the same image) in the same document.  Changing this label before importing additional images prevents potential naming conflicts.  As an example, suppose you are importing a dog image and a cat image into the same document.  You can use dog as the Base Name Label for the dog image and cat as the Base Name Label for the cat image to avoid naming conflicts.  It can also be useful for keeping track of which objects are part of the cat import and which are part of the dog import.
 
-<h4>Recompute Interval</h4>
+<h4 id='Recompute Interval'>Recompute Interval</h4>
 
 The value in this box is used during solid and mesh imports.  At the risk of oversimplifying, these objects are fused in stages, with calls to the fuse function happening once every recompute interval during the process.  The larger this number, the fewer calls to the fuse function are made, but each call takes a bit longer since there are more objects to be fused.  FreeCAD will often be unresponsive during these calls, so smaller numbers keep FreeCAD more responsive during the import.
 
-<h4>Cheat Factor </h4>
+<h4 id='Cheat Factor'>Cheat Factor </h4>
 
 Cheat Factor is used in all import types except for solid.  You can disable it by setting it to 0, but doing so will disable wire, face, and extruded import types.  Also, mesh imports are far more likely to fail if cheat factor is set to 0, and sketch imports are less likely to be paddable, pocketable, etc.
 
 Cheat factor is used to either separate or fuse 2 pixels that are diagonally adjacent.  With mesh imports cheat factor is applied to all building blocks in their length direction (along x axis), shortening them by cheat factor millimeters.  This prevents the next block on top of the current block from becoming diagonally adjacent.  With sketch, wire, face, and extruded imports cheat factor is applied more elaborately using a "smarter" algorithm.  In these import types the macro looks for instances where 4 line segments converge to a single point, which is a no no.  There should only ever be 2 line segments meeting at any single point.  When it finds 4 line segments meeting at a single point it separates that point into 2 points, one of which is cheat factor millimeters from the nearest integer coordinate on the x and y axes.  Thus, the 2 points are 2 * cheat factor * sqrt(2) millimeters from each other after cheat factor is applied.  The current default (as of version 0.2018.05.16) is 7e-5 (= .00007 millimeters).  Thus the 2 points would be 2 * 7e-5 * sqrt(2) = 0.000197989898732 millimeters or about 198 nanometers apart.  To put this into context an atom might be about 1/2 nanometer in size, so cheat factor is very, very tiny, and not something you will notice at normal zoom levels and beyond the precision that a 3d printer or cnc mill would be able to work with.  In other words, it won't affect the nominal size of the model in any non-negligible way.  We'll revisit cheat factor when we get to the sketch imports.
 
-<h4>Zero XYZ Button</h4>
+<h4 id='Zero XYZ Button'>Zero XYZ Button</h4>
 
 The Zero XYZ button will zero out the X Offset, Y Offset, and Z Offset edit boxes.
 
-<h4>Defaults Button</h4>
+<h4 id='Defaults Button'>Defaults Button</h4>
 
 The Defaults button will reset all of the Various Options boxes to their default values, along with resetting the Black Foreground checkbox and the Keep Window On Top checkbox to their default values.
 
@@ -190,19 +233,19 @@ SEPARATOR = ','
 
 Where possible I've avoided hard coding decimals, preferring instead a more generic e-notation format, such as 2e-5 instead of 0.00002 or 0,00002.  The only time SEPARATOR comes into play is in using math functions within the edit boxes, such as entering cos32p5r, where the p gets replaced by SEPARATOR.
 
-<h3>Keep Window On Top</h3>
+<h3 id='Keep Window On Top'>Keep Window On Top</h3>
 
 As the name implies, this provides a hint to the operating system to keep this window on top of other windows. (It can still be minimized.)  It is only a hint, but should work unless perhaps there are other windows giving the same hint.  This option can be useful when using the macro after importing an image, for some post import processing (such as using the Wire Point Editing tools or the Select Objects tool).  Keeping the window on top can also be a nuisance because it can block modal popups from FreeCAD, which then cannot be accessed because the macro window is in the way and the macro window can't be moved because there is a modal dialog active in FreeCAD (such as a popup dialog asking if you wish to save a file you just closed).  Sometimes you can just press the Esc button to dismiss the dialog, but other times the only alternative might be to kill FreeCAD with a task manager and restart.  If you use Always on Top you should move the window off to the side to prevent this from happening.
 
-<h3>Black Foreground</h3>
+<h3 id='Black Foreground'>Black Foreground</h3>
 
 When checked black pixels will be interpreted as foreground pixels during the import.  When unchecked the white pixels will be interpreted as foreground.  This is an important distinction because the foreground pixels are the ones will be represented as FreeCAD objects whereas the background pixels are only used for spacing and sizing said objects.
 
-<h3>Progress Bar</h3>
+<h3 id='Progress Bar'>Progress Bar</h3>
 
 Some processes can take some time to complete.  When the time required is estimated to be more than 4 seconds a progress bar is displayed.  You can press the Abort button to abort an ongoing process (but at times FreeCAD might be slow to respond, so be patient).  If you exit (either by closing the window using the X icon or by exiting via the Exit button) the ongoing process might still continue.  If you wish to stop the ongoing process and exit you should Abort first, and then Exit.  I've decided to leave this like it is because there could be times when the user exits believing the ongoing process to be complete when in fact there are still a few steps remaining.
 
-<h3>Select Objects Button</h3>
+<h3 id='Select Objects Button'>Select Objects Button</h3>
 
 When you press the Select Objects button it will ask for an axis to use, the default is Z.  The first thing it does then is check for any currently selected objects (these can be points, edges, or faces).  The most recently selected object is used as the template for then parsing over the remaining objects and adding those with the same ZMin and ZMax bounding box values to the current selection.  (This would be the same XMin and XMax if you use the X axis instead of the Z, and similarly YMin and YMax if using the Y axis.)
 
@@ -210,13 +253,13 @@ This can be a very useful tool for selecting all the faces in preparation for cr
 
 This can also be potential of some use with selecting edges when, for example, you wish to apply a chamfer or fillet to all the edges.  This tool, along with the Wire Point Editing Tools can be of use even when not using the macro for its main purpose, which is importing images into FreeCAD as FreeCAD objects.
 
-<h3>Wire Point Editing Tools</h3>
+<h3 id='Wire Point Editing Tools'>Wire Point Editing Tools</h3>
 
 FreeCAD already offers some wire point editing tools in the Draft workbench.  These tools will supplement those already existing tools.  These tools only work with DWire objects, which are produced during the wire and face import types.  You can also create new DWire objects in the Draft workbench using the multi-line tool, which said new objects can then be manipulated using these Wire Point Editing Tools.  To access the pre-existing Draft workbench wire editor, simply double-click a DWire object in the combo view while in the Draft workbench.
 
 It is anticipated these tools will be used mostly for "cleaning up" jagged (pixelated) edges by removing some of the points along the DWire and moving other points.
 
-<h4>Select</h4>
+<h4 id='Select Button'>Select Button</h4>
 
 The select button is used for selecting points on a DWire object preparatory to performing an additional operation, such as a Cut or Move operation.  Keyboard modifier keys are monitored when the Select button is pressed.  CTRL + CLICK for a "smart select", SHIFT + CLICK for selecting all points (all select), and CLICK by itself for regular select, which selects every other point.  You must first have at least one point selected (but not the entire DWire selected).
 
@@ -230,17 +273,15 @@ In the above screenshot we have the butterfly image that has been imported as DW
 
 There still remains some additional cleanup work to be done on this DWire051 object, but the edges are now much smoother and less pixelated than they were.
 
-<h4>Cut Button</h4>
+<h4 id='Cut Button'>Cut Button</h4>
 
 The Cut button will cut previously selected points out of a DWire object.  This was done in the 2 above screenshots, showing the before and after.  If a cut operation doesn't come out the way you had hoped it would you can undo the operation by SHIFT+CLICKING the Cut button a 2nd time (but this must be done immediately before conducting any other operation).  
 
 Caveat: if ALL points are selected and Cut from a DWire object, the operation cannot be undone.  Moral of the story: Save your work and save often.
 
-<h4>Move Button</h4>
+<h4 id='Move Button'>Move Button</h4>
 
 The Move button is used to move selected points.  For this operation we are repurposing the X Offset, Y Offset, and Z Offset edit boxes.  These boxes will now contain the offsets to be used for moving the selected points.  For example, if you wish to move a selected point "up" in the positive Y direction, you would enter 1 into the Y Offset box and click Move.  To undo the operation, SHIFT+CLICK Move immediately afterwards before performing any other operation (even before selecting another object).  (SHIFT+CLICK merely moves the selected points in the opposite direction.)
-
-<h5>Control Move</h5>
 
 A Control Move is done by holding CTRL while CLICKING the Move button.  Control Moves can only be done with a single selected point.  If multiple points are selected the operation will not be performed.  The Control Move operation sets up a mouse click observer, which calls the function back after the user clicks the desired destination point for the move.  The Move button changes its label to "Waiting..." to indicate to the user the macro is waiting for the next click.  The user can click the Move button (now labeled "Waiting...") again to cancel the operation at this time.
 
@@ -248,11 +289,9 @@ After the user clicks a destination point in 3d space the selected point gets mo
 
 Note: the Z Offset is not set for Control Move operations, and must be set manually.  This is to prevent accidental moves in the Z direction, which would result in a DWire object that is no longer coplanar.  Users should ensure they are viewing the DWire object from directly above (or below) rather than the axonometric view when performing Control Move operations for best results.
 
-<h4>Insert Button</h4>
+<h4 id='Insert Button'>Insert Button</h4>
 
 The Insert button is used for inserting new points into an existing DWire object.  If there are cuts in the Cut buffer these points can be inserted into the DWire object, but care must be taken to ensure the operation is setup properly.  The user must select 2 points, and then press the Insert button.  If the presses Insert (without any keyboard modifiers) a single new point is created at the midpoint between the 2 selected points.  If SHIFT + CLICK is used the points in the Cut buffer, if any, are inserted between the 2 selected points.
-
-<h5>Inserting multiple points</h5>
 
 These are steps to be used when inserting a new set of points into a DWire object.
 
@@ -264,7 +303,7 @@ These are steps to be used when inserting a new set of points into a DWire objec
   <li>Now select the same 2 ADJACENT points on the existing DWire object and press SHIFT+Insert to connect the points in the Cut buffer to the existing DWire object.</li>
 </ol>
 
-<h3>Converting Images</h3>
+<h3 id='Converting Images'>Converting Images</h3>
 
 The only image format support for importing (although previewing will work with just about any image format) is black and white windows bmp format.  In other words, 1 bit-per-pixel monochrome bmp.  A good tool for converting just about any image to this format is <a href="https://www.gimp.org">GIMP2</a>.  Windows Paint will also work, but the quality is often not suitable for our purposes.
 
@@ -276,11 +315,11 @@ You should also consider scaling the image: Image -> Scale within GIMP2.  The or
 
 Tip: FCBmpImport applies scale factor equally to both the x and y axes.  If you wish to use a different scaling for x and y, you can do the scaling in GIMP2 before doing the import.
 
-<h3>Importing</h3>
+<h3 id='Importing'>Importing</h3>
 
 First step is to press the Preview Image button, and then navigate to and select the desired bmp image.  It will appear in the preview panel where you may then set offets and scaling options.  Press one of the import buttons to begin the import process.
 
-<h4>Sketch</h4>
+<h4 id='Sketch'>Sketch</h4>
 
 Bring up the macro and click the Preview Image button.  Select the <a href="adjacencies.bmp">adjacencies.bmp</a> file.  This is a very tiny file consisting of only 7 pixels per line and 5 raster lines.
 
@@ -302,7 +341,7 @@ When editing an imported sketch remember that, although they appear to be vertic
 
 Tip: Uncheck the Auto Update checkbox in the sketcher when working with larger imported sketches to improve performance.
 
-<h4>Solid</h4>
+<h4 id='Solid'>Solid</h4>
 
 Close any open FreeCAD documents (not counting the macro itself if open in the editor or the Start page) and select the Solid button with the adjacencies.bmp image in the image preview panel.  You will be prompted with 3 options: MULTIPLE WEDGES, MAKE COMPOUND SOLID, and MAKE ONE SOLID.  Select MULTIPLE WEDGES.
 
@@ -314,7 +353,7 @@ The MAKE ONE SOLID option fuses the individual wedges into a single fusion objec
 
 Note: solid imports are the only import types where cheat factor is not used.
 
-<h4>Mesh</h4>
+<h4 id='Mesh'>Mesh</h4>
 
 Mesh imports require the use of an additional binary, <a href="https://www.openscad.org">OpenSCAD</a>, which must be installed separately as it is not included with FreeCAD.  Go to their website to download the binary for Windows and/or Macintosh.  If you are on linux you should be able to install it using your distribution's repository.  See the <a href="https://www.openscad.org">OpenSCAD</a> website for details.
 
@@ -330,7 +369,7 @@ Once you have the mesh object imported go to the Mesh Design workbench and selec
 
 To convert the mesh to a solid, you can do this from the Part workbench, selecting Create Shape from Mesh item in the Part menu.  The created shape will be ready to use in the Path workbench.  The idea behind the mesh import option is to hopefully be able to import larger (higher resolution) and more complex images due to the lightweight nature of mesh objects as compared to "smart" objects, like wedges.
 
-<h4>Extruded</h4>
+<h4 id='Extruded'>Extruded</h4>
 
 Wire, face, and extruded imports use the same import function as the sketch import uses, only some additional steps are taken.  In fact, wire and face objects are the same objects (DWire) with the only difference being the makeFace parameter is set to True for face objects.  Extruded imports take the additional step of extruding the faces to part height.
 
@@ -338,13 +377,13 @@ With an extruded import you will need to take the additional step of cutting the
 
 The extruded object is a solid object and can be used like any other solid, such as mapping a sketch to a face for pocketing operations, for example.  The advantage is you have fewer objects being created in FreeCAD than when imported as multiple wedges, and so the performance should be better.
 
-<h4>Wire and Face</h4>
+<h4 id='Wire And Face'>Wire And Face</h4>
 
 Since these are basically the same we will treat them together in this section.  The only difference between wire and face imports is the DWire objects produced have their makeFace parameters set to True for face objects.  This can be toggled back and forth within the combo view, data tab.  The Wire Point Editing Tools can be used on both face and wire objects, but in my opinion it is easier to see what you are doing when editing wire objects as opposed to face objects.
 
 This import type is perhaps the most flexible when it comes to post import processing, but also requires additional work (extruding, etc.) to end up with a final solid object.  With relatively complex images the process of extruding, cutting, fusing, etc. can become confusing.  It is probably better to start with smaller, simpler images and work your way up from there.
 
-<h3>Final Thoughts</h3>
+<h3 id='Final Thoughts'>Final Thoughts</h3>
 
 It is hoped some users will find this macro to be of some usefulness.  I developed it with the idea of using it for importing images to be engraved with a cnc engraver / miniature mill to create signs and such.  It works reasonably well for that purpose, but it is somewhat disappointing that FreeCAD does not perform well in terms of speed when working with images beyond low resolution examples, such as the butterfly image, and even with that one it can be a struggle.
 
