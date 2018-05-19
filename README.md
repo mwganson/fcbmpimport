@@ -23,10 +23,21 @@ FreeCAD Macro for importing black and white bmp images as FreeCAD objects.
   <li><a href='#Select Objects Button'>Select Objects Button</a></li>
   <li><a href='#Wire Point Editing Tools'>Wire Point Editing Tools</a></li>
   <ul>
-  
-  
-  
+    <li><a href='#Select Button'>Select Button</a></li>
+    <li><a href='#Cut Button'>Cut Button</a></li>
+    <li><a href='#Move Button'>Move Button</a></li>
+    <li><a href='#Insert Button'>Insert Button</a></li>
   </ul>
+  <li><a href='#Converting Images'>Converting Images</a></li>
+  <li><a href='#Importing'>Importing</a></li>
+  <ul>
+    <li><a href='#Sketch'>Sketch</a></li>
+    <li><a href='#Solid'>Solid</a></li>
+    <li><a href='#Mesh'>Mesh</a></li>
+    <li><a href='#Extruded'>Extruded</a></li>
+    <li><a href='#Wire And Face'>Wire And Face</a></li>
+  </ul>
+  <li><a href='#Final Thoughts'>Final Thoughts</a></li>
 </ul>
 
 
@@ -245,7 +256,7 @@ FreeCAD already offers some wire point editing tools in the Draft workbench.  Th
 
 It is anticipated these tools will be used mostly for "cleaning up" jagged (pixelated) edges by removing some of the points along the DWire and moving other points.
 
-<h4>Select</h4>
+<h4 id='Select Button'>Select Button</h4>
 
 The select button is used for selecting points on a DWire object preparatory to performing an additional operation, such as a Cut or Move operation.  Keyboard modifier keys are monitored when the Select button is pressed.  CTRL + CLICK for a "smart select", SHIFT + CLICK for selecting all points (all select), and CLICK by itself for regular select, which selects every other point.  You must first have at least one point selected (but not the entire DWire selected).
 
@@ -259,17 +270,15 @@ In the above screenshot we have the butterfly image that has been imported as DW
 
 There still remains some additional cleanup work to be done on this DWire051 object, but the edges are now much smoother and less pixelated than they were.
 
-<h4>Cut Button</h4>
+<h4 id='Cut Button'>Cut Button</h4>
 
 The Cut button will cut previously selected points out of a DWire object.  This was done in the 2 above screenshots, showing the before and after.  If a cut operation doesn't come out the way you had hoped it would you can undo the operation by SHIFT+CLICKING the Cut button a 2nd time (but this must be done immediately before conducting any other operation).  
 
 Caveat: if ALL points are selected and Cut from a DWire object, the operation cannot be undone.  Moral of the story: Save your work and save often.
 
-<h4>Move Button</h4>
+<h4 id='Move Button'>Move Button</h4>
 
 The Move button is used to move selected points.  For this operation we are repurposing the X Offset, Y Offset, and Z Offset edit boxes.  These boxes will now contain the offsets to be used for moving the selected points.  For example, if you wish to move a selected point "up" in the positive Y direction, you would enter 1 into the Y Offset box and click Move.  To undo the operation, SHIFT+CLICK Move immediately afterwards before performing any other operation (even before selecting another object).  (SHIFT+CLICK merely moves the selected points in the opposite direction.)
-
-<h5>Control Move</h5>
 
 A Control Move is done by holding CTRL while CLICKING the Move button.  Control Moves can only be done with a single selected point.  If multiple points are selected the operation will not be performed.  The Control Move operation sets up a mouse click observer, which calls the function back after the user clicks the desired destination point for the move.  The Move button changes its label to "Waiting..." to indicate to the user the macro is waiting for the next click.  The user can click the Move button (now labeled "Waiting...") again to cancel the operation at this time.
 
@@ -277,11 +286,9 @@ After the user clicks a destination point in 3d space the selected point gets mo
 
 Note: the Z Offset is not set for Control Move operations, and must be set manually.  This is to prevent accidental moves in the Z direction, which would result in a DWire object that is no longer coplanar.  Users should ensure they are viewing the DWire object from directly above (or below) rather than the axonometric view when performing Control Move operations for best results.
 
-<h4>Insert Button</h4>
+<h4 id='Insert Button'>Insert Button</h4>
 
 The Insert button is used for inserting new points into an existing DWire object.  If there are cuts in the Cut buffer these points can be inserted into the DWire object, but care must be taken to ensure the operation is setup properly.  The user must select 2 points, and then press the Insert button.  If the presses Insert (without any keyboard modifiers) a single new point is created at the midpoint between the 2 selected points.  If SHIFT + CLICK is used the points in the Cut buffer, if any, are inserted between the 2 selected points.
-
-<h5>Inserting multiple points</h5>
 
 These are steps to be used when inserting a new set of points into a DWire object.
 
@@ -293,7 +300,7 @@ These are steps to be used when inserting a new set of points into a DWire objec
   <li>Now select the same 2 ADJACENT points on the existing DWire object and press SHIFT+Insert to connect the points in the Cut buffer to the existing DWire object.</li>
 </ol>
 
-<h3>Converting Images</h3>
+<h3 id='Converting Images'>Converting Images</h3>
 
 The only image format support for importing (although previewing will work with just about any image format) is black and white windows bmp format.  In other words, 1 bit-per-pixel monochrome bmp.  A good tool for converting just about any image to this format is <a href="https://www.gimp.org">GIMP2</a>.  Windows Paint will also work, but the quality is often not suitable for our purposes.
 
@@ -305,11 +312,11 @@ You should also consider scaling the image: Image -> Scale within GIMP2.  The or
 
 Tip: FCBmpImport applies scale factor equally to both the x and y axes.  If you wish to use a different scaling for x and y, you can do the scaling in GIMP2 before doing the import.
 
-<h3>Importing</h3>
+<h3 id='Importing'>Importing</h3>
 
 First step is to press the Preview Image button, and then navigate to and select the desired bmp image.  It will appear in the preview panel where you may then set offets and scaling options.  Press one of the import buttons to begin the import process.
 
-<h4>Sketch</h4>
+<h4 id='Sketch'>Sketch</h4>
 
 Bring up the macro and click the Preview Image button.  Select the <a href="adjacencies.bmp">adjacencies.bmp</a> file.  This is a very tiny file consisting of only 7 pixels per line and 5 raster lines.
 
@@ -331,7 +338,7 @@ When editing an imported sketch remember that, although they appear to be vertic
 
 Tip: Uncheck the Auto Update checkbox in the sketcher when working with larger imported sketches to improve performance.
 
-<h4>Solid</h4>
+<h4 id='Solid'>Solid</h4>
 
 Close any open FreeCAD documents (not counting the macro itself if open in the editor or the Start page) and select the Solid button with the adjacencies.bmp image in the image preview panel.  You will be prompted with 3 options: MULTIPLE WEDGES, MAKE COMPOUND SOLID, and MAKE ONE SOLID.  Select MULTIPLE WEDGES.
 
@@ -343,7 +350,7 @@ The MAKE ONE SOLID option fuses the individual wedges into a single fusion objec
 
 Note: solid imports are the only import types where cheat factor is not used.
 
-<h4>Mesh</h4>
+<h4 id='Mesh'>Mesh</h4>
 
 Mesh imports require the use of an additional binary, <a href="https://www.openscad.org">OpenSCAD</a>, which must be installed separately as it is not included with FreeCAD.  Go to their website to download the binary for Windows and/or Macintosh.  If you are on linux you should be able to install it using your distribution's repository.  See the <a href="https://www.openscad.org">OpenSCAD</a> website for details.
 
@@ -359,7 +366,7 @@ Once you have the mesh object imported go to the Mesh Design workbench and selec
 
 To convert the mesh to a solid, you can do this from the Part workbench, selecting Create Shape from Mesh item in the Part menu.  The created shape will be ready to use in the Path workbench.  The idea behind the mesh import option is to hopefully be able to import larger (higher resolution) and more complex images due to the lightweight nature of mesh objects as compared to "smart" objects, like wedges.
 
-<h4>Extruded</h4>
+<h4 id='Extruded'>Extruded</h4>
 
 Wire, face, and extruded imports use the same import function as the sketch import uses, only some additional steps are taken.  In fact, wire and face objects are the same objects (DWire) with the only difference being the makeFace parameter is set to True for face objects.  Extruded imports take the additional step of extruding the faces to part height.
 
@@ -367,13 +374,13 @@ With an extruded import you will need to take the additional step of cutting the
 
 The extruded object is a solid object and can be used like any other solid, such as mapping a sketch to a face for pocketing operations, for example.  The advantage is you have fewer objects being created in FreeCAD than when imported as multiple wedges, and so the performance should be better.
 
-<h4>Wire and Face</h4>
+<h4 id='Wire And Face'>Wire And Face</h4>
 
 Since these are basically the same we will treat them together in this section.  The only difference between wire and face imports is the DWire objects produced have their makeFace parameters set to True for face objects.  This can be toggled back and forth within the combo view, data tab.  The Wire Point Editing Tools can be used on both face and wire objects, but in my opinion it is easier to see what you are doing when editing wire objects as opposed to face objects.
 
 This import type is perhaps the most flexible when it comes to post import processing, but also requires additional work (extruding, etc.) to end up with a final solid object.  With relatively complex images the process of extruding, cutting, fusing, etc. can become confusing.  It is probably better to start with smaller, simpler images and work your way up from there.
 
-<h3>Final Thoughts</h3>
+<h3 id='Final Thoughts'>Final Thoughts</h3>
 
 It is hoped some users will find this macro to be of some usefulness.  I developed it with the idea of using it for importing images to be engraved with a cnc engraver / miniature mill to create signs and such.  It works reasonably well for that purpose, but it is somewhat disappointing that FreeCAD does not perform well in terms of speed when working with images beyond low resolution examples, such as the butterfly image, and even with that one it can be a struggle.
 
