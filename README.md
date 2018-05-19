@@ -4,7 +4,7 @@ FreeCAD Macro for importing black and white bmp images as FreeCAD objects.
   <li><a href='#Installation'>Installation</a></li>
   <li><a href='#Limitations'>Limitations</a></li>
   <li><a href='#ipv'>Image Preview Panel</a></li>
-  <li><a href='#Various Options'>Various Options</a></li>
+  <li><a href='#Various Options Boxes'>Various Options Boxes</a></li>
   <ul>
     <li><a href='#Scale Factor'>Scale Factor</a></li>
     <li><a href='#ebf'>Edit Box Features</a></li>
@@ -65,7 +65,7 @@ Image Preview (200x137), px,py = 210.53,163.04 Zoom = 1.8953x
 
 The (200x137) tells us the image resolution is 200x137 pixels (including white background pixels).  Notice the image preview panel has a gray background in order to contrast with the white background for this image.  px,py = 210.53,163.04 means that at this particular zoom (1.8953x) the image preview panel can (but not always will) contain 210.53x163.04 pixels.  This can be useful information when scaling an image (read more about scaling below) so that it will be represented in FreeCAD with a FreeCAD object of the desired size.  If you press Shift while moving the mouse scrollwheel vertical grid lines will be displayed to aid in counting the number of pixels between 2 points on the image.  This will also cause the zoom value to be one such that px will be equal to an integer value.  Thus by alternating between dragging the image around inside the image preview panel and Shift+scrollwheel movements one can measure (using the px value) distances (in pixels) between various points on the image.  Ctrl+scrollwheel movements can be used to help measure vertical distances.  Ctrl+Shift+scrollwheel movements will behave the same as Shift+scrollwheel except no grid lines will be shown.
 
-<h3 id='Various Options'>Various Options</h3>
+<h3 id='Various Options Boxes'>Various Options Boxes</h3>
 
 <h4 id='Scale Factor'>Scale Factor</h4>
 
