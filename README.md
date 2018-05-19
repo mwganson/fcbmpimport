@@ -9,12 +9,24 @@ FreeCAD Macro for importing black and white bmp images as FreeCAD objects.
     <li><a href='#Scale Factor'>Scale Factor</a></li>
     <li><a href='#ebf'>Edit Box Features</a></li>
     <li><a href='#Using Offsets'>Using Offsets</a></li>
-    
-    
+    <li><a href='#More on Scaling'>More on Scaling</a></li>
+    <li><a href='#Part Height'>Part Height</a></li>
+    <li><a href='#Base Name Label'>Base Name Label</a></li>
+    <li><a href='#Recompute Interval'>Recompute Interval</a></li>
+    <li><a href='#Cheat Factor'>Cheat Factor</a></li>
+    <li><a href='#Zero XYZ Button'>Zero XYZ Button</a></li>
+    <li><a href='#Defaults Button'>Defaults Button</a></li>
+   </ul>
+  <li><a href='#Keep Window On Top'>Keep Window On Top</a></li>
+  <li><a href='#Black Foreground'>Black Foreground</a></li>
+  <li><a href='#Progress Bar'>Progress Bar</a></li>
+  <li><a href='#Select Objects Button'>Select Objects Button</a></li>
+  <li><a href='#Wire Point Editing Tools'>Wire Point Editing Tools</a></li>
+  <ul>
+  
   
   
   </ul>
-
 </ul>
 
 
@@ -131,7 +143,7 @@ Each time a value or expression is entered into an edit box, that value or expre
 
 You will notice in the above screenshot there is a red and green axis cross centered between the two butterfly antennae.  This axis cross marks the location the FreeCAD objects created to represent this image will be positioned relative to the origin at (0,0,0) in 3d space, or (0,0) in 2d space if importing as a sketch.  I positioned this by entering "-w/2" in the X Offset box and "-h * 8/10" in the Y Offset box.  (Recall, w and h refer to the image width and height, respectively.)  By default, the axis cross is set to the lower left corner of the image.  To move it to the right, enter a negative value in the X Offset.  To move it up, enter a negative value in the Y Offset.  Actually, what's happening is the image is moving left and down, then getting re-centered as the image preview is updated.  This is why negative numbers are needed.
 
-<h4>More on Scaling</h4>
+<h4 id='More on Scaling'>More on Scaling</h4>
 
 The easiest way to scale the FreeCAD object to be created to represent the image is to enter the desired final size (in mm) into the scale factor box, and then divide that number by horizontal size (width) of the image (in pixels).  I gave the previous example of 6 inches above.  If we wish to scale the butterfly object such that it is 6 inches, we can enter this into the scale factor box:
 
@@ -151,29 +163,29 @@ into the scale factor box to achieve this result.  Or, alternatively:
 
 100 / 43
 
-<h4>Part Height</h4>
+<h4 id='Part Height'>Part Height</h4>
 
 The value placed into the Part Height box will be the final height (thickness) of the object created in FreeCAD to represent the image being imported for mesh, solid, and extruded import types.  All images are imported to the XY plane, thus this value always gets applied to the Z axis. (Exception: sketch imports may be mapped to the YZ or XZ planes during import, but part height is not applicable to those import types.)  Scale Factor is not applied to part height as of version 0.2018.05.16.
 
-<h4> Base Name Label </h4>
+<h4 id='Base Name Label'> Base Name Label </h4>
 
 This is a label applied to the objects created during most import types.  It is only a label and does not impact the object in any way except that if an object already exists with the same label there is the possibility of a naming conflict, resulting in the existing object getting replaced by the new object of the same name.  The only time this can happen is when you are importing multiple images (or the same image) in the same document.  Changing this label before importing additional images prevents potential naming conflicts.  As an example, suppose you are importing a dog image and a cat image into the same document.  You can use dog as the Base Name Label for the dog image and cat as the Base Name Label for the cat image to avoid naming conflicts.  It can also be useful for keeping track of which objects are part of the cat import and which are part of the dog import.
 
-<h4>Recompute Interval</h4>
+<h4 id='Recompute Interval'>Recompute Interval</h4>
 
 The value in this box is used during solid and mesh imports.  At the risk of oversimplifying, these objects are fused in stages, with calls to the fuse function happening once every recompute interval during the process.  The larger this number, the fewer calls to the fuse function are made, but each call takes a bit longer since there are more objects to be fused.  FreeCAD will often be unresponsive during these calls, so smaller numbers keep FreeCAD more responsive during the import.
 
-<h4>Cheat Factor </h4>
+<h4 id='Cheat Factor'>Cheat Factor </h4>
 
 Cheat Factor is used in all import types except for solid.  You can disable it by setting it to 0, but doing so will disable wire, face, and extruded import types.  Also, mesh imports are far more likely to fail if cheat factor is set to 0, and sketch imports are less likely to be paddable, pocketable, etc.
 
 Cheat factor is used to either separate or fuse 2 pixels that are diagonally adjacent.  With mesh imports cheat factor is applied to all building blocks in their length direction (along x axis), shortening them by cheat factor millimeters.  This prevents the next block on top of the current block from becoming diagonally adjacent.  With sketch, wire, face, and extruded imports cheat factor is applied more elaborately using a "smarter" algorithm.  In these import types the macro looks for instances where 4 line segments converge to a single point, which is a no no.  There should only ever be 2 line segments meeting at any single point.  When it finds 4 line segments meeting at a single point it separates that point into 2 points, one of which is cheat factor millimeters from the nearest integer coordinate on the x and y axes.  Thus, the 2 points are 2 * cheat factor * sqrt(2) millimeters from each other after cheat factor is applied.  The current default (as of version 0.2018.05.16) is 7e-5 (= .00007 millimeters).  Thus the 2 points would be 2 * 7e-5 * sqrt(2) = 0.000197989898732 millimeters or about 198 nanometers apart.  To put this into context an atom might be about 1/2 nanometer in size, so cheat factor is very, very tiny, and not something you will notice at normal zoom levels and beyond the precision that a 3d printer or cnc mill would be able to work with.  In other words, it won't affect the nominal size of the model in any non-negligible way.  We'll revisit cheat factor when we get to the sketch imports.
 
-<h4>Zero XYZ Button</h4>
+<h4 id='Zero XYZ Button'>Zero XYZ Button</h4>
 
 The Zero XYZ button will zero out the X Offset, Y Offset, and Z Offset edit boxes.
 
-<h4>Defaults Button</h4>
+<h4 id='Defaults Button'>Defaults Button</h4>
 
 The Defaults button will reset all of the Various Options boxes to their default values, along with resetting the Black Foreground checkbox and the Keep Window On Top checkbox to their default values.
 
@@ -207,19 +219,19 @@ SEPARATOR = ','
 
 Where possible I've avoided hard coding decimals, preferring instead a more generic e-notation format, such as 2e-5 instead of 0.00002 or 0,00002.  The only time SEPARATOR comes into play is in using math functions within the edit boxes, such as entering cos32p5r, where the p gets replaced by SEPARATOR.
 
-<h3>Keep Window On Top</h3>
+<h3 id='Keep Window On Top'>Keep Window On Top</h3>
 
 As the name implies, this provides a hint to the operating system to keep this window on top of other windows. (It can still be minimized.)  It is only a hint, but should work unless perhaps there are other windows giving the same hint.  This option can be useful when using the macro after importing an image, for some post import processing (such as using the Wire Point Editing tools or the Select Objects tool).  Keeping the window on top can also be a nuisance because it can block modal popups from FreeCAD, which then cannot be accessed because the macro window is in the way and the macro window can't be moved because there is a modal dialog active in FreeCAD (such as a popup dialog asking if you wish to save a file you just closed).  Sometimes you can just press the Esc button to dismiss the dialog, but other times the only alternative might be to kill FreeCAD with a task manager and restart.  If you use Always on Top you should move the window off to the side to prevent this from happening.
 
-<h3>Black Foreground</h3>
+<h3 id='Black Foreground'>Black Foreground</h3>
 
 When checked black pixels will be interpreted as foreground pixels during the import.  When unchecked the white pixels will be interpreted as foreground.  This is an important distinction because the foreground pixels are the ones will be represented as FreeCAD objects whereas the background pixels are only used for spacing and sizing said objects.
 
-<h3>Progress Bar</h3>
+<h3 id='Progress Bar'>Progress Bar</h3>
 
 Some processes can take some time to complete.  When the time required is estimated to be more than 4 seconds a progress bar is displayed.  You can press the Abort button to abort an ongoing process (but at times FreeCAD might be slow to respond, so be patient).  If you exit (either by closing the window using the X icon or by exiting via the Exit button) the ongoing process might still continue.  If you wish to stop the ongoing process and exit you should Abort first, and then Exit.  I've decided to leave this like it is because there could be times when the user exits believing the ongoing process to be complete when in fact there are still a few steps remaining.
 
-<h3>Select Objects Button</h3>
+<h3 id='Select Objects Button'>Select Objects Button</h3>
 
 When you press the Select Objects button it will ask for an axis to use, the default is Z.  The first thing it does then is check for any currently selected objects (these can be points, edges, or faces).  The most recently selected object is used as the template for then parsing over the remaining objects and adding those with the same ZMin and ZMax bounding box values to the current selection.  (This would be the same XMin and XMax if you use the X axis instead of the Z, and similarly YMin and YMax if using the Y axis.)
 
@@ -227,7 +239,7 @@ This can be a very useful tool for selecting all the faces in preparation for cr
 
 This can also be potential of some use with selecting edges when, for example, you wish to apply a chamfer or fillet to all the edges.  This tool, along with the Wire Point Editing Tools can be of use even when not using the macro for its main purpose, which is importing images into FreeCAD as FreeCAD objects.
 
-<h3>Wire Point Editing Tools</h3>
+<h3 id='Wire Point Editing Tools'>Wire Point Editing Tools</h3>
 
 FreeCAD already offers some wire point editing tools in the Draft workbench.  These tools will supplement those already existing tools.  These tools only work with DWire objects, which are produced during the wire and face import types.  You can also create new DWire objects in the Draft workbench using the multi-line tool, which said new objects can then be manipulated using these Wire Point Editing Tools.  To access the pre-existing Draft workbench wire editor, simply double-click a DWire object in the combo view while in the Draft workbench.
 
