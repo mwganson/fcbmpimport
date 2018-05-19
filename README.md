@@ -1,11 +1,28 @@
 # FCBmpImport
 FreeCAD Macro for importing black and white bmp images as FreeCAD objects.
-<a href='#Installation'>Installation</a>
+<ul>
+  <li><a href='#Installation'>Installation</a></li>
+  <li><a href='#Limitations'>Limitations</a></li>
+  <li><a href='#ipv'>Image Preview Panel</a></li>
+  <li><a href='#Various Options'>Various Options</a></li>
+  <ul>
+    <li><a href='#Scale Factor'>Scale Factor</a></li>
+    <li><a href='#ebf'>Edit Box Features</a></li>
+    <li><a href='#Using Offsets'>Using Offsets</a></li>
+    
+    
+  
+  
+  </ul>
+
+</ul>
+
+
 <h3 id='Installation'>Installation</h3>
 
 To install place FCBmpImport.FCMacro.py in your macros folder in FreeCAD.  If you don't know the location of the macros folder, go to the Macros menu, select Macros... and you will find at the bottom of the dialog your user macros location.  You may also simply create a new macro using the Macro -> Macros.. -> Create button, name the new file FCBmpImport.FCMacro.py, and copy/paste the macro code from FCBmpImport.FCMacro.py into your new file.  Don't forget to save the changes before exiting FreeCAD.
 
-<h3>Limitations</h3>
+<h3 id='Limitations'>Limitations</h3>
 
 The only image file format supported is Black and White (1 bit-per-pixel) Windows BMP.
 
@@ -13,7 +30,7 @@ While the macro does not impose any size/complexity limitations, there are pract
 
 <img src= "screenshot.png" alt="screenshot">
 
-<h3>Image Preview Panel</h3>
+<h3 id='ipv'>Image Preview Panel</h3>
 
 In the upper right corner of the user interface you will find the image preview panel.  While it is not, strictly speaking, necessary to first preview the image before importing it, you will find it is often useful to do so.  When an image is being previewed a red and green axis cross, very similar to the one used in FreeCAD to mark the origin, will be superimposed over the image.  This axis cross marks the position the objects created to represent the image will be placed relative to the origin.  Other features of the image preview panel include the ability to zoom in/out with the mouse scrollwheel.  If the zoom level is too high for a particular image to fit entirely within the image preview panel, the image can be dragged around inside the image preview panel with the left mouse button.
 
@@ -25,9 +42,9 @@ Image Preview (200x137), px,py = 210.53,163.04 Zoom = 1.8953x
 
 The (200x137) tells us the image resolution is 200x137 pixels (including white background pixels).  Notice the image preview panel has a gray background in order to contrast with the white background for this image.  px,py = 210.53,163.04 means that at this particular zoom (1.8953x) the image preview panel can (but not always will) contain 210.53x163.04 pixels.  This can be useful information when scaling an image (read more about scaling below) so that it will be represented in FreeCAD with a FreeCAD object of the desired size.  If you press Shift while moving the mouse scrollwheel vertical grid lines will be displayed to aid in counting the number of pixels between 2 points on the image.  This will also cause the zoom value to be one such that px will be equal to an integer value.  Thus by alternating between dragging the image around inside the image preview panel and Shift+scrollwheel movements one can measure (using the px value) distances (in pixels) between various points on the image.  Ctrl+scrollwheel movements can be used to help measure vertical distances.  Ctrl+Shift+scrollwheel movements will behave the same as Shift+scrollwheel except no grid lines will be shown.
 
-<h3>Various Options</h3>
+<h3 id='Various Options'>Various Options</h3>
 
-<h4>Scale Factor</h4>
+<h4 id='Scale Factor'>Scale Factor</h4>
 
 Below the image preview panel is a group of line edit widgets that can be used to set various options and preferences, including scaling and offsets.  The scale factor edit box is used to set the scale of the FreeCAD object created to represent the image in FreeCAD.  By default, each pixel is 1mm x 1mm x 1mm for solid, extruded, and mesh import types, and 1mm x 1mm for wire, face, and sketch import types.  The value entered as the scale factor will be multiplied against those default 1mm values (except for part height), and used to size the object(s).  As an example, if you wish each pixel to be 3.5mm x 3.5mm x 3.5mm you would simply enter 3.5 into the scale factor edit box (or 3,5 depending on your locale) and 3.5 in the part height edit box. (Note: part height is only applicable to mesh, solid, and extruded import types.)
 
@@ -37,7 +54,7 @@ But usually the desired scaling will be for the entire image or for some subset 
 
 Notice a few things here.  First of all, we can enter mathematical expressions into these edit boxes.  Secondly, we can access some useful mathematical constants (the constant value "inches" = 25.4).  Thirdly, we can access some global variables being kept in macro memory, in this case width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the above "(6 * inches) / width" gets replaced with 0.762, which is the numerical evaluation of that expression.  Note: if you select a different size image to preview after doing this, the value in the scale factor edit box DOES NOT CHANGE.  There is no permanent reference to "width" being created.  The current value for "width" is used, and then immediately discarded.  It is equivalent to simply entering 0.762 into the box in the first place.
 
-<h4>Edit Box Feature Details</h4>
+<h4 id='ebf'>Edit Box Features</h4>
 
 The following operators are supported within the Various Options edit boxes:
 <ul>
@@ -110,7 +127,7 @@ Note: It is permissible to reference an edit box value from within the same box.
 
 Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
 
-<h4>Setting up the X, Y, and Z offset values</h4>
+<h4 id='Using Offsets'>Using Offsets</h4>
 
 You will notice in the above screenshot there is a red and green axis cross centered between the two butterfly antennae.  This axis cross marks the location the FreeCAD objects created to represent this image will be positioned relative to the origin at (0,0,0) in 3d space, or (0,0) in 2d space if importing as a sketch.  I positioned this by entering "-w/2" in the X Offset box and "-h * 8/10" in the Y Offset box.  (Recall, w and h refer to the image width and height, respectively.)  By default, the axis cross is set to the lower left corner of the image.  To move it to the right, enter a negative value in the X Offset.  To move it up, enter a negative value in the Y Offset.  Actually, what's happening is the image is moving left and down, then getting re-centered as the image preview is updated.  This is why negative numbers are needed.
 
