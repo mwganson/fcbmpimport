@@ -148,6 +148,7 @@ pi * (part/2) ** 2 -> math.pi * the square of the value in part height box divid
 </pre>
 Note: It is permissible to reference an edit box value from within the same box.  For example, you could enter 2 into the X Offset box, and then enter x * 2 into the same box (after it has been evaluated) to get 4.  References are not retained after the initial evaluation.  In other words, no dependencies are created when referencing boxes.  Whatever value is in the box is all that matters, not which expression was used to create it, whether it was an immediate numerical value or a complext mathematical expression.
 
+
 Tip: Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
 
 <h4 id='Scale Factor'>Scale Factor</h4>
