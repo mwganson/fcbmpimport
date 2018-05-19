@@ -73,7 +73,7 @@ The (200x137) tells us the image resolution is 200x137 pixels (including white b
 
 <h3 id='Various Options Boxes'>Various Options Boxes</h3>
 
-Below the image preview panel is a group of line edit widgets that can be used to set various options and preferences, including scaling and offsets, etc..  In addition to being able to enter numerical values into these boxes we can also enter various mathematical expressions.  Secondly, we can access some useful mathematical constants (the constant value "inches" = 25.4).  Thirdly, we can access some global variables being kept in macro memory, in this case width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the above mathematical expression gets replaced with a numerical value, which is the numerical evaluation of that expression.  After the expression is evaluated any references used in the evaluation will not be retained.  As an example, we can refer to the width (in pixels) of the currently previewed image as "width" or "w" (without the quotes).  Thus we might enter something like w/2 or width/2 in the X Offsets box.  The thing to keep in mind is if we preview a different image with a different width the value in X Offsets DOES NOT get updated.
+Below the image preview panel is a group of line edit widgets that can be used to set various options and preferences, including scaling and offsets, etc.  In addition to being able to enter numerical values into these boxes we can also enter various mathematical expressions, we can access some useful mathematical constants (example, the constant value "inches" = 25.4), and we can access some global variables being kept in macro memory, such as width, which refers to the width of the currently previewed image.  Upon pressing Enter (or leaving the box) the mathematical expression gets replaced with a numerical value, which is the numerical evaluation of that expression.  After the expression is evaluated any references used in the evaluation will not be retained.  As an example, we can refer to the width (in pixels) of the currently previewed image as "width" or "w" (without the quotes).  Thus we might enter something like -w/2 or -width/2 in the X Offsets box.  The thing to keep in mind is if we preview a different image with a different width the value in X Offsets DOES NOT get updated.
 
 <h4 id='ebf'>Edit Box Features</h4>
 <h5 id='Operators'>Operators</h5>
@@ -127,8 +127,10 @@ The following mathematical functions can be called from within the Various Optio
   <li>log - natural logarithm to base e - math.log()</li>
   <li>tlog - base 10 logarithm - math.log10()</li>
 </ul>
+
+Note: a special syntax is required for calling the mathematical functions.  Only immediate values (numbers) can be used as parameters for these functions (none of the above constants are references can be used as parameters to the math functions).  The format to be used is best illustrated as examples, included among the examples below.
+
 <h5 id='Examples'>Examples</h5>
-Note: a special syntax is required for calling the mathematical functions.  Only immediate values (numbers) can be used as parameters for these functions (none of the above constants are references can be used as parameters to the math functions).  The format to be used is best illustrated by giving a few examples:
 <pre>
 log32 -> returns value from call to math.log(32) = 3.4657359028, the natural logarithm of 32.
 tlog17p52 -> returns value from call to math.log10(17.52) = 1.24353410183, notice the p is a stand in for the decimal point (or comma)
@@ -138,21 +140,21 @@ asin72 -> returns value from call to math.asin(72) = 0 because this is an error 
 sin13 -> returns value from call to math.sin(13) = 0.420167036827 (notice no r or d at the end defaults to radians)
 tan40d * x -> same as math.tan(40 * math.pi / 180.0) * value currently in X Offset box.
 z ** 3 -> the value in the Z Offset box raised to the power of 3.
-z ** (1/3) -> cube root of value in Z Offset box.
+z ** (1/2) -> square root of value in Z Offset box.
 part_height ** scale -> value in part height box raised to the power of the value in the scale factor box.
 pi * (part/2) ** 2 -> math.pi * the square of the value in part height box divided by 2.
 12 * inches / width -> if used in the scale factor box would scale created object to be 12 inches wide.
 200 / w -> if used in the scale factor box would scale created object to be 200 mm wide.
 </pre>
-Note: It is permissible to reference an edit box value from within the same box.  For example, you could enter 2 into the X Offset box, and then enter x * 2 into the same box (after it has been evaluated) to get 4.  References are not retained after the initial evaluation.  In other words, no dependencies are created when referencing boxes.
+Note: It is permissible to reference an edit box value from within the same box.  For example, you could enter 2 into the X Offset box, and then enter x * 2 into the same box (after it has been evaluated) to get 4.  References are not retained after the initial evaluation.  In other words, no dependencies are created when referencing boxes.  Whatever value is in the box is all that matters, not which expression was used to create it, whether it was an immediate numerical value or a complext mathematical expression.
 
-Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
+Tip: Each time a value or expression is entered into an edit box, that value or expression is appended to the associated label's tool tip.  Thus, by mouse hovering over the associated label one can view the history of values previously entered during this session.
 
 <h4 id='Scale Factor'>Scale Factor</h4>
 
-The scale factor edit box is used to set the scale of the FreeCAD object created to represent the image in FreeCAD.  By default, each pixel is 1mm x 1mm x 1mm for solid, extruded, and mesh import types, and 1mm x 1mm for wire, face, and sketch import types.  The value entered as the scale factor will be multiplied against those default 1mm values (except for part height), and used to size the object(s).  As an example, if you wish each pixel to be 3.5mm x 3.5mm x 3.5mm you would simply enter 3.5 into the scale factor edit box (or 3,5 depending on your locale) and 3.5 in the part height edit box. (Note: part height is only applicable to mesh, solid, and extruded import types.)
+The scale factor edit box is used to set the scale of the FreeCAD object created to represent the image.  By default, each pixel is 1mm x 1mm x 1mm for solid, extruded, and mesh import types, and 1mm x 1mm for wire, face, and sketch import types.  The value entered as the scale factor will be multiplied against those default 1mm values (except for part height), and used to size the object(s).  As an example, if you wish each pixel to be 3.5mm x 3.5mm x 3.5mm you would simply enter 3.5 into the scale factor edit box (or 3,5 depending on your locale) and 3.5 in the part height edit box. (Note: part height is only applicable to mesh, solid, and extruded import types.)
 
-But usually the desired scaling will be for the entire image or for some subset of that image rather than per pixel.  For example, you might wish to engrave this butterfly into a 6 inch x 6 inch plaque.  The easiest way to scale the FreeCAD object to be created to represent the image is to enter the desired final size (in mm) into the scale factor box, and then divide that number by horizontal size (width) of the image (in pixels). Assuming you are content with the white background as a border or margin, the way to go about scaling this particular image would be to enter this into the scale factor edit box:
+But usually the desired scaling will be for the entire image or for some subset of that image rather than per pixel.  For example, you might wish to engrave this butterfly into a 6 inch x 6 inch plaque.  The easiest way to scale the FreeCAD object is to enter the desired final size (in mm) into the scale factor box, and then divide that number by horizontal size (width) of the image (in pixels) (or you could also use height if you'd prefer to scale via the vertical size). Assuming you are content with the white background as a border or margin, the way to go about scaling this particular image would be to enter this into the scale factor edit box:
 
 (6 * inches) / width
 
