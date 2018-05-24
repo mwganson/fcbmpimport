@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
-    <height>493</height>
+    <width>636</width>
+    <height>512</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Helvetica</family>
+    <pointsize>10</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -22,7 +28,7 @@
      <rect>
       <x>180</x>
       <y>0</y>
-      <width>401</width>
+      <width>451</width>
       <height>20</height>
      </rect>
     </property>
@@ -33,10 +39,10 @@
    <widget class="QGroupBox" name="verticalGroupBox_2">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>440</x>
       <y>340</y>
-      <width>171</width>
-      <height>131</height>
+      <width>181</width>
+      <height>151</height>
      </rect>
     </property>
     <property name="title">
@@ -113,9 +119,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>339</y>
+      <y>349</y>
       <width>391</width>
-      <height>131</height>
+      <height>141</height>
      </rect>
     </property>
     <property name="title">
@@ -257,9 +263,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>60</y>
+      <y>50</y>
       <width>161</width>
-      <height>91</height>
+      <height>101</height>
      </rect>
     </property>
     <property name="title">
@@ -317,9 +323,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>190</y>
+      <y>179</y>
       <width>160</width>
-      <height>80</height>
+      <height>101</height>
      </rect>
     </property>
     <property name="title">
@@ -381,7 +387,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>160</y>
+      <y>150</y>
       <width>161</width>
       <height>23</height>
      </rect>
@@ -393,10 +399,10 @@
    <widget class="QGraphicsView" name="graphicsView">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>190</x>
       <y>20</y>
-      <width>401</width>
-      <height>311</height>
+      <width>431</width>
+      <height>321</height>
      </rect>
     </property>
     <property name="verticalScrollBarPolicy">
@@ -414,8 +420,8 @@
      <rect>
       <x>10</x>
       <y>280</y>
-      <width>161</width>
-      <height>51</height>
+      <width>171</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="title">
@@ -424,6 +430,12 @@
     <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
       <widget class="QPushButton" name="zeroButton">
+       <property name="font">
+        <font>
+         <family>Helvetica</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Zero Offsets</string>
        </property>
@@ -442,7 +454,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>330</y>
+      <y>340</y>
       <width>391</width>
       <height>16</height>
      </rect>
