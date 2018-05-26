@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "http://www.freecadweb.org/"
 __Wiki__ = "http://www.freecadweb.org/wiki/index.php"
-__date__ = "2018.05.24" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.05.26" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -373,6 +373,7 @@ yoeTip = zoeTip = xoeTip = u'Offset image to desired position relative to the or
 bneTip = u'Base name applied to labels for most import types, e.g. Imported, Imported1, etc.'
 cheTip = u'Z height for some import types. Scale Factor is NOT applied to part height, so this will be the final height.'
 wirePointEditingText = u'Wire Point Editing'
+selectedObjectNotDWireCandidateErrorText = u'Selected object is not a candidate from which we might create a DWire object.'
 selectErrorMessage = u'You must first select an existing face, edge, or vertex, so we know which x/y/zmin and x/y/zmax to look for'
 abortedText = u'Aborted by user'
 placingText = u"Processing "
@@ -388,7 +389,7 @@ lineSegmentsText = u' line segments'
 examiningText = u'Examining '
 objectsText = u' objects'
 selectOddPointsErrorMessage = u'No points selected.  Select a point or points on a DWire object.'
-selectOddPointsErrorMessage2 = u'These methods only work with DWire objects.'
+selectOddPointsErrorMessage2 = u'These methods only work with DWire objects.  (You might be able to convert it to a DWire by right-clicking on Select button with object selected.)'
 scaleFactorErrorText = u'Error setting scale_factor, resetting to 1'
 recomputeErrorText = u'Error setting recompute_interval, resetting to 10'
 xOffsetErrorText = u'Error setting import_x_offset, resetting to 0'
@@ -449,10 +450,6 @@ e**pi (e to the power of pi = 23.14...)\n\
 '
 
 
-
-
-
-
 importAsSketchButtonTip = u'Import image as Sketch made up exclusively of unconstrained line segments.'
 cantImportText = u'Sorry, can\'t import as this type if Cheat Factor is set to 0'
 meshObjectText = u'MESH OBJECT'
@@ -463,6 +460,7 @@ moveButtonWaitingText = u'Waiting...'
 moveButtonTipText=u'Move currently selected point by x,y,z offset, SHIFT+CLICK to go opposite direction (UNDO), CTRL+CLICK to setup mouse click destination, CLICK again to cancel.'
 selectOddPointsButtonText=u'Select'
 selectOddPointsButtonTipText = u'Select points on a DWire object, CLICK = every other point, SHIFT+CLICK = every point, CTRL+CLICK = smart select'
+makeDWireActionText = u'Make DWire from Selected Object'
 deleteButtonText = u'Cut'
 deleteButtonTipText = u'Cuts previously selected points from DWire object (SHIFT+CLICK to undo last cut operation)'
 insertButtonText = u'Insert'
@@ -497,6 +495,7 @@ SEPARATOR = locale.localeconv()['decimal_point']
 SEPARATOR_STANDIN = 'p'
 DEGREES_INDICATOR = 'd'
 RADIANS_INDICATOR = 'r'
+DISCRETIZE_NUMBER = 50 #number of discrete points to use when creating DWire from selected Circle or Arc object
 
 
 #some globals
@@ -961,12 +960,37 @@ def movePoint(p,bOpposite): #apply offsets and return new point
     return newPoint
 
 
-    #moveTo() function if user clicks Move with CTRL pressed
-    #we setup the observer within movePoint
-    #when the mouse is clicked the observer function sets up and calls moveSelected(x,y,z) using the mouse coords
-    #upon return from moveSelected(x,y,z) the observer function removes itself from resident status
-#App.newDocument()
-#v=Gui.activeDocument().activeView()
+
+def makeDWire():
+    selectionObject = Gui.Selection.getSelectionEx()
+    if selectionObject:
+        selObjs = selectionObject
+    else:
+        msgDialog(selectOddPointsErrorMessage,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
+        return
+    for selObj in selObjs:
+        objectName = selObj.ObjectName #e.g. 'DWire'
+        doc = Gui.activeDocument()
+        obj = doc.getObject(objectName)
+        if not hasattr(obj.Object,'Points'):
+            shape = obj.Object.Shape
+            if not hasattr(shape,'Wires'):
+                msgDialog(selectedObjectNotDWireCandidateErrorText)
+                return
+            else:
+                if 'Draft._Circle' not in str(obj.Object.Proxy):
+                    for w in shape.Wires:
+                        Draft.makeWire(w,closed=False,face=False)
+                        Draft.autogroup(w)
+                else: #handle circles and arcs
+                    w = shape.discretize(Number=DISCRETIZE_NUMBER)
+                    Draft.makeWire(w,closed=False,face=False)
+                    Draft.autogroup(w)
+
+                obj.Visibility=False
+                App.ActiveDocument.recompute()
+
+
  
 
 def selectOddPoints(idx=None): #user selects 2 points on the same wire, we select the odd points in between
@@ -998,7 +1022,7 @@ def selectOddPoints(idx=None): #user selects 2 points on the same wire, we selec
 
 
     if not hasattr(obj.Object,'Points'):
-        msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
+        msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#not a DWire
         return
     allPoints = obj.Object.Points #all the points in the selected wire
 
@@ -2346,6 +2370,17 @@ def defaults():
     processEvents()
 
 
+def select_context_menu(point):
+    # create context menu
+    selectPopupMenu = QtGui.QMenu(MainWindow)
+    makeDWireAction = QtGui.QAction(makeDWireActionText, MainWindow)
+    makeDWireAction.triggered.connect(makeDWire)
+    selectPopupMenu.addAction(makeDWireAction)
+    selectPopupMenu.exec_(ui.selectOddPointsButton.mapToGlobal(point))
+
+
+
+
 MainWindow = QtGui.QMainWindow()
 
 ui = Ui_MainWindow()
@@ -2439,6 +2474,11 @@ setToolTip(ui.offsetsGroupBoxLabel,offsetsGroupBoxTipText)
 
 ui.cutSelectedButton.clicked.connect(cutSelected)
 ui.selectOddPointsButton.clicked.connect(selectOddPoints)
+ui.selectOddPointsButton.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+ui.selectOddPointsButton.customContextMenuRequested.connect(select_context_menu)
+
+
+
 
 ui.moveButton.clicked.connect(moveSelected)
 ui.insertButton.clicked.connect(insertPoint)
