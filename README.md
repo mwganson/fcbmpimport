@@ -222,6 +222,7 @@ SEPARATOR = locale.localeconv()['decimal_point']
 SEPARATOR_STANDIN = 'p'
 DEGREES_INDICATOR = 'd'
 RADIANS_INDICATOR = 'r'
+DISCRETIZE_NUMBER = 50
 </pre>
 Note: if the SEPARATOR ('.' or ',', depending on your locale) isn't correct (or isn't what you would prefer) you can change it manually to something like:
 
@@ -272,6 +273,8 @@ In the above screenshot we have the butterfly image that has been imported as DW
 <img src="screenshot-butterfly-cut.png" alt="screenshot butterfly after cut">
 
 There still remains some additional cleanup work to be done on this DWire051 object, but the edges are now much smoother and less pixelated than they were.
+
+New for version 2018.05.26, there is now a right-click context menu associated with the Select button in the Wire Point Editing Tools section.  Only option at this time is to create a new DWire object from the selected object.  Since the Wire Point Editing Tools only work with DWire objects, some objects need to be converted to DWire objects before these functions will work with them.  New object will have makeFace = False and closed = False, so you might need to set those properties to True in the Combo Box Data tab in FreeCAD.  Circles and Arcs are discretized by default to have 50 vertices.  Only way to change this behavior is to edit the defaults.  See the documentation for the <a href='#Defaults Button'>Defaults Button</a> for more details on macro defaults.
 
 <h4 id='Cut Button'>Cut Button</h4>
 
