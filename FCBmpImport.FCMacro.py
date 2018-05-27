@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "http://www.freecadweb.org/"
 __Wiki__ = "http://www.freecadweb.org/wiki/index.php"
-__date__ = "2018.05.26" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.05.26a" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -972,18 +972,22 @@ def makeDWire():
         objectName = selObj.ObjectName #e.g. 'DWire'
         doc = Gui.activeDocument()
         obj = doc.getObject(objectName)
-        if not hasattr(obj.Object,'Points'):
+        if not hasattr(obj.Object,'Points') or 'Draft._BSpline' in str(obj.Object.Proxy) or 'Draft._BezCurve' in str(obj.Object.Proxy):
             shape = obj.Object.Shape
             if not hasattr(shape,'Wires'):
                 msgDialog(selectedObjectNotDWireCandidateErrorText)
                 return
             else:
-                if 'Draft._Circle' not in str(obj.Object.Proxy):
+                if 'Draft._Circle' not in str(obj.Object.Proxy) and 'Draft._Ellipse' not in str(obj.Object.Proxy) and 'Draft._BSpline' not in str(obj.Object.Proxy) and 'Draft._BezCurve' not in str(obj.Object.Proxy):
                     for w in shape.Wires:
                         Draft.makeWire(w,closed=False,face=False)
                         Draft.autogroup(w)
                 else: #handle circles and arcs
-                    w = shape.discretize(Number=DISCRETIZE_NUMBER)
+
+                    num, okPressed = QtGui.QInputDialog.getInteger(MainWindow, "Discretize Number","Vertices:",DISCRETIZE_NUMBER, 0, 100000, 10)
+                    if not okPressed:
+                        return
+                    w = shape.discretize(Number=num)
                     Draft.makeWire(w,closed=False,face=False)
                     Draft.autogroup(w)
 
