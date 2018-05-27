@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "http://www.freecadweb.org/"
 __Wiki__ = "http://www.freecadweb.org/wiki/index.php"
-__date__ = "2018.05.26a" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.05.26b" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -378,6 +378,7 @@ selectErrorMessage = u'You must first select an existing face, edge, or vertex, 
 abortedText = u'Aborted by user'
 placingText = u"Processing "
 previewButtonText = u'Preview Image'
+reorderPointsActionText = u'Reorder Points'
 previewButtonTip = u'Loads an image for preview in the preview panel, displays red and green cross to indicate origin (0,0) position'
 graphicsExceptionText = u'\nGraphics exception displaying preview image.\n'
 invalidFileText = u'File must be a monochrome BMP (black and white, monochrome, 1 bit-per-pixel only).'
@@ -531,6 +532,7 @@ make_compound_solid = True
 sketch_support = 'XY_PLANE'
 viewrectHeight = None
 viewrectWidth = None
+madeFace = None #used in makeDWire()
 #apply default values
 black_foreground = BLACK_FOREGROUND
 foreground_color = 0 #0 = color 1, 1 = color 2 (gets changed if user changes black foreground checkbox)
@@ -962,6 +964,7 @@ def movePoint(p,bOpposite): #apply offsets and return new point
 
 
 def makeDWire():
+    global madeFace
     selectionObject = Gui.Selection.getSelectionEx()
     if selectionObject:
         selObjs = selectionObject
@@ -980,22 +983,74 @@ def makeDWire():
             else:
                 if 'Draft._Circle' not in str(obj.Object.Proxy) and 'Draft._Ellipse' not in str(obj.Object.Proxy) and 'Draft._BSpline' not in str(obj.Object.Proxy) and 'Draft._BezCurve' not in str(obj.Object.Proxy):
                     for w in shape.Wires:
-                        Draft.makeWire(w,closed=False,face=False)
+                        madeFace = obj.Proxy.Object.MakeFace
+                        Draft.makeWire(w,closed=False,face=madeFace)
                         Draft.autogroup(w)
-                else: #handle circles and arcs
+                        madeFace = None
+                else: #handle curve objects
 
-                    num, okPressed = QtGui.QInputDialog.getInteger(MainWindow, "Discretize Number","Vertices:",DISCRETIZE_NUMBER, 0, 100000, 10)
+
+                    if not hasattr(shape,'discretize'):
+                        madeFace = obj.Proxy.Object.MakeFace
+                        obj.Proxy.Object.MakeFace = False #needs to be false in order to have a discretize() function
+                        App.ActiveDocument.recompute()
+                        makeDWire()
+                        madeFace = None
+                        return
+                    num, okPressed = QtGui.QInputDialog.getInteger(MainWindow, "Discretize Number","Vertices for "+objectName+":",DISCRETIZE_NUMBER, 0, 100000, 10)
                     if not okPressed:
                         return
                     w = shape.discretize(Number=num)
                     Draft.makeWire(w,closed=False,face=False)
                     Draft.autogroup(w)
+                    if madeFace:
+                        obj.Proxy.Object.MakeFace = madeFace #set make face back to true again
 
                 obj.Visibility=False
                 App.ActiveDocument.recompute()
 
+def reorderPoints():
+    global undoPoints
+    selectionObject = Gui.Selection.getSelectionEx()
+    if selectionObject:
+        selObj = selectionObject[-1]
+    else:
+        msgDialog(selectOddPointsErrorMessage,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
+        return
+    subObjs = selObj.SubObjects
+    objectName = selObj.ObjectName #e.g. 'DWire'
+    picked = selObj.SubObjects
+    if len(picked)!=1:
+        msgDialog(u'Select one point on the DWire object you wish to reorder.  That selected point will become Vertex1.')
+        return
+    doc = Gui.activeDocument()
+    obj = doc.getObject(selObj.ObjectName)
+    if not hasattr(obj.Object,'Points'):
+        msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#wrong object type
+        return
+    allPoints = obj.Object.Points #all the points in the selected wire
 
- 
+    outerPoints=[]
+
+    for jj in range(len(allPoints)-1,-1,-1):
+        for ii in range(len(picked)-1,-1,-1):
+            if allPoints[jj].x == picked[ii].X and allPoints[jj].y == picked[ii].Y and allPoints[jj].z == picked[ii].Z:
+                outerPoints.append(jj)
+
+    newVertex1 = outerPoints[0]
+    newPoints = []
+    for ii in range(newVertex1,len(allPoints)):
+        newPoints.append(allPoints[ii])
+    for ii in range(0,newVertex1):
+        newPoints.append(allPoints[ii])
+
+
+
+    obj.Object.Points = newPoints
+    App.ActiveDocument.recompute()
+
+
+
 
 def selectOddPoints(idx=None): #user selects 2 points on the same wire, we select the odd points in between
                                 #or if shift+click and 2 points we select all points in between or..
@@ -2380,6 +2435,9 @@ def select_context_menu(point):
     makeDWireAction = QtGui.QAction(makeDWireActionText, MainWindow)
     makeDWireAction.triggered.connect(makeDWire)
     selectPopupMenu.addAction(makeDWireAction)
+    reorderPointsAction = QtGui.QAction(reorderPointsActionText,MainWindow)
+    reorderPointsAction.triggered.connect(reorderPoints)
+    selectPopupMenu.addAction(reorderPointsAction)
     selectPopupMenu.exec_(ui.selectOddPointsButton.mapToGlobal(point))
 
 
