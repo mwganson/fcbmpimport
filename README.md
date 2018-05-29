@@ -274,9 +274,15 @@ In the above screenshot we have the butterfly image that has been imported as DW
 
 There still remains some additional cleanup work to be done on this DWire051 object, but the edges are now much smoother and less pixelated than they were.
 
-New for version 2018.05.26, there is now a right-click context menu associated with the Select button in the Wire Point Editing Tools section.  Only options at this time are to create a new DWire object from the selected object and to Reorder Points.  Since the Wire Point Editing Tools only work with DWire objects, some objects need to be converted to DWire objects before these functions will work with them.  New object will have makeFace = False (unless original had makeFace set to true --sometimes) and closed = False, so you might need to set those properties to True in the Combo Box Data tab in FreeCAD.  Circles and Arcs are discretized by default to have 50 vertices (changeable during operation).  If you would prefer a number other than 50, you can edit the defaults.  See the documentation for the <a href='#Defaults Button'>Defaults Button</a> for more details on macro defaults.
+New for version 2018.05.26, there is now a right-click context menu associated with the Select button in the Wire Point Editing Tools section.  
 
-The Reorder Points option will set the selected point to Vertex1.  Can be useful when trying to merge 2 DWires using Shift+Insert operation.
+Context menu options include:Create a new DWire object from the selected object, Reorder Points, and Reverse Points.  
+
+Since the Wire Point Editing Tools only work with DWire objects, some objects need to be converted to DWire objects before these functions will work with them.  New object will have makeFace = False (unless original had makeFace set to true --sometimes) and closed = False, so you might need to set those properties to True in the Combo Box Data tab in FreeCAD.  Circles and Arcs are discretized by default to have 50 vertices (changeable during operation).  If you would prefer a number other than 50, you can edit the defaults.  See the documentation for the <a href='#Defaults Button'>Defaults Button</a> for more details on macro defaults.
+
+The Reorder Points option will set the selected point to Vertex1.  Can be useful when trying to merge 2 DWires using Shift+Insert operation.  Generally, you don't want vertex1 to be one of the insertion points.
+
+The Reverse Points option will reverse the selected points.  This can be used to uncross after a shift+insert operation when the wrong points are hooked up to the points inserted out of the cut buffer.
 
 <h4 id='Cut Button'>Cut Button</h4>
 
