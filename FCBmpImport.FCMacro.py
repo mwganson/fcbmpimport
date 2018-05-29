@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "http://www.freecadweb.org/"
 __Wiki__ = "http://www.freecadweb.org/wiki/index.php"
-__date__ = "2018.05.26b" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.05.29" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -379,6 +379,7 @@ abortedText = u'Aborted by user'
 placingText = u"Processing "
 previewButtonText = u'Preview Image'
 reorderPointsActionText = u'Reorder Points'
+reversePointsActionText = u'Reverse (Uncross) Points'
 previewButtonTip = u'Loads an image for preview in the preview panel, displays red and green cross to indicate origin (0,0) position'
 graphicsExceptionText = u'\nGraphics exception displaying preview image.\n'
 invalidFileText = u'File must be a monochrome BMP (black and white, monochrome, 1 bit-per-pixel only).'
@@ -1009,8 +1010,47 @@ def makeDWire():
                 obj.Visibility=False
                 App.ActiveDocument.recompute()
 
+
+def reversePoints():
+    selectionObject = Gui.Selection.getSelectionEx()
+    if selectionObject:
+        selObj = selectionObject[-1]
+    else:
+        msgDialog(selectOddPointsErrorMessage,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
+        return
+    subObjs = selObj.SubObjects
+    objectName = selObj.ObjectName #e.g. 'DWire'
+    picked = selObj.SubObjects
+    if len(picked)<2:
+        msgDialog(u'Select the points you wish to reverse.')
+        return
+    doc = Gui.activeDocument()
+    obj = doc.getObject(selObj.ObjectName)
+    if not hasattr(obj.Object,'Points'):
+        msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#wrong object type
+        return
+    allPoints = obj.Object.Points #all the points in the selected wire
+
+    outerPoints=[]
+
+    for jj in range(len(allPoints)-1,-1,-1):
+        for ii in range(len(picked)-1,-1,-1):
+            if allPoints[jj].x == picked[ii].X and allPoints[jj].y == picked[ii].Y and allPoints[jj].z == picked[ii].Z:
+                outerPoints.append(jj)
+
+    start = outerPoints[0] #start and end are indices
+    end = outerPoints[-1]
+    if start > end:
+        tmp = start
+        start = end
+        end = tmp
+    allPoints[start:end+1] = allPoints[start:end+1][::-1] #credit flakes and dawg at stackoverflow for this line of code to reverse a sublist
+
+    obj.Object.Points = allPoints
+    App.ActiveDocument.recompute()
+
+
 def reorderPoints():
-    global undoPoints
     selectionObject = Gui.Selection.getSelectionEx()
     if selectionObject:
         selObj = selectionObject[-1]
@@ -1048,6 +1088,25 @@ def reorderPoints():
 
     obj.Object.Points = newPoints
     App.ActiveDocument.recompute()
+
+
+def select_context_menu(point):
+    # create context menu
+    selectPopupMenu = QtGui.QMenu(MainWindow)
+
+    makeDWireAction = QtGui.QAction(makeDWireActionText, MainWindow)
+    makeDWireAction.triggered.connect(makeDWire)
+    selectPopupMenu.addAction(makeDWireAction)
+
+    reorderPointsAction = QtGui.QAction(reorderPointsActionText,MainWindow)
+    reorderPointsAction.triggered.connect(reorderPoints)
+    selectPopupMenu.addAction(reorderPointsAction)
+
+    reversePointsAction = QtGui.QAction(reversePointsActionText,MainWindow)
+    reversePointsAction.triggered.connect(reversePoints)
+    selectPopupMenu.addAction(reversePointsAction)
+
+    selectPopupMenu.exec_(ui.selectOddPointsButton.mapToGlobal(point))
 
 
 
@@ -2427,18 +2486,6 @@ def defaults():
     ui.xOffsetEdit.setText(str(IMPORT_X_OFFSET))
     ui.baseNameEdit.setText(SHAPE_BASENAME)
     processEvents()
-
-
-def select_context_menu(point):
-    # create context menu
-    selectPopupMenu = QtGui.QMenu(MainWindow)
-    makeDWireAction = QtGui.QAction(makeDWireActionText, MainWindow)
-    makeDWireAction.triggered.connect(makeDWire)
-    selectPopupMenu.addAction(makeDWireAction)
-    reorderPointsAction = QtGui.QAction(reorderPointsActionText,MainWindow)
-    reorderPointsAction.triggered.connect(reorderPoints)
-    selectPopupMenu.addAction(reorderPointsAction)
-    selectPopupMenu.exec_(ui.selectOddPointsButton.mapToGlobal(point))
 
 
 
