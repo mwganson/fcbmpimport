@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "http://www.freecadweb.org/"
 __Wiki__ = "http://www.freecadweb.org/wiki/index.php"
-__date__ = "2018.05.29" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.04" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -378,6 +378,7 @@ selectErrorMessage = u'You must first select an existing face, edge, or vertex, 
 abortedText = u'Aborted by user'
 placingText = u"Processing "
 previewButtonText = u'Preview Image'
+makeArcActionText=u'Make Arc from 3 points'
 reorderPointsActionText = u'Reorder Points'
 reversePointsActionText = u'Reverse (Uncross) Points'
 previewButtonTip = u'Loads an image for preview in the preview panel, displays red and green cross to indicate origin (0,0) position'
@@ -982,7 +983,12 @@ def makeDWire():
                 msgDialog(selectedObjectNotDWireCandidateErrorText)
                 return
             else:
-                if 'Draft._Circle' not in str(obj.Object.Proxy) and 'Draft._Ellipse' not in str(obj.Object.Proxy) and 'Draft._BSpline' not in str(obj.Object.Proxy) and 'Draft._BezCurve' not in str(obj.Object.Proxy):
+                if not hasattr(obj.Object,'Proxy'):
+                    for w in shape.Wires:
+                        Draft.makeWire(w,closed=False,face=madeFace)
+                        Draft.autogroup(w)
+
+                elif 'Draft._Circle' not in str(obj.Object.Proxy) and 'Draft._Ellipse' not in str(obj.Object.Proxy) and 'Draft._BSpline' not in str(obj.Object.Proxy) and 'Draft._BezCurve' not in str(obj.Object.Proxy):
                     for w in shape.Wires:
                         madeFace = obj.Proxy.Object.MakeFace
                         Draft.makeWire(w,closed=False,face=madeFace)
@@ -1000,7 +1006,7 @@ def makeDWire():
                         return
                     num, okPressed = QtGui.QInputDialog.getInteger(MainWindow, "Discretize Number","Vertices for "+objectName+":",DISCRETIZE_NUMBER, 0, 100000, 10)
                     if not okPressed:
-                        return
+                        return False #tells makeArc user is canceling
                     w = shape.discretize(Number=num)
                     Draft.makeWire(w,closed=False,face=False)
                     Draft.autogroup(w)
@@ -1009,6 +1015,7 @@ def makeDWire():
 
                 obj.Visibility=False
                 App.ActiveDocument.recompute()
+                return True #tells makeArc() user gave us the go ahead
 
 
 def reversePoints():
@@ -1106,22 +1113,133 @@ def select_context_menu(point):
     reversePointsAction.triggered.connect(reversePoints)
     selectPopupMenu.addAction(reversePointsAction)
 
+    makeArcAction = QtGui.QAction(makeArcActionText,MainWindow)
+    makeArcAction.triggered.connect(makeArc)
+    selectPopupMenu.addAction(makeArcAction)
+
     selectPopupMenu.exec_(ui.selectOddPointsButton.mapToGlobal(point))
 
 
 
 
-def selectOddPoints(idx=None): #user selects 2 points on the same wire, we select the odd points in between
+
+def getDistance3d(x1, y1, z1, x2, y2, z2):
+    return math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
+
+#find the center of a circle in 3d space given 3 points on the rim of the circle
+#adapted from java code by Russell Strauss posted on stackoverflow
+#stackoverflow.com/questions/4103405/what-is-the-algorithm-for-finding-the-center-of-a-circle-from-three-points
+#original java code:
+ #pt circleCenter(pt A, pt B, pt C) {
+
+ #   float yDelta_a = B.y - A.y;
+ #   float xDelta_a = B.x - A.x;
+ #   float yDelta_b = C.y - B.y;
+ #   float xDelta_b = C.x - B.x;
+ #   pt center = P(0,0);
+
+ #   float aSlope = yDelta_a/xDelta_a;
+ #   float bSlope = yDelta_b/xDelta_b;  
+ #   center.x = (aSlope*bSlope*(A.y - C.y) + bSlope*(A.x + B.x)
+ #       - aSlope*(B.x+C.x) )/(2* (bSlope-aSlope) );
+ #   center.y = -1*(center.x - (A.x+B.x)/2)/aSlope +  (A.y+B.y)/2;
+
+ #   return center;
+ # }
+
+def getCenter(ax,ay,az,bx,by,bz,cx,cy,cz):
+    if not (math.fabs(az) <= CHEAT_FACTOR/2.0 and math.fabs(bz) <= CHEAT_FACTOR/2.0 and math.fabs(cz) <= CHEAT_FACTOR/2.0):
+        msgDialog(u'Sorry, but this only works for wires on the xy plane with z = 0.  If you feel this is in error, try adjust Cheat Factor to a larger value.')
+        return None
+    avoidDivByZero = CHEAT_FACTOR/2.0 #lazy bit of hackery
+
+    yDelta_a = float(by-ay)
+    xDelta_a = float(bx-ax)
+    yDelta_b = float(cy-by)
+    xDelta_b = float(cx-bx)
+
+    if xDelta_a == 0: 
+        xDelta_a = avoidDivByZero
+
+    if xDelta_b == 0:
+        xDelta_b = avoidDivByZero
+       
+
+    aSlope = yDelta_a/xDelta_a
+
+    if aSlope == 0:
+        aSlope = avoidDivByZero
+
+    bSlope = yDelta_b/xDelta_b
+
+    if bSlope == aSlope:
+        bSlope = avoidDivByZero
+  
+    dx = (aSlope*bSlope*(ay-cy) + bSlope*(ax+bx) - aSlope*(bx+cx) )/(2.0* (bSlope-aSlope) )
+    dy = -1.0*(dx - (ax+bx)/2.0)/aSlope +  (ay+by)/2.0
+
+    return dx,dy,0
+
+def makeArc():
+    global undoPoints
+    selectionObject = Gui.Selection.getSelectionEx()
+    if selectionObject:
+        selObj = selectionObject[-1]
+    else:
+        msgDialog(selectOddPointsErrorMessage,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
+        return
+
+    subObjs = selObj.SubObjects
+    picked = selObj.SubObjects
+
+    if len(picked)!= 3:
+        msgDialog(u'Select 3 rim points along the arc and try again.')
+        return
+
+    doc = Gui.activeDocument()
+    obj = doc.getObject(selObj.ObjectName)
+    if not hasattr(obj.Object,'Points'):
+        msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#object not compatible
+        return
+
+    start = App.Vector(picked[0].X,picked[0].Y,picked[0].Z)
+    mid = App.Vector(picked[1].X,picked[1].Y,picked[1].Z)
+    end = App.Vector(picked[2].X,picked[2].Y,picked[2].Z)
+
+    cx,cy,cz = getCenter(start.x,start.y,start.z,mid.x,mid.y,mid.z,end.x,end.y,end.z)
+    radius = getDistance3d(cx,cy,cz,start.x,start.y,start.z)
+
+    startAngle = math.atan2(start.y-cy,start.x-cx) *180.0 / math.pi
+    endAngle = math.atan2(end.y-cy,end.x-cx) * 180.0/ math.pi
+
+
+
+    placement = App.Placement(App.Vector(cx,cy,cz), App.Rotation(App.Vector(0,0,1),0),App.Vector(0,0,0))
+    draftArc = Draft.makeCircle(radius, placement, False, endAngle, startAngle)
+    Draft.select([draftArc])
+    bContinue = makeDWire()
+    if not bContinue: #user canceled at choose discretize points
+        App.ActiveDocument.removeObject(draftArc.Label)
+        return
+
+    App.ActiveDocument.recompute()
+
+
+
+
+def selectOddPoints(idx=None,selectThemAll=False): #user selects 2 points on the same wire, we select the odd points in between
                                 #or if shift+click and 2 points we select all points in between or..
                         #alternatively, user selects one point and we select all odd points (or even if the user selected even numbered point) or...
                         #user selects one point and shift+clicks and we select all points on the wire
+
+   #selectThemAll is True when called internally by another method, such as makeArc()
 
 
     mod = None
     modifiers = QtGui.QApplication.keyboardModifiers()
     selectAll = False
     smartSelect = False
-    if modifiers == QtCore.Qt.ShiftModifier: #select all points if shift-clicked
+    if modifiers == QtCore.Qt.ShiftModifier or selectThemAll: #select all points if shift-clicked
         selectAll = True
     elif modifiers == QtCore.Qt.ControlModifier: #ctrl-clicked, so do smart select
         smartSelect = True
@@ -2642,6 +2760,7 @@ scene.addPixmap(pixmap)
 
 stayOnTop(False) #False means window hasn't yet been shown
 stayOnTop() #show it first in previous call, and then call again to set the configuration
+
 
 #MainWindow.show()
 
