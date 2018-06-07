@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "http://www.freecadweb.org/"
 __Wiki__ = "http://www.freecadweb.org/wiki/index.php"
-__date__ = "2018.06.04" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.07" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -65,6 +65,7 @@ import Draft
 import OpenSCADUtils
 import locale
 import re
+import DraftVecUtils,DraftGeomUtils
 
 
 
@@ -381,6 +382,7 @@ previewButtonText = u'Preview Image'
 makeArcActionText=u'Make Arc from 3 points'
 reorderPointsActionText = u'Reorder Points'
 reversePointsActionText = u'Reverse (Uncross) Points'
+globalUndoActionText = u'Undo'
 previewButtonTip = u'Loads an image for preview in the preview panel, displays red and green cross to indicate origin (0,0) position'
 graphicsExceptionText = u'\nGraphics exception displaying preview image.\n'
 invalidFileText = u'File must be a monochrome BMP (black and white, monochrome, 1 bit-per-pixel only).'
@@ -523,7 +525,8 @@ shownX = None #how many pixels currently showing in preview panel at this zoom l
 shownY = None
 mouseEventCallBack = None
 selPointIndex = None #used to keep track of which point was selected before mouseEventCallBack in move function
-undoPoints=[] #to undo cut operation or for inserting using shift+insert
+undoPoints=[] #to undo some operations
+undoObject=None
 select_objects_axis = 'Z'
 import_as_mesh = True
 import_as_sketch = False
@@ -814,10 +817,20 @@ def selectObjects():
 
 #WIRE POINT EDITING TOOLS
 
+def globalUndo():
+    global undoObject
+    global undoPoints
+    if undoObject != None and len(undoPoints) != 0:
+        undoObject.Points = undoPoints
+        undoObject = None
+        undoPoints = []
+        App.ActiveDocument.recompute()
+
 
 def insertPoint(): # add new point on wire in between the 2 selected points
                 # or insert previously cut points if SHIFT+CLICK
     global undoPoints
+    global undoObject
     selectionObject = Gui.Selection.getSelectionEx()
     if selectionObject:
         selObj = selectionObject[0]
@@ -865,6 +878,7 @@ def insertPoint(): # add new point on wire in between the 2 selected points
             for p in undoPoints:
                 allPoints.insert(end,p)
             undoPoints = []
+            undoObject=None
     else:
 
 
@@ -882,7 +896,8 @@ def insertPoint(): # add new point on wire in between the 2 selected points
         else:
             allPoints.insert(start+1,newPoint)
             idx = start+1
-
+    undoPoints = obj.Object.Points
+    undoObject = obj.Object
     obj.Object.Points = allPoints
     App.ActiveDocument.recompute()
     if modifiers != QtCore.Qt.ShiftModifier: 
@@ -892,6 +907,7 @@ def insertPoint(): # add new point on wire in between the 2 selected points
 
 def cutSelected():
     global undoPoints
+    global undoObject
     selectionObject = Gui.Selection.getSelectionEx()
     if selectionObject:
         selObj = selectionObject[-1]
@@ -914,11 +930,13 @@ def cutSelected():
             obj.Object.Points = undoPoints
             App.ActiveDocument.recompute()
             undoPoints = []
+            undoObject = None
 
         return
     else:
         #setup the undo operation
         undoPoints = []
+        undoObject = obj.Object
         for p in obj.Object.Points:
             undoPoints.append(p)
 
@@ -934,7 +952,8 @@ def cutSelected():
 
     for tbr in toBeRemoved: #because we have these in reverse order from end, larger indices first, this method can work
         allPoints.pop(tbr)
-
+    undoPoints = obj.Object.Points
+    undoObject = obj.Object
     obj.Object.Points = allPoints
     if len(allPoints) == 0:
         docName = App.ActiveDocument.Name
@@ -965,7 +984,7 @@ def movePoint(p,bOpposite): #apply offsets and return new point
 
 
 
-def makeDWire():
+def makeDWire(): #make a DWire object based on the selected object
     global madeFace
     selectionObject = Gui.Selection.getSelectionEx()
     if selectionObject:
@@ -990,7 +1009,8 @@ def makeDWire():
 
                 elif 'Draft._Circle' not in str(obj.Object.Proxy) and 'Draft._Ellipse' not in str(obj.Object.Proxy) and 'Draft._BSpline' not in str(obj.Object.Proxy) and 'Draft._BezCurve' not in str(obj.Object.Proxy):
                     for w in shape.Wires:
-                        madeFace = obj.Proxy.Object.MakeFace
+                        if hasattr(obj.Proxy.Object,'MakeFace'):
+                            madeFace = obj.Proxy.Object.MakeFace
                         Draft.makeWire(w,closed=False,face=madeFace)
                         Draft.autogroup(w)
                         madeFace = None
@@ -1018,7 +1038,9 @@ def makeDWire():
                 return True #tells makeArc() user gave us the go ahead
 
 
-def reversePoints():
+def reversePoints(): #reverse the order of all selected points
+    global undoPoints
+    global undoObject
     selectionObject = Gui.Selection.getSelectionEx()
     if selectionObject:
         selObj = selectionObject[-1]
@@ -1052,12 +1074,15 @@ def reversePoints():
         start = end
         end = tmp
     allPoints[start:end+1] = allPoints[start:end+1][::-1] #credit flakes and dawg at stackoverflow for this line of code to reverse a sublist
-
+    undoPoints = obj.Object.Points
+    undoObject = obj.Object
     obj.Object.Points = allPoints
     App.ActiveDocument.recompute()
 
 
-def reorderPoints():
+def reorderPoints(): #make the selected point Vertex1
+    global undoPoints
+    global undoObject
     selectionObject = Gui.Selection.getSelectionEx()
     if selectionObject:
         selObj = selectionObject[-1]
@@ -1092,7 +1117,8 @@ def reorderPoints():
         newPoints.append(allPoints[ii])
 
 
-
+    undoPoints = obj.Object.Points
+    undoObject = obj.Object
     obj.Object.Points = newPoints
     App.ActiveDocument.recompute()
 
@@ -1116,6 +1142,10 @@ def select_context_menu(point):
     makeArcAction = QtGui.QAction(makeArcActionText,MainWindow)
     makeArcAction.triggered.connect(makeArc)
     selectPopupMenu.addAction(makeArcAction)
+
+    globalUndoAction = QtGui.QAction(globalUndoActionText,MainWindow)
+    globalUndoAction.triggered.connect(globalUndo)
+    selectPopupMenu.addAction(globalUndoAction)
 
     selectPopupMenu.exec_(ui.selectOddPointsButton.mapToGlobal(point))
 
@@ -1180,8 +1210,14 @@ def getCenter(ax,ay,az,bx,by,bz,cx,cy,cz):
 
     return dx,dy,0
 
-def makeArc():
+def makeArc(boolUndo = False):
     global undoPoints
+    global undoObject
+    modifiers = QtGui.QApplication.keyboardModifiers()
+    if modifiers == QtCore.Qt.ShiftModifier or boolUndo:
+        bUndo = True
+    else:
+        bUndo = False
     selectionObject = Gui.Selection.getSelectionEx()
     if selectionObject:
         selObj = selectionObject[-1]
@@ -1192,7 +1228,7 @@ def makeArc():
     subObjs = selObj.SubObjects
     picked = selObj.SubObjects
 
-    if len(picked)!= 3:
+    if not bUndo and len(picked)!= 3:
         msgDialog(u'Select 3 rim points along the arc and try again.')
         return
 
@@ -1202,26 +1238,112 @@ def makeArc():
         msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#object not compatible
         return
 
+    if bUndo:
+        if len(undoPoints)==0:
+            msgDialog(u'Sorry, undo buffer is empty.')
+            return
+        obj.Object.Points = undoPoints
+        undoPoints = []
+        undoObject = None
+        App.ActiveDocument.recompute()
+        return
+
+    indices = []
+    allPoints = obj.Object.Points
+    undoPoints=obj.Object.Points
+    undoObject = obj.Object
+    for ii in range(0,len(allPoints)):
+        if comparePoints(allPoints[ii],picked[0].Point):
+            lowIdx = ii
+        elif comparePoints(allPoints[ii],picked[1].Point):
+            midIdx = ii
+        elif comparePoints(allPoints[ii],picked[2].Point):
+            highIdx = ii
+
+    if DraftVecUtils.isColinear([allPoints[lowIdx],allPoints[midIdx],allPoints[highIdx]]):
+        msgDialog(u'Select 3 points that are not colinear.')
+        return
+      
+    if highIdx < lowIdx:
+        tmp = highIdx
+        highIdx = lowIdx
+        lowIdx = tmp
+
+    if lowIdx > midIdx or midIdx > highIdx: #set a new vertex1 so we don't have an overflow issue
+        if lowIdx > midIdx:
+            newVertex1 = lowIdx + 1
+        else:
+            newVertex1 = highIdx -1
+        newPoints = []
+        for ii in range(newVertex1,len(allPoints)):
+            newPoints.append(allPoints[ii])
+        for ii in range(0,newVertex1):
+            newPoints.append(allPoints[ii])
+        obj.Object.Points = newPoints
+
+        indices = []
+        allPoints = obj.Object.Points
+        undoPoints = obj.Object.Points
+        undoObject = obj.Object
+        for ii in range(0,len(allPoints)):
+            if comparePoints(allPoints[ii],picked[0].Point):
+                lowIdx = ii
+            elif comparePoints(allPoints[ii],picked[1].Point):
+                midIdx = ii
+            elif comparePoints(allPoints[ii],picked[2].Point):
+                highIdx = ii
+
+        if highIdx < lowIdx:
+            tmp = highIdx
+            highIdx = lowIdx
+            lowIdx = tmp
+
+
+
     start = App.Vector(picked[0].X,picked[0].Y,picked[0].Z)
     mid = App.Vector(picked[1].X,picked[1].Y,picked[1].Z)
     end = App.Vector(picked[2].X,picked[2].Y,picked[2].Z)
 
     cx,cy,cz = getCenter(start.x,start.y,start.z,mid.x,mid.y,mid.z,end.x,end.y,end.z)
     radius = getDistance3d(cx,cy,cz,start.x,start.y,start.z)
-
-    startAngle = math.atan2(start.y-cy,start.x-cx) *180.0 / math.pi
-    endAngle = math.atan2(end.y-cy,end.x-cx) * 180.0/ math.pi
-
-
-
     placement = App.Placement(App.Vector(cx,cy,cz), App.Rotation(App.Vector(0,0,1),0),App.Vector(0,0,0))
-    draftArc = Draft.makeCircle(radius, placement, False, endAngle, startAngle)
+    startAngle = math.atan2(start.y-cy,start.x-cx) *180.0 / math.pi
+    midAngle = math.atan2(mid.y-cy,mid.x-cx)*180.0 / math.pi
+    endAngle = math.atan2(end.y-cy,end.x-cx) * 180.0/ math.pi
+    
+    draftArc = Draft.makeCircle(radius, placement, False, startAngle, endAngle)
+   
     Draft.select([draftArc])
+    draftArcName = App.ActiveDocument.ActiveObject.Label
+    edge = draftArc.Shape.Edges[0]
+    if not DraftGeomUtils.isPtOnEdge(mid,edge):
+        App.ActiveDocument.removeObject(draftArcName)
+        draftArc = Draft.makeCircle(radius, placement, False, endAngle, startAngle)
+        Draft.select([draftArc])
+        draftArcName = App.ActiveDocument.ActiveObject.Label
+
     bContinue = makeDWire()
-    if not bContinue: #user canceled at choose discretize points
-        App.ActiveDocument.removeObject(draftArc.Label)
+    if not bContinue: #user canceled
+        App.ActiveDocument.removeObject(draftArcName)
         return
 
+    dwire = App.ActiveDocument.ActiveObject
+    dwireName = dwire.Label
+    dwPoints = dwire.Points
+
+    for ii in range(highIdx-1,lowIdx,-1):
+        allPoints.pop(ii) #removes original vertices between new arc endpoints
+
+    if not comparePoints(allPoints[lowIdx],dwPoints[0]):
+        dwPoints.reverse()        
+      
+    allPoints = allPoints[:lowIdx] + dwPoints+ allPoints[lowIdx+1:]
+    App.ActiveDocument.removeObject(dwireName)    
+    App.ActiveDocument.removeObject(draftArcName)
+    undoObject = obj.Object
+    undoPoints = undoObject.Points
+    obj.Object.Points = allPoints
+    
     App.ActiveDocument.recompute()
 
 
@@ -1368,6 +1490,8 @@ def fixDirection(vec1,vec2):
 def moveSelected(newVector = None):
     global mouseEventCallBack
     global selPointIndex #point selected when Ctrl-clicked move button
+    global undoPoints
+    global undoObject
     processEvents()
     checkOffsets() #ensure offset values are registered
 
@@ -1441,7 +1565,8 @@ def moveSelected(newVector = None):
             allPoints[selPointIndex][ii] = newVector[ii]
         allPoints[selPointIndex][2] = float(import_z_offset) #user must manually set z offset to something other than 0
 
-
+    undoPoints = obj.Object.Points
+    undoObject = obj.Object
     obj.Object.Points = allPoints
     App.ActiveDocument.recompute()
 
