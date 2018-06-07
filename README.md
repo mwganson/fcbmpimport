@@ -276,7 +276,7 @@ There still remains some additional cleanup work to be done on this DWire051 obj
 
 New for version 2018.05.26, there is now a right-click context menu associated with the Select button in the Wire Point Editing Tools section.  
 
-Context menu options include:Create a new DWire object from the selected object, Reorder Points, Reverse Points, and Make Arc from 3 selected points.  
+Context menu options include:Create a new DWire object from the selected object, Reorder Points, Reverse Points, Make Arc from 3 selected points, and Undo.  
 
 Since the Wire Point Editing Tools only work with DWire objects, some objects need to be converted to DWire objects before these functions will work with them.  New object will have makeFace = False (unless original had makeFace set to true --sometimes) and closed = False, so you might need to set those properties to True in the Combo Box Data tab in FreeCAD.  Circles and Arcs are discretized by default to have 50 vertices (changeable during operation).  If you would prefer a number other than 50, you can edit the defaults.  See the documentation for the <a href='#Defaults Button'>Defaults Button</a> for more details on macro defaults.
 
@@ -284,7 +284,9 @@ The Reorder Points option will set the selected point to Vertex1.  Can be useful
 
 The Reverse Points option will reverse the selected points.  This can be used to uncross after a shift+insert operation when the wrong points are hooked up to the points inserted out of the cut buffer.
 
-Make Arc from 3 selected points will create an arc along the 3 selected points (must be on the same DWire object).  If the start and end points of the arc are not what you wanted, just do it again, but this time reverse the order in which you select the points.  First point selected should be starting point for arc, 2nd selected is a mid point to use as a reference, and the 3rd point selected is the end point of the arc.
+Make Arc from 3 selected points will create an arc along the 3 selected points (must be on the same DWire object).  If the start and end points of the arc are not what you wanted, just do it again, but this time reverse the order in which you select the points.  First point selected should be starting point for arc, 2nd selected is a mid point to use as a reference, and the 3rd point selected is the end point of the arc.  As of version 2018.06.07 the macro automatically replaces the span of vertices used to create the arc with the arc.
+
+Undo will (usually -- save your work and save often) undo the previous wire point editing operation.
 
 <h4 id='Cut Button'>Cut Button</h4>
 
