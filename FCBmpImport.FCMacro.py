@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.07" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.08" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -501,7 +501,9 @@ SEPARATOR = locale.localeconv()['decimal_point']
 SEPARATOR_STANDIN = 'p'
 DEGREES_INDICATOR = 'd'
 RADIANS_INDICATOR = 'r'
-DISCRETIZE_NUMBER = 50 #number of discrete points to use when creating DWire from selected Circle or Arc object
+DISCRETIZE_NUMBER = 50 #number of discrete points to use when creating DWire from curve (unless AUTO_DISCRETIZE_COUNT = True)
+AUTO_DISCRETIZE_COUNT = True #uses length (in mm) of edge / AUTO_DISCRETIZE_POINTS_PER_MM as DISCRETIZE_NUMBER suggestion
+AUTO_DISCRETIZE_POINTS_PER_MM = 2
 
 
 #some globals
@@ -1025,7 +1027,11 @@ def makeDWire(): #make a DWire object based on the selected object
                         makeDWire()
                         madeFace = None
                         return
-                    num, okPressed = QtGui.QInputDialog.getInteger(MainWindow, "Discretize Number","Vertices for "+objectName+":",DISCRETIZE_NUMBER, 0, 100000, 10)
+                    if AUTO_DISCRETIZE_COUNT == True:
+                        discretePoints = int(obj.Object.Shape.Length) / AUTO_DISCRETIZE_POINTS_PER_MM
+                    else:
+                        discretePoints = DISCRETIZE_NUMBER
+                    num, okPressed = QtGui.QInputDialog.getInteger(MainWindow, "Discretize Number","Vertices for "+objectName+":",discretePoints, 2, 100000, 10)
                     if not okPressed:
                         return False #tells makeArc user is canceling
                     w = shape.discretize(Number=num)
