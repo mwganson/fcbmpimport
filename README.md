@@ -307,6 +307,8 @@ The Reverse Points option will reverse the selected points.  This can be used to
 
 Make Arc from 3 selected points will create an arc along the 3 selected points (must be on the same DWire object).  If the start and end points of the arc are not what you wanted, just do it again, but this time reverse the order in which you select the points.  First point selected should be starting point for arc, 2nd selected is a mid point to use as a reference, and the 3rd point selected is the end point of the arc.  As of version 2018.06.07 the macro automatically replaces the span of vertices used to create the arc with the arc.
 
+<img src="using_make_arc.png" alt="Using Make Arc">
+
 <h6 id='Make Line, Replace Existing'>Make Line, Replace Existing</h6>
 
 Make Line, Replace Existing is similar to Make Arc, only it creates a multiline along the selected points and replaces the existing structure.  As with Make Arc, you have the opportunity to cancel the operation if it doesn't look right.  You can also undo if you're not happy with the results using the Select context menu -> Undo operation.  Substantially the same thing can be accomplished with selecting points and removing them via the Cut operation, but this is more intuitive and you don't have to select as many points.
