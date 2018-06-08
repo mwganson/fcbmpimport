@@ -30,6 +30,9 @@
   <li><a href='#Wire Point Editing Tools'>Wire Point Editing Tools</a></li>
   <ul>
     <li><a href='#Select Button'>Select Button</a></li>
+    <ul>
+      <li><a href='#Select Button Context Menu'>Select Button Context Menu</a></li>
+    </ul>
     <li><a href='#Cut Button'>Cut Button</a></li>
     <li><a href='#Move Button'>Move Button</a></li>
     <li><a href='#Insert Button'>Insert Button</a></li>
@@ -275,6 +278,8 @@ In the above screenshot we have the butterfly image that has been imported as DW
 There still remains some additional cleanup work to be done on this DWire051 object, but the edges are now much smoother and less pixelated than they were.
 
 New for version 2018.05.26, there is now a right-click context menu associated with the Select button in the Wire Point Editing Tools section.  
+
+<h5 id='Select Button Context Menu'>Select Button Context Menu</h5>
 
 Context menu options include:Create a new DWire object from the selected object, Reorder Points, Reverse Points, Make Arc from 3 selected points, "Make Line, Replace Existing", and Undo.  
 
