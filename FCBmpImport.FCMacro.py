@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.08" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.08b" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -76,52 +76,92 @@ class Ui_MainWindow(object):
         MainWindow.resize(636, 512)
         font = QtGui.QFont()
         font.setFamily("Helvetica")
-        font.setPointSize(10)
+        font.setPointSize(FONT_POINT_SIZE)
         MainWindow.setFont(font)
         MainWindow.setDockNestingEnabled(True)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.imagePreviewLabel = QtGui.QLabel(self.centralwidget)
         self.imagePreviewLabel.setGeometry(QtCore.QRect(180, 0, 451, 20))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.imagePreviewLabel.setFont(font)
         self.imagePreviewLabel.setObjectName("imagePreviewLabel")
         self.verticalGroupBox_2 = QtGui.QGroupBox(self.centralwidget)
         self.verticalGroupBox_2.setGeometry(QtCore.QRect(440, 340, 181, 151))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.verticalGroupBox_2.setFont(font)
         self.verticalGroupBox_2.setObjectName("verticalGroupBox_2")
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalGroupBox_2)
         self.verticalLayout.setObjectName("verticalLayout")
         self.previewButton = QtGui.QPushButton(self.verticalGroupBox_2)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.previewButton.setFont(font)
         self.previewButton.setObjectName("previewButton")
         self.verticalLayout.addWidget(self.previewButton)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.importAsShapeButton = QtGui.QPushButton(self.verticalGroupBox_2)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.importAsShapeButton.setFont(font)
         self.importAsShapeButton.setFlat(False)
         self.importAsShapeButton.setObjectName("importAsShapeButton")
         self.horizontalLayout_5.addWidget(self.importAsShapeButton)
         self.importAsMeshButton = QtGui.QPushButton(self.verticalGroupBox_2)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.importAsMeshButton.setFont(font)
         self.importAsMeshButton.setObjectName("importAsMeshButton")
         self.horizontalLayout_5.addWidget(self.importAsMeshButton)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.importAsSolidButton = QtGui.QPushButton(self.verticalGroupBox_2)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.importAsSolidButton.setFont(font)
         self.importAsSolidButton.setObjectName("importAsSolidButton")
         self.horizontalLayout_4.addWidget(self.importAsSolidButton)
         self.importAsSketchButton = QtGui.QPushButton(self.verticalGroupBox_2)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.importAsSketchButton.setFont(font)
         self.importAsSketchButton.setObjectName("importAsSketchButton")
         self.horizontalLayout_4.addWidget(self.importAsSketchButton)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.importAsFaceButton = QtGui.QPushButton(self.verticalGroupBox_2)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.importAsFaceButton.setFont(font)
         self.importAsFaceButton.setObjectName("importAsFaceButton")
         self.horizontalLayout_2.addWidget(self.importAsFaceButton)
         self.importAsWireButton = QtGui.QPushButton(self.verticalGroupBox_2)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.importAsWireButton.setFont(font)
         self.importAsWireButton.setObjectName("importAsWireButton")
         self.horizontalLayout_2.addWidget(self.importAsWireButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.offsetsGroupBox = QtGui.QGroupBox(self.centralwidget)
         self.offsetsGroupBox.setGeometry(QtCore.QRect(10, 349, 391, 141))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.offsetsGroupBox.setFont(font)
         self.offsetsGroupBox.setTitle("")
         self.offsetsGroupBox.setObjectName("offsetsGroupBox")
         self.gridLayout = QtGui.QGridLayout(self.offsetsGroupBox)
@@ -131,15 +171,31 @@ class Ui_MainWindow(object):
         self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.scaleLabel = QtGui.QLabel(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.scaleLabel.setFont(font)
         self.scaleLabel.setObjectName("scaleLabel")
         self.verticalLayout_3.addWidget(self.scaleLabel)
         self.xOffsetLabel = QtGui.QLabel(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.xOffsetLabel.setFont(font)
         self.xOffsetLabel.setObjectName("xOffsetLabel")
         self.verticalLayout_3.addWidget(self.xOffsetLabel)
         self.yOffsetLabel = QtGui.QLabel(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.yOffsetLabel.setFont(font)
         self.yOffsetLabel.setObjectName("yOffsetLabel")
         self.verticalLayout_3.addWidget(self.yOffsetLabel)
         self.zOffsetLabel = QtGui.QLabel(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.zOffsetLabel.setFont(font)
         self.zOffsetLabel.setObjectName("zOffsetLabel")
         self.verticalLayout_3.addWidget(self.zOffsetLabel)
         self.horizontalLayout.addLayout(self.verticalLayout_3)
@@ -147,16 +203,32 @@ class Ui_MainWindow(object):
         self.verticalLayout_4 = QtGui.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.scaleEdit = QtGui.QLineEdit(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.scaleEdit.setFont(font)
         self.scaleEdit.setObjectName("scaleEdit")
         self.verticalLayout_4.addWidget(self.scaleEdit)
         self.xOffsetEdit = QtGui.QLineEdit(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.xOffsetEdit.setFont(font)
         self.xOffsetEdit.setObjectName("xOffsetEdit")
         self.verticalLayout_4.addWidget(self.xOffsetEdit)
         self.yOffsetEdit = QtGui.QLineEdit(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.yOffsetEdit.setFont(font)
         self.yOffsetEdit.setToolTip("")
         self.yOffsetEdit.setObjectName("yOffsetEdit")
         self.verticalLayout_4.addWidget(self.yOffsetEdit)
         self.zOffsetEdit = QtGui.QLineEdit(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.zOffsetEdit.setFont(font)
         self.zOffsetEdit.setToolTip("")
         self.zOffsetEdit.setObjectName("zOffsetEdit")
         self.verticalLayout_4.addWidget(self.zOffsetEdit)
@@ -164,16 +236,32 @@ class Ui_MainWindow(object):
         self.verticalLayout_8 = QtGui.QVBoxLayout()
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.baseNameEdit = QtGui.QLineEdit(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.baseNameEdit.setFont(font)
         self.baseNameEdit.setObjectName("baseNameEdit")
         self.verticalLayout_8.addWidget(self.baseNameEdit)
         self.shapeHeightEdit = QtGui.QLineEdit(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.shapeHeightEdit.setFont(font)
         self.shapeHeightEdit.setObjectName("shapeHeightEdit")
         self.verticalLayout_8.addWidget(self.shapeHeightEdit)
         self.recomputeIntervalEdit = QtGui.QLineEdit(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.recomputeIntervalEdit.setFont(font)
         self.recomputeIntervalEdit.setToolTip("")
         self.recomputeIntervalEdit.setObjectName("recomputeIntervalEdit")
         self.verticalLayout_8.addWidget(self.recomputeIntervalEdit)
         self.cheatFactorEdit = QtGui.QLineEdit(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.cheatFactorEdit.setFont(font)
         self.cheatFactorEdit.setObjectName("cheatFactorEdit")
         self.verticalLayout_8.addWidget(self.cheatFactorEdit)
         self.gridLayout.addLayout(self.verticalLayout_8, 0, 4, 1, 1)
@@ -182,108 +270,190 @@ class Ui_MainWindow(object):
         self.verticalLayout_7 = QtGui.QVBoxLayout()
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.baseNameLabel = QtGui.QLabel(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.baseNameLabel.setFont(font)
         self.baseNameLabel.setObjectName("baseNameLabel")
         self.verticalLayout_7.addWidget(self.baseNameLabel)
         self.shapeHeightLabel = QtGui.QLabel(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.shapeHeightLabel.setFont(font)
         self.shapeHeightLabel.setObjectName("shapeHeightLabel")
         self.verticalLayout_7.addWidget(self.shapeHeightLabel)
         self.recomputeIntervalLabel = QtGui.QLabel(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.recomputeIntervalLabel.setFont(font)
         self.recomputeIntervalLabel.setObjectName("recomputeIntervalLabel")
         self.verticalLayout_7.addWidget(self.recomputeIntervalLabel)
         self.cheatFactorLabel = QtGui.QLabel(self.offsetsGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.cheatFactorLabel.setFont(font)
         self.cheatFactorLabel.setObjectName("cheatFactorLabel")
         self.verticalLayout_7.addWidget(self.cheatFactorLabel)
         self.gridLayout.addLayout(self.verticalLayout_7, 0, 3, 1, 1)
         self.progressGroupBox = QtGui.QGroupBox(self.centralwidget)
         self.progressGroupBox.setGeometry(QtCore.QRect(10, 50, 161, 101))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.progressGroupBox.setFont(font)
         self.progressGroupBox.setTitle("")
         self.progressGroupBox.setObjectName("progressGroupBox")
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.progressGroupBox)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.progressLabel = QtGui.QLabel(self.progressGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.progressLabel.setFont(font)
         self.progressLabel.setObjectName("progressLabel")
         self.verticalLayout_6.addWidget(self.progressLabel)
         self.progressBar = QtGui.QProgressBar(self.progressGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.progressBar.setFont(font)
         self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
         self.verticalLayout_6.addWidget(self.progressBar)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.abortButton = QtGui.QPushButton(self.progressGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.abortButton.setFont(font)
         self.abortButton.setObjectName("abortButton")
         self.horizontalLayout_3.addWidget(self.abortButton)
         self.exitButton = QtGui.QPushButton(self.progressGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.exitButton.setFont(font)
         self.exitButton.setObjectName("exitButton")
         self.horizontalLayout_3.addWidget(self.exitButton)
         self.verticalLayout_6.addLayout(self.horizontalLayout_3)
         self.staysOnTopCheckBox = QtGui.QCheckBox(self.centralwidget)
         self.staysOnTopCheckBox.setGeometry(QtCore.QRect(10, 10, 151, 17))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.staysOnTopCheckBox.setFont(font)
         self.staysOnTopCheckBox.setObjectName("staysOnTopCheckBox")
         self.wireEditGroupBox = QtGui.QGroupBox(self.centralwidget)
         self.wireEditGroupBox.setGeometry(QtCore.QRect(10, 179, 160, 101))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.wireEditGroupBox.setFont(font)
         self.wireEditGroupBox.setObjectName("wireEditGroupBox")
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.wireEditGroupBox)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.horizontalLayout_7 = QtGui.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.selectOddPointsButton = QtGui.QPushButton(self.wireEditGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.selectOddPointsButton.setFont(font)
         self.selectOddPointsButton.setObjectName("selectOddPointsButton")
         self.horizontalLayout_7.addWidget(self.selectOddPointsButton)
         self.cutSelectedButton = QtGui.QPushButton(self.wireEditGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.cutSelectedButton.setFont(font)
         self.cutSelectedButton.setObjectName("cutSelectedButton")
         self.horizontalLayout_7.addWidget(self.cutSelectedButton)
         self.verticalLayout_9.addLayout(self.horizontalLayout_7)
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.moveButton = QtGui.QPushButton(self.wireEditGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.moveButton.setFont(font)
         self.moveButton.setObjectName("moveButton")
         self.horizontalLayout_8.addWidget(self.moveButton)
         self.insertButton = QtGui.QPushButton(self.wireEditGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.insertButton.setFont(font)
         self.insertButton.setObjectName("insertButton")
         self.horizontalLayout_8.addWidget(self.insertButton)
         self.verticalLayout_9.addLayout(self.horizontalLayout_8)
         self.blackForegroundCheckbox = QtGui.QCheckBox(self.centralwidget)
         self.blackForegroundCheckbox.setGeometry(QtCore.QRect(10, 30, 140, 21))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.blackForegroundCheckbox.setFont(font)
         self.blackForegroundCheckbox.setObjectName("blackForegroundCheckbox")
         self.selectFacesButton = QtGui.QPushButton(self.centralwidget)
         self.selectFacesButton.setGeometry(QtCore.QRect(10, 150, 161, 23))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.selectFacesButton.setFont(font)
         self.selectFacesButton.setObjectName("selectFacesButton")
         self.graphicsView = QtGui.QGraphicsView(self.centralwidget)
         self.graphicsView.setGeometry(QtCore.QRect(190, 20, 431, 321))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.graphicsView.setFont(font)
         self.graphicsView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.graphicsView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.graphicsView.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
         self.graphicsView.setObjectName("graphicsView")
         self.horizontalGroupBox = QtGui.QGroupBox(self.centralwidget)
         self.horizontalGroupBox.setGeometry(QtCore.QRect(10, 280, 171, 61))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.horizontalGroupBox.setFont(font)
         self.horizontalGroupBox.setObjectName("horizontalGroupBox")
         self.horizontalLayout_6 = QtGui.QHBoxLayout(self.horizontalGroupBox)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.zeroButton = QtGui.QPushButton(self.horizontalGroupBox)
         font = QtGui.QFont()
-        font.setFamily("Helvetica")
-        font.setPointSize(9)
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
         self.zeroButton.setFont(font)
         self.zeroButton.setObjectName("zeroButton")
         self.horizontalLayout_6.addWidget(self.zeroButton)
         self.defaultsButton = QtGui.QPushButton(self.horizontalGroupBox)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.defaultsButton.setFont(font)
         self.defaultsButton.setObjectName("defaultsButton")
         self.horizontalLayout_6.addWidget(self.defaultsButton)
         self.offsetsGroupBoxLabel = QtGui.QLabel(self.centralwidget)
         self.offsetsGroupBoxLabel.setGeometry(QtCore.QRect(20, 340, 391, 16))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(FONT_POINT_SIZE)
+        self.offsetsGroupBoxLabel.setFont(font)
         self.offsetsGroupBoxLabel.setObjectName("offsetsGroupBoxLabel")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
+        #self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.exitButton, QtCore.SIGNAL("clicked()"), MainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        if not hasattr(QtGui.QApplication,'UnicodeUTF8'):
-            return
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.imagePreviewLabel.setText(QtGui.QApplication.translate("MainWindow", "Image Preview:", None, QtGui.QApplication.UnicodeUTF8))
         self.verticalGroupBox_2.setTitle(QtGui.QApplication.translate("MainWindow", "Import Buttons", None, QtGui.QApplication.UnicodeUTF8))
@@ -315,9 +485,11 @@ class Ui_MainWindow(object):
         self.blackForegroundCheckbox.setText(QtGui.QApplication.translate("MainWindow", "Black Foreground", None, QtGui.QApplication.UnicodeUTF8))
         self.selectFacesButton.setText(QtGui.QApplication.translate("MainWindow", "Select Objects", None, QtGui.QApplication.UnicodeUTF8))
         self.horizontalGroupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Defaults", None, QtGui.QApplication.UnicodeUTF8))
-        self.zeroButton.setText(QtGui.QApplication.translate("MainWindow", "Zero Offsets", None, QtGui.QApplication.UnicodeUTF8))
+        self.zeroButton.setText(QtGui.QApplication.translate("MainWindow", "Zero XYZ", None, QtGui.QApplication.UnicodeUTF8))
         self.defaultsButton.setText(QtGui.QApplication.translate("MainWindow", "Defaults", None, QtGui.QApplication.UnicodeUTF8))
         self.offsetsGroupBoxLabel.setText(QtGui.QApplication.translate("MainWindow", "various options", None, QtGui.QApplication.UnicodeUTF8))
+
+
 
 
 #end QTDesigner produced code
@@ -383,6 +555,8 @@ makeArcActionText=u'Make Arc from 3 points'
 reorderPointsActionText = u'Reorder Points'
 reversePointsActionText = u'Reverse (Uncross) Points'
 globalUndoActionText = u'Undo'
+shiftSelectActionText = u'Shift-Select (all points)'
+ctrlSelectActionText = u'Ctrl-Select (smart select)'
 previewButtonTip = u'Loads an image for preview in the preview panel, displays red and green cross to indicate origin (0,0) position'
 graphicsExceptionText = u'\nGraphics exception displaying preview image.\n'
 invalidFileText = u'File must be a monochrome BMP (black and white, monochrome, 1 bit-per-pixel only).'
@@ -453,7 +627,10 @@ y**(1/3) (cube root of whatever value is currently in the y offset edit box)\n\
 10*phi, alternatively: 10*golden, alternatively 10*golden_ratio (10 * 1.618...)\n\
 e**pi (e to the power of pi = 23.14...)\n\
 '
-
+makeDWireGoText = u'Looks Good, keep going.'
+makeDWireStopText = u'No, something is not right.'
+makeDWireTitleText = u'Continue?'
+makeDWireMessageText = u'Continue replacing existing structure with this line?'
 
 importAsSketchButtonTip = u'Import image as Sketch made up exclusively of unconstrained line segments.'
 cantImportText = u'Sorry, can\'t import as this type if Cheat Factor is set to 0'
@@ -467,6 +644,9 @@ selectOddPointsButtonText=u'Select'
 selectOddPointsButtonTipText = u'Select points on a DWire object, CLICK = every other point, SHIFT+CLICK = every point, CTRL+CLICK = smart select'
 makeDWireActionText = u'Make DWire from Selected Object'
 makeLineActionText = u'Make Line, Replace Existing'
+shiftMoveActionText=u'Shift-Move (opposite direction)'
+shiftInsertActionText=u'Shift-Insert (insert from cut buffer)'
+ctrlMoveActionText=u'Ctrl-Move (click destination)'
 deleteButtonText = u'Cut'
 deleteButtonTipText = u'Cuts previously selected points from DWire object (SHIFT+CLICK to undo last cut operation)'
 insertButtonText = u'Insert'
@@ -503,7 +683,8 @@ DEGREES_INDICATOR = 'd'
 RADIANS_INDICATOR = 'r'
 DISCRETIZE_NUMBER = 50 #number of discrete points to use when creating DWire from curve (unless AUTO_DISCRETIZE_COUNT = True)
 AUTO_DISCRETIZE_COUNT = True #uses length (in mm) of edge / AUTO_DISCRETIZE_POINTS_PER_MM as DISCRETIZE_NUMBER suggestion
-AUTO_DISCRETIZE_POINTS_PER_MM = 2
+AUTO_DISCRETIZE_POINTS_PER_MM = 0.5
+FONT_POINT_SIZE=10
 
 
 #some globals
@@ -829,8 +1010,10 @@ def globalUndo():
         undoPoints = []
         App.ActiveDocument.recompute()
 
+def doShiftInsert():
+    insertPoint(bShiftKey=True)
 
-def insertPoint(): # add new point on wire in between the 2 selected points
+def insertPoint(bShiftKey=False): # add new point on wire in between the 2 selected points
                 # or insert previously cut points if SHIFT+CLICK
     global undoPoints
     global undoObject
@@ -874,7 +1057,7 @@ def insertPoint(): # add new point on wire in between the 2 selected points
     startPoint = allPoints[start]
     endPoint = allPoints[end]
 
-    if modifiers == QtCore.Qt.ShiftModifier: #insert undoPoints if shift-clicked
+    if modifiers == QtCore.Qt.ShiftModifier or bShiftKey: #insert undoPoints if shift-clicked
         if len(undoPoints)==0:
             return
         else:
@@ -903,7 +1086,7 @@ def insertPoint(): # add new point on wire in between the 2 selected points
     undoObject = obj.Object
     obj.Object.Points = allPoints
     App.ActiveDocument.recompute()
-    if modifiers != QtCore.Qt.ShiftModifier: 
+    if modifiers != QtCore.Qt.ShiftModifier and not bShiftKey: 
         selectOddPoints(idx)
 
 
@@ -928,20 +1111,9 @@ def cutSelected():
         return
     allPoints = obj.Object.Points #all the points in the selected wire
     modifiers = QtGui.QApplication.keyboardModifiers()
-    if modifiers == QtCore.Qt.ShiftModifier: #undo deleted points if shift-clicked
-        if len(undoPoints)!=0:
-            obj.Object.Points = undoPoints
-            App.ActiveDocument.recompute()
-            undoPoints = []
-            undoObject = None
-
+    if modifiers == QtCore.Qt.ShiftModifier: #undo cut points if shift-clicked
+        globalUndo()
         return
-    else:
-        #setup the undo operation
-        undoPoints = []
-        undoObject = obj.Object
-        for p in obj.Object.Points:
-            undoPoints.append(p)
 
 
     toBeRemoved=[]
@@ -1028,10 +1200,10 @@ def makeDWire(): #make a DWire object based on the selected object
                         madeFace = None
                         return
                     if AUTO_DISCRETIZE_COUNT == True:
-                        discretePoints = int(obj.Object.Shape.Length) / AUTO_DISCRETIZE_POINTS_PER_MM
+                        discretePoints = int(obj.Object.Shape.Length * AUTO_DISCRETIZE_POINTS_PER_MM)
                     else:
                         discretePoints = DISCRETIZE_NUMBER
-                    num, okPressed = QtGui.QInputDialog.getInteger(MainWindow, "Discretize Number","Vertices for "+objectName+":",discretePoints, 2, 100000, 10)
+                    num, okPressed = QtGui.QInputDialog.getInt(MainWindow, "Discretize Number","Vertices for "+objectName+":",discretePoints, 2, 100000, 10)
                     if not okPressed:
                         return False #tells makeArc user is canceling
                     w = shape.discretize(Number=num)
@@ -1134,6 +1306,28 @@ def select_context_menu(point):
     # create context menu
     selectPopupMenu = QtGui.QMenu(MainWindow)
 
+    shiftSelectAction = QtGui.QAction(shiftSelectActionText, MainWindow)
+    shiftSelectAction.triggered.connect(doShiftSelect)
+    selectPopupMenu.addAction(shiftSelectAction)
+
+    ctrlSelectAction = QtGui.QAction(ctrlSelectActionText, MainWindow)
+    ctrlSelectAction.triggered.connect(doCtrlSelect)
+    selectPopupMenu.addAction(ctrlSelectAction)
+
+    ctrlMoveAction = QtGui.QAction(ctrlMoveActionText, MainWindow)
+    ctrlMoveAction.triggered.connect(doCtrlMove)
+    selectPopupMenu.addAction(ctrlMoveAction)
+
+    shiftMoveAction = QtGui.QAction(shiftMoveActionText, MainWindow)
+    shiftMoveAction.triggered.connect(doShiftMove)
+    selectPopupMenu.addAction(shiftMoveAction)
+
+    shiftInsertAction = QtGui.QAction(shiftInsertActionText, MainWindow)
+    shiftInsertAction.triggered.connect(doShiftInsert)
+    selectPopupMenu.addAction(shiftInsertAction)
+
+    selectPopupMenu.addSeparator()
+
     makeDWireAction = QtGui.QAction(makeDWireActionText, MainWindow)
     makeDWireAction.triggered.connect(makeDWire)
     selectPopupMenu.addAction(makeDWireAction)
@@ -1153,6 +1347,8 @@ def select_context_menu(point):
     makeLineAction = QtGui.QAction(makeLineActionText,MainWindow)
     makeLineAction.triggered.connect(makeLine)
     selectPopupMenu.addAction(makeLineAction)
+
+    selectPopupMenu.addSeparator()
 
     globalUndoAction = QtGui.QAction(globalUndoActionText,MainWindow)
     globalUndoAction.triggered.connect(globalUndo)
@@ -1292,9 +1488,10 @@ def makeLine(boolUndo = False):
     dwire = App.ActiveDocument.ActiveObject
     dwireName = dwire.Label
     dwPoints = dwire.Points
-    items = ("Looks good, keep going.", "No, something is not right.")
-    item, okPressed = QtGui.QInputDialog.getItem(MainWindow, "Continue?", "Continue replacing existing structure with this line?", items, 0, False)
-    if not okPressed or item== "No, something is not right.": #user canceled
+
+    items = (makeDWireGoText, makeDWireStopText)
+    item, okPressed = QtGui.QInputDialog.getItem(MainWindow, makeDWireTitleText, makeDWireMessageText, items, 0, False)
+    if not okPressed or item== makeDWireStopText: #user canceled
         App.ActiveDocument.removeObject(partWireName)
         App.ActiveDocument.removeObject(dwireName)
         return
@@ -1460,23 +1657,27 @@ def makeArc(boolUndo = False):
     App.ActiveDocument.recompute()
 
 
+def doShiftSelect(): #reached from select context menu
+    selectOddPoints(bShiftKey=True)
 
+def doCtrlSelect(): #reached from select context menu
+    selectOddPoints(bCtrlKey=True)
 
-def selectOddPoints(idx=None,selectThemAll=False): #user selects 2 points on the same wire, we select the odd points in between
+def selectOddPoints(idx=None,bShiftKey=False,bCtrlKey=False): #user selects 2 points on the same wire, we select the odd points in between
                                 #or if shift+click and 2 points we select all points in between or..
                         #alternatively, user selects one point and we select all odd points (or even if the user selected even numbered point) or...
                         #user selects one point and shift+clicks and we select all points on the wire
 
-   #selectThemAll is True when called internally by another method, such as makeArc()
+   #bShiftKey is True when called internally by another method, such as makeArc()
 
 
     mod = None
     modifiers = QtGui.QApplication.keyboardModifiers()
     selectAll = False
     smartSelect = False
-    if modifiers == QtCore.Qt.ShiftModifier or selectThemAll: #select all points if shift-clicked
+    if modifiers == QtCore.Qt.ShiftModifier or bShiftKey: #select all points if shift-clicked
         selectAll = True
-    elif modifiers == QtCore.Qt.ControlModifier: #ctrl-clicked, so do smart select
+    elif modifiers == QtCore.Qt.ControlModifier or bCtrlKey: #ctrl-clicked, so do smart select
         smartSelect = True
         
     selectionObject = Gui.Selection.getSelectionEx()
@@ -1599,8 +1800,13 @@ def fixDirection(vec1,vec2):
             vector2[jj]=1.0
     return vector2 
 
+def doCtrlMove():
+    moveSelected(bCtrlKey=True)
 
-def moveSelected(newVector = None):
+def doShiftMove():
+    moveSelected(bShiftKey=True)
+
+def moveSelected(newVector = None, bCtrlKey=False,bShiftKey=False):
     global mouseEventCallBack
     global selPointIndex #point selected when Ctrl-clicked move button
     global undoPoints
@@ -1619,7 +1825,7 @@ def moveSelected(newVector = None):
 
     modifiers = QtGui.QApplication.keyboardModifiers()
     moveOpposite = False
-    if modifiers == QtCore.Qt.ShiftModifier: #move opposite direction if shift-clicked
+    if modifiers == QtCore.Qt.ShiftModifier or bShiftKey: #move opposite direction if shift-clicked
         moveOpposite = True
 
     selectionObject = Gui.Selection.getSelectionEx()
@@ -1648,7 +1854,7 @@ def moveSelected(newVector = None):
         for ii in range(len(picked)-1,-1,-1):
             if allPoints[jj].x == picked[ii].X and allPoints[jj].y == picked[ii].Y and allPoints[jj].z == picked[ii].Z:
                 toBeMoved.append(jj)
-    if modifiers == QtCore.Qt.ControlModifier: #if user ctrl-clicks move we setup observer and return, on click the observer calls moveSelected again with newVector set
+    if modifiers == QtCore.Qt.ControlModifier or bCtrlKey: #if user ctrl-clicks move we setup observer and return, on click the observer calls moveSelected again with newVector set
         v=Gui.activeDocument().activeView()
         o = ViewObserver(v)
         mouseEventCallBack = v.addEventCallback("SoMouseButtonEvent",o.logPosition)

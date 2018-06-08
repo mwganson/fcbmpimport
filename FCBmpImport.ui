@@ -32,6 +32,12 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Image Preview:</string>
     </property>
@@ -45,12 +51,24 @@
       <height>151</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string>Import Buttons</string>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QPushButton" name="previewButton">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Preview Image</string>
        </property>
@@ -60,6 +78,12 @@
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
         <widget class="QPushButton" name="importAsShapeButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Extruded</string>
          </property>
@@ -70,6 +94,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="importAsMeshButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Mesh</string>
          </property>
@@ -81,6 +111,12 @@
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QPushButton" name="importAsSolidButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Solid</string>
          </property>
@@ -88,6 +124,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="importAsSketchButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Sketch</string>
          </property>
@@ -99,6 +141,12 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QPushButton" name="importAsFaceButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Face</string>
          </property>
@@ -106,6 +154,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="importAsWireButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Wire</string>
          </property>
@@ -124,6 +178,12 @@
       <height>141</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string/>
     </property>
@@ -134,6 +194,12 @@
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
           <widget class="QLabel" name="scaleLabel">
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Scale Factor</string>
            </property>
@@ -141,6 +207,12 @@
          </item>
          <item>
           <widget class="QLabel" name="xOffsetLabel">
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>X Offset</string>
            </property>
@@ -148,6 +220,12 @@
          </item>
          <item>
           <widget class="QLabel" name="yOffsetLabel">
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Y Offset</string>
            </property>
@@ -155,6 +233,12 @@
          </item>
          <item>
           <widget class="QLabel" name="zOffsetLabel">
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Z Offset</string>
            </property>
@@ -167,13 +251,33 @@
      <item row="0" column="1">
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QLineEdit" name="scaleEdit"/>
+        <widget class="QLineEdit" name="scaleEdit">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="xOffsetEdit"/>
+        <widget class="QLineEdit" name="xOffsetEdit">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLineEdit" name="yOffsetEdit">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string extracomment="Shift origin of image on Y axis"/>
          </property>
@@ -181,6 +285,12 @@
        </item>
        <item>
         <widget class="QLineEdit" name="zOffsetEdit">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string extracomment="Shift origin of image on Z axis"/>
          </property>
@@ -192,28 +302,60 @@
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
         <widget class="QLineEdit" name="baseNameEdit">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Imported</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="shapeHeightEdit"/>
+        <widget class="QLineEdit" name="shapeHeightEdit">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLineEdit" name="recomputeIntervalEdit">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string extracomment="Lower is more responsive, but higher is better overall performance."/>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="cheatFactorEdit"/>
+        <widget class="QLineEdit" name="cheatFactorEdit">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
      <item row="0" column="2">
       <spacer name="verticalSpacer_2">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -229,6 +371,12 @@
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
         <widget class="QLabel" name="baseNameLabel">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Base Name</string>
          </property>
@@ -236,6 +384,12 @@
        </item>
        <item>
         <widget class="QLabel" name="shapeHeightLabel">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Shape Height</string>
          </property>
@@ -243,6 +397,12 @@
        </item>
        <item>
         <widget class="QLabel" name="recomputeIntervalLabel">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Recompute Interval    </string>
          </property>
@@ -250,6 +410,12 @@
        </item>
        <item>
         <widget class="QLabel" name="cheatFactorLabel">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Cheat Factor</string>
          </property>
@@ -268,12 +434,24 @@
       <height>101</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string/>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_6">
      <item>
       <widget class="QLabel" name="progressLabel">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Progress Bar</string>
        </property>
@@ -281,6 +459,12 @@
      </item>
      <item>
       <widget class="QProgressBar" name="progressBar">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="value">
         <number>0</number>
        </property>
@@ -290,6 +474,12 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QPushButton" name="abortButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Abort</string>
          </property>
@@ -297,6 +487,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="exitButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Exit</string>
          </property>
@@ -315,6 +511,12 @@
       <height>17</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Window Stays on Top</string>
     </property>
@@ -328,6 +530,12 @@
       <height>101</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string>Wire Editing</string>
     </property>
@@ -336,6 +544,12 @@
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
         <widget class="QPushButton" name="selectOddPointsButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Select</string>
          </property>
@@ -343,6 +557,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="cutSelectedButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Cut</string>
          </property>
@@ -354,6 +574,12 @@
       <layout class="QHBoxLayout" name="horizontalLayout_8">
        <item>
         <widget class="QPushButton" name="moveButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Move</string>
          </property>
@@ -361,6 +587,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="insertButton">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Insert</string>
          </property>
@@ -379,6 +611,12 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Black Foreground</string>
     </property>
@@ -392,6 +630,12 @@
       <height>23</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Select Objects</string>
     </property>
@@ -404,6 +648,12 @@
       <width>431</width>
       <height>321</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -424,6 +674,12 @@
       <height>61</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string>Defaults</string>
     </property>
@@ -432,17 +688,23 @@
       <widget class="QPushButton" name="zeroButton">
        <property name="font">
         <font>
-         <family>Helvetica</family>
-         <pointsize>9</pointsize>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Zero Offsets</string>
+        <string>Zero XYZ</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="defaultsButton">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Defaults</string>
        </property>
@@ -458,6 +720,12 @@
       <width>391</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>various options</string>
