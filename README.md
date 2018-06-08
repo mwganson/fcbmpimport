@@ -32,6 +32,12 @@
     <li><a href='#Select Button'>Select Button</a></li>
     <ul>
       <li><a href='#Select Button Context Menu'>Select Button Context Menu</a></li>
+      <li><a href='#Make DWire from Selected Object'>Make DWire from Selected Object</a></li>
+      <li><a href='#Reorder Points'>Reorder Points</a></li>
+      <li><a href='#Reverse Points'>Reverse Points</a></li>
+      <li><a href='#Make Arc from 3 Selected Points'>Make Arc from 3 Selected Points</a></li>
+      <li><a href='#Make Line, Replace Existing'>Make Line, Replace Existing</a></li>
+      <li><a href='#Undo'>Undo</a></li>
     </ul>
     <li><a href='#Cut Button'>Cut Button</a></li>
     <li><a href='#Move Button'>Move Button</a></li>
@@ -281,17 +287,29 @@ New for version 2018.05.26, there is now a right-click context menu associated w
 
 <h5 id='Select Button Context Menu'>Select Button Context Menu</h5>
 
-Context menu options include:Create a new DWire object from the selected object, Reorder Points, Reverse Points, Make Arc from 3 selected points, "Make Line, Replace Existing", and Undo.  
+Context menu options include: Make DWire from Selected Object, Reorder Points, Reverse Points, Make Arc from 3 selected points, "Make Line, Replace Existing", and Undo.  
+
+<h6 id='Make DWire from Selected Object'>Make DWire from Selected Object</h6>
 
 Since the Wire Point Editing Tools only work with DWire objects, some objects need to be converted to DWire objects before these functions will work with them.  New object will have makeFace = False (unless original had makeFace set to true --sometimes) and closed = False, so you might need to set those properties to True in the Combo Box Data tab in FreeCAD.  Circles and Arcs are discretized by default to have 50 vertices (changeable during operation).  If you would prefer a number other than 50, you can edit the defaults.  See the documentation for the <a href='#Defaults Button'>Defaults Button</a> for more details on macro defaults.
 
+<h6 id='Reorder Points'>Reorder Points</h6>
+
 The Reorder Points option will set the selected point to Vertex1.  Can be useful when trying to merge 2 DWires using Shift+Insert operation.  Generally, you don't want vertex1 to be one of the insertion points.
+
+<h6 id='Reverse Points'>Reverse Points</h6>
 
 The Reverse Points option will reverse the selected points.  This can be used to uncross after a shift+insert operation when the wrong points are hooked up to the points inserted out of the cut buffer.
 
+<h6 id='Make Arc from 3 Selected Points'>Make Arc from 3 Selected Points</h6>
+
 Make Arc from 3 selected points will create an arc along the 3 selected points (must be on the same DWire object).  If the start and end points of the arc are not what you wanted, just do it again, but this time reverse the order in which you select the points.  First point selected should be starting point for arc, 2nd selected is a mid point to use as a reference, and the 3rd point selected is the end point of the arc.  As of version 2018.06.07 the macro automatically replaces the span of vertices used to create the arc with the arc.
 
+<h6 id='Make Line, Replace Existing'>Make Line, Replace Existing</h6>
+
 Make Line, Replace Existing is similar to Make Arc, only it creates a multiline along the selected points and replaces the existing structure.  As with Make Arc, you have the opportunity to cancel the operation if it doesn't look right.  You can also undo if you're not happy with the results using the Select context menu -> Undo operation.  Substantially the same thing can be accomplished with selecting points and removing them via the Cut operation, but this is more intuitive and you don't have to select as many points.
+
+<h6 id='Undo'>Undo</h6>
 
 Undo will (usually -- save your work and save often) undo the previous wire point editing operation.
 
