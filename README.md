@@ -32,12 +32,14 @@
     <li><a href='#Select Button'>Select Button</a></li>
     <ul>
       <li><a href='#Select Button Context Menu'>Select Button Context Menu</a></li>
+      <ul>
       <li><a href='#Make DWire from Selected Object'>Make DWire from Selected Object</a></li>
       <li><a href='#Reorder Points'>Reorder Points</a></li>
       <li><a href='#Reverse Points'>Reverse Points</a></li>
       <li><a href='#Make Arc from 3 Selected Points'>Make Arc from 3 Selected Points</a></li>
       <li><a href='#Make Line, Replace Existing'>Make Line, Replace Existing</a></li>
       <li><a href='#Undo'>Undo</a></li>
+        </u>
     </ul>
     <li><a href='#Cut Button'>Cut Button</a></li>
     <li><a href='#Move Button'>Move Button</a></li>
