@@ -684,7 +684,7 @@ RADIANS_INDICATOR = 'r'
 DISCRETIZE_NUMBER = 50 #number of discrete points to use when creating DWire from curve (unless AUTO_DISCRETIZE_COUNT = True)
 AUTO_DISCRETIZE_COUNT = True #uses length (in mm) of edge / AUTO_DISCRETIZE_POINTS_PER_MM as DISCRETIZE_NUMBER suggestion
 AUTO_DISCRETIZE_POINTS_PER_MM = 0.5
-FONT_POINT_SIZE=10
+FONT_POINT_SIZE=11
 
 
 #some globals
