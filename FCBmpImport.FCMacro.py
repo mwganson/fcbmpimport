@@ -38,8 +38,8 @@
 
 __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
-__url__ = "http://www.freecadweb.org/"
-__Wiki__ = "http://www.freecadweb.org/wiki/index.php"
+__url__ = "https://github.com/mwganson/fcbmpimport"
+__Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
 __date__ = "2018.06.07" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
@@ -466,6 +466,7 @@ moveButtonTipText=u'Move currently selected point by x,y,z offset, SHIFT+CLICK t
 selectOddPointsButtonText=u'Select'
 selectOddPointsButtonTipText = u'Select points on a DWire object, CLICK = every other point, SHIFT+CLICK = every point, CTRL+CLICK = smart select'
 makeDWireActionText = u'Make DWire from Selected Object'
+makeLineActionText = u'Make Line, Replace Existing'
 deleteButtonText = u'Cut'
 deleteButtonTipText = u'Cuts previously selected points from DWire object (SHIFT+CLICK to undo last cut operation)'
 insertButtonText = u'Insert'
@@ -1143,6 +1144,10 @@ def select_context_menu(point):
     makeArcAction.triggered.connect(makeArc)
     selectPopupMenu.addAction(makeArcAction)
 
+    makeLineAction = QtGui.QAction(makeLineActionText,MainWindow)
+    makeLineAction.triggered.connect(makeLine)
+    selectPopupMenu.addAction(makeLineAction)
+
     globalUndoAction = QtGui.QAction(globalUndoActionText,MainWindow)
     globalUndoAction.triggered.connect(globalUndo)
     selectPopupMenu.addAction(globalUndoAction)
@@ -1209,6 +1214,108 @@ def getCenter(ax,ay,az,bx,by,bz,cx,cy,cz):
     dy = -1.0*(dx - (ax+bx)/2.0)/aSlope +  (ay+by)/2.0
 
     return dx,dy,0
+
+def makeLine(boolUndo = False):
+#make a line (or multiple lines) to replace existing structure, similar to makeArc, but with a straight line instead of a curve
+    global undoPoints
+    global undoObject
+    modifiers = QtGui.QApplication.keyboardModifiers()
+    if modifiers == QtCore.Qt.ShiftModifier or boolUndo:
+        bUndo = True
+    else:
+        bUndo = False
+    selectionObject = Gui.Selection.getSelectionEx()
+    if selectionObject:
+        selObj = selectionObject[-1]
+    else:
+        msgDialog(selectOddPointsErrorMessage,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
+        return
+
+    subObjs = selObj.SubObjects
+    picked = selObj.SubObjects
+
+    if not bUndo and len(picked)<=1:
+        msgDialog(u'Select at least 2 points and try again.')
+        return
+
+    doc = Gui.activeDocument()
+    obj = doc.getObject(selObj.ObjectName)
+    if not hasattr(obj.Object,'Points'):
+        msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#object not compatible
+        return
+
+    if bUndo:
+        if len(undoPoints)==0:
+            msgDialog(u'Sorry, undo buffer is empty.')
+            return
+        obj.Object.Points = undoPoints
+        undoPoints = []
+        undoObject = None
+        App.ActiveDocument.recompute()
+        return
+
+    indices = []
+    allPoints = obj.Object.Points
+    undoPoints=obj.Object.Points
+    undoObject = obj.Object
+    for ii in range(0,len(allPoints)):
+        for p in picked:
+            if comparePoints(allPoints[ii],p.Point):
+                indices.append(ii)
+
+
+      
+    lowIdx = indices[0]
+    highIdx = indices[-1]
+    if highIdx < lowIdx:
+        tmp = highIdx
+        highIdx = lowIdx
+        lowIdx = tmp
+
+    edges=[]
+    for ii in range(0,len(picked)-1):
+        edges.append(Part.makeLine(picked[ii].Point,picked[ii+1].Point))
+
+    partWire = Part.Wire(edges)
+    Part.show(partWire)
+    App.ActiveDocument.recompute()
+    partWireName = App.ActiveDocument.ActiveObject.Label
+    Draft.select(App.ActiveDocument.ActiveObject)
+ 
+    makeDWire()
+    dwire = App.ActiveDocument.ActiveObject
+    dwireName = dwire.Label
+    dwPoints = dwire.Points
+    items = ("Looks good, keep going.", "No, something is not right.")
+    item, okPressed = QtGui.QInputDialog.getItem(MainWindow, "Continue?", "Continue replacing existing structure with this line?", items, 0, False)
+    if not okPressed or item== "No, something is not right.": #user canceled
+        App.ActiveDocument.removeObject(partWireName)
+        App.ActiveDocument.removeObject(dwireName)
+        return
+
+
+
+    for ii in range(highIdx-1,lowIdx,-1):
+        allPoints.pop(ii) #removes original vertices between new arc endpoints
+
+    if not comparePoints(allPoints[lowIdx],dwPoints[0]):
+        dwPoints.reverse()        
+      
+    allPoints = allPoints[:lowIdx] + dwPoints+ allPoints[lowIdx+1:]
+    App.ActiveDocument.removeObject(dwireName)    
+    App.ActiveDocument.removeObject(partWireName)
+    undoObject = obj.Object
+    undoPoints = undoObject.Points
+    obj.Object.Points = allPoints
+    
+    App.ActiveDocument.recompute()
+
+
+
+
+
+
+
 
 def makeArc(boolUndo = False):
     global undoPoints
