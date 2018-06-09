@@ -1,5 +1,8 @@
 # FCBmpImport
 <a href="https://www.freecadweb.org">FreeCAD</a> Macro for importing black and white bmp images as FreeCAD objects.
+
+<img src="screencap.gif" alt="animated screen capture">
+
 <ul>
   <li><a href='#Installation'>Installation</a></li>
   <li><a href='#Limitations'>Limitations</a></li>
