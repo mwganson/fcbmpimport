@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.08b" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.09" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -555,6 +555,8 @@ makeArcActionText=u'Make Arc from 3 points'
 reorderPointsActionText = u'Reorder Points'
 reversePointsActionText = u'Reverse (Uncross) Points'
 globalUndoActionText = u'Undo'
+globalRedoActionText = u'Redo'
+applyMidpointsActionText=u'Apply Midpoints (average out lines)'
 shiftSelectActionText = u'Shift-Select (all points)'
 ctrlSelectActionText = u'Ctrl-Select (smart select)'
 previewButtonTip = u'Loads an image for preview in the preview panel, displays red and green cross to indicate origin (0,0) position'
@@ -711,6 +713,8 @@ mouseEventCallBack = None
 selPointIndex = None #used to keep track of which point was selected before mouseEventCallBack in move function
 undoPoints=[] #to undo some operations
 undoObject=None
+redoPoints = []
+redoObject=None
 select_objects_axis = 'Z'
 import_as_mesh = True
 import_as_sketch = False
@@ -1004,11 +1008,32 @@ def selectObjects():
 def globalUndo():
     global undoObject
     global undoPoints
+    global redoObject
+    global redoPoints
+    
     if undoObject != None and len(undoPoints) != 0:
+        redoObject = undoObject
+        redoPoints = undoObject.Points
         undoObject.Points = undoPoints
         undoObject = None
         undoPoints = []
         App.ActiveDocument.recompute()
+
+
+def globalRedo():
+    global undoObject
+    global undoPoints
+    global redoObject
+    global redoPoints
+    if redoObject != None and len(redoPoints) != 0:
+        undoObject = redoObject
+        undoPoints = redoPoints
+        redoObject.Points = redoPoints
+        redoObject = None
+        redoPoints = []
+        App.ActiveDocument.recompute()
+
+
 
 def doShiftInsert():
     insertPoint(bShiftKey=True)
@@ -1348,15 +1373,250 @@ def select_context_menu(point):
     makeLineAction.triggered.connect(makeLine)
     selectPopupMenu.addAction(makeLineAction)
 
+    removeColinearActionText = u'Remove Colinear Points'
+    removeColinearAction = QtGui.QAction(removeColinearActionText,MainWindow)
+    removeColinearAction.triggered.connect(removeColinear)
+    selectPopupMenu.addAction(removeColinearAction)
+
+    applyMidpointsAction = QtGui.QAction(applyMidpointsActionText,MainWindow)
+    applyMidpointsAction.triggered.connect(applyMidpoints)
+    selectPopupMenu.addAction(applyMidpointsAction)
+
     selectPopupMenu.addSeparator()
 
     globalUndoAction = QtGui.QAction(globalUndoActionText,MainWindow)
     globalUndoAction.triggered.connect(globalUndo)
     selectPopupMenu.addAction(globalUndoAction)
+    if len(undoPoints)==0:
+        globalUndoAction.setEnabled(False)
+    else:
+        globalUndoAction.setEnabled(True)
+
+    globalRedoAction = QtGui.QAction(globalRedoActionText,MainWindow)
+    globalRedoAction.triggered.connect(globalRedo)
+    selectPopupMenu.addAction(globalRedoAction)
+    if len(redoPoints)==0:
+        globalRedoAction.setEnabled(False)
+    else:
+        globalRedoAction.setEnabled(True)
 
     selectPopupMenu.exec_(ui.selectOddPointsButton.mapToGlobal(point))
 
+def removeColinear(): #remove extra colinear points along all straight edges
+    global undoPoints
+    global undoObject
+    global redoPoints
+    global redoObject
+    modifiers = QtGui.QApplication.keyboardModifiers()
+    if modifiers == QtCore.Qt.ShiftModifier:
+        bUndo = True
+    else:
+        bUndo = False
+    selectionObject = Gui.Selection.getSelectionEx()
+    if not selectionObject:
+        msgDialog(selectOddPointsErrorMessage,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
+        return
+    bStopAsking=False
+    counter = 1
+    initProgressBar(u'Removing Colinears',len(selectionObject),1)
+    for selObj in selectionObject:
 
+        updateProgressBar(counter)
+        counter += 1
+        subObjs = selObj.SubObjects
+        picked = selObj.SubObjects
+        doc = Gui.activeDocument()
+        obj = doc.getObject(selObj.ObjectName)
+
+        if not hasattr(obj.Object,'Points'):
+            msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#object not compatible
+            return
+        if bUndo:
+            if len(undoPoints)==0:
+                msgDialog(u'Sorry, undo buffer is empty.')
+                return
+            redoObject = obj.Object
+            redoPoints = obj.Object.Points
+            obj.Object.Points = undoPoints
+            undoPoints = []
+            undoObject = None
+            App.ActiveDocument.recompute()
+            return
+        if not bUndo and len(picked)==0:
+            picked = obj.Object.Points
+        indices = []
+        allPoints = obj.Object.Points
+        undoPoints=obj.Object.Points
+        undoObject = obj.Object
+        for ii in range(0,len(allPoints)):
+            for p in picked:
+                if hasattr(p,'Point'):
+                    if comparePoints(allPoints[ii],p.Point):
+                        indices.append(ii)
+                else:
+                    if comparePoints(allPoints[ii],p):
+                        indices.append(ii)
+      
+        lowIdx = indices[0]
+        highIdx = indices[-1]
+        if highIdx < lowIdx:
+            tmp = highIdx
+            highIdx = lowIdx
+            lowIdx = tmp
+
+    #now go from lowIdx to highIdx and get the colinear points to be removed
+        colinearPoints = []
+
+        for ii in range(lowIdx,highIdx-2):
+            startPoint = allPoints[ii]
+            midPoint = allPoints[ii+1]
+            endPoint = allPoints[ii+2]
+            if DraftVecUtils.isColinear([startPoint,midPoint,endPoint]):
+                colinearPoints.append(midPoint)
+        if len(colinearPoints)==0:
+            FreeCAD.Console.PrintMessage("Found: "+str(len(colinearPoints))+ " colinear points to be removed.\n")
+            continue
+        else:
+            FreeCAD.Console.PrintMessage("Found: "+str(len(colinearPoints))+ " colinear points to be removed.\n")
+        keptPoints = []
+        for ap in allPoints:
+            if ap not in colinearPoints:
+                keptPoints.append(ap)
+
+
+       
+        allPoints = keptPoints
+        undoObject = obj.Object
+        undoPoints = undoObject.Points
+        obj.Object.Points = allPoints
+        #end of for selObj loop
+    App.ActiveDocument.recompute()
+       
+
+
+def applyMidpoints():
+
+#make a line (or multiple lines) using midpoints of selected points 
+    global undoPoints
+    global undoObject
+    global redoPoints
+    global redoObject
+    modifiers = QtGui.QApplication.keyboardModifiers()
+    if modifiers == QtCore.Qt.ShiftModifier:
+        bUndo = True
+    else:
+        bUndo = False
+    selectionObject = Gui.Selection.getSelectionEx()
+    if not selectionObject:
+        msgDialog(selectOddPointsErrorMessage,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
+        return
+    bStopAsking=False
+    counter = 1
+    initProgressBar(u'Applying Midpoints',len(selectionObject),1)
+    for selObj in selectionObject:
+
+        updateProgressBar(counter)
+        counter += 1
+        subObjs = selObj.SubObjects
+        picked = selObj.SubObjects
+        doc = Gui.activeDocument()
+        obj = doc.getObject(selObj.ObjectName)
+
+        if not hasattr(obj.Object,'Points'):
+            msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#object not compatible
+            return
+        if bUndo:
+            if len(undoPoints)==0:
+                msgDialog(u'Sorry, undo buffer is empty.')
+                return
+            redoObject = obj.Object
+            redoPoints = obj.Object.Points
+            obj.Object.Points = undoPoints
+            undoPoints = []
+            undoObject = None
+            App.ActiveDocument.recompute()
+            return
+        if not bUndo and len(picked)==0:
+            picked = obj.Object.Points
+        indices = []
+        allPoints = obj.Object.Points
+        undoPoints=obj.Object.Points
+        undoObject = obj.Object
+        for ii in range(0,len(allPoints)):
+            for p in picked:
+                if hasattr(p,'Point'):
+                    if comparePoints(allPoints[ii],p.Point):
+                        indices.append(ii)
+                else:
+                    if comparePoints(allPoints[ii],p):
+                        indices.append(ii)
+      
+        lowIdx = indices[0]
+        highIdx = indices[-1]
+        if highIdx < lowIdx:
+            tmp = highIdx
+            highIdx = lowIdx
+            lowIdx = tmp
+
+    #now go from lowIdx to highIdx and get the midpoints
+        midPoints = []
+
+        for ii in range(lowIdx,highIdx-1):
+            startPoint = allPoints[ii]
+            endPoint = allPoints[ii+1]
+            newPoint = App.Vector(startPoint)
+            newPoint.x = (startPoint.x + endPoint.x)/2.0
+            newPoint.y = (startPoint.y + endPoint.y)/2.0
+            newPoint.z = (startPoint.z + endPoint.z)/2.0
+            midPoints.append(newPoint)
+
+        edges=[]
+        for ii in range(0,len(midPoints)-1):
+            edges.append(Part.makeLine(midPoints[ii],midPoints[ii+1]))
+
+        partWire = Part.Wire(edges)
+        Part.show(partWire)
+        App.ActiveDocument.recompute()
+        partWireName = App.ActiveDocument.ActiveObject.Label
+        Draft.select(App.ActiveDocument.ActiveObject)
+ 
+        makeDWire()
+        dwire = App.ActiveDocument.ActiveObject
+        dwireName = dwire.Label
+        dwPoints = dwire.Points
+        
+        applyMidpointsDoAllText=u'Just do them all without asking.'
+        applyMidpointsStopAllText = u'Do not do this one or any of the remaining, if any.'
+        if not bStopAsking:
+            items = (makeDWireGoText, makeDWireStopText,applyMidpointsDoAllText,applyMidpointsStopAllText)
+            item, okPressed = QtGui.QInputDialog.getItem(MainWindow, makeDWireTitleText, makeDWireMessageText, items, 0, False)
+            if not okPressed or item== makeDWireStopText: #user canceled
+                App.ActiveDocument.removeObject(partWireName)
+                App.ActiveDocument.removeObject(dwireName)
+                continue
+            elif okPressed and item==applyMidpointsDoAllText:
+                bStopAsking=True
+            elif okPressed and item==applyMidpointsStopAllText:
+                App.ActiveDocument.removeObject(partWireName)
+                App.ActiveDocument.removeObject(dwireName)
+                return
+
+
+        for ii in range(highIdx-1,lowIdx,-1):
+            allPoints.pop(ii) #removes original vertices between new arc endpoints
+
+        if comparePoints(allPoints[lowIdx],dwPoints[0]):
+            dwPoints.reverse()        
+      
+        allPoints = allPoints[:lowIdx] + dwPoints+ allPoints[lowIdx+1:]
+        App.ActiveDocument.removeObject(dwireName)    
+        App.ActiveDocument.removeObject(partWireName)
+        undoObject = obj.Object
+        undoPoints = undoObject.Points
+        obj.Object.Points = allPoints
+        #end of for selObj loop
+    App.ActiveDocument.recompute()
+       
 
 
 
@@ -1450,6 +1710,8 @@ def makeLine(boolUndo = False):
         if len(undoPoints)==0:
             msgDialog(u'Sorry, undo buffer is empty.')
             return
+        redoObject = obj.Object
+        redoPoints = obj.Object.Points
         obj.Object.Points = undoPoints
         undoPoints = []
         undoObject = None
@@ -1552,6 +1814,8 @@ def makeArc(boolUndo = False):
         if len(undoPoints)==0:
             msgDialog(u'Sorry, undo buffer is empty.')
             return
+        redoObject = obj.Object
+        redoPoints = obj.Object.Points
         obj.Object.Points = undoPoints
         undoPoints = []
         undoObject = None
