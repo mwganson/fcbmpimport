@@ -38,7 +38,10 @@
       <li><a href='#Reverse Points'>Reverse Points</a></li>
       <li><a href='#Make Arc from 3 Selected Points'>Make Arc from 3 Selected Points</a></li>
       <li><a href='#Make Line, Replace Existing'>Make Line, Replace Existing</a></li>
+      <li><a href='#Remove Colinear'>Remove Colinear</a></li>
+      <li><a href='#Apply Midpoints'>Apply Midpoints</a></li>
       <li><a href='#Undo'>Undo</a></li>
+      <li><a href='#Redo'>Redo</a></li>
         </u>
     </ul>
     <li><a href='#Cut Button'>Cut Button</a></li>
@@ -313,9 +316,21 @@ Make Arc from 3 selected points will create an arc along the 3 selected points (
 
 Make Line, Replace Existing is similar to Make Arc, only it creates a multiline along the selected points and replaces the existing structure.  As with Make Arc, you have the opportunity to cancel the operation if it doesn't look right.  You can also undo if you're not happy with the results using the Select context menu -> Undo operation.  Substantially the same thing can be accomplished with selecting points and removing them via the Cut operation, but this is more intuitive and you don't have to select as many points.
 
+<h6 id='Apply Midpoints'>Apply Midpoints</h6>
+
+This is a great feature!  Can be used to greatly smooth out jagged (pixellated) edges produced when importing low resolution images.  To use it, select all the points on the DWire object, and then choose Apply Midpoints from the context menu.  Basically, the algorithm takes each 2 consecutive points and replaces the first point with the midpoint between the 2 points.  Sometimes reapplying the operation can smooth out the DWire even more.
+
+<h6 id='Remove Colinear'>Remove Colinear</h6>
+
+This removes the middle point from every set of 3 consecutive colinear points.  The result is the DWire still looks exactly the same, but now might have many fewer points.  This will make things much easier on FreeCAD in that now the DWire object is much less complex, and hence should result in substantial performance improvements as you do further operations, such as extruding, boolean cuts, generating paths, etc.
+
 <h6 id='Undo'>Undo</h6>
 
 Undo will (usually -- save your work and save often) undo the previous wire point editing operation.
+
+<h6 id='Redo'>Redo</h6>
+
+Redo what you just undid with undo.
 
 <h4 id='Cut Button'>Cut Button</h4>
 
@@ -431,7 +446,7 @@ This import type is perhaps the most flexible when it comes to post import proce
 
 <h3 id='Final Thoughts'>Final Thoughts</h3>
 
-It is hoped some users will find this macro to be of some usefulness.  I developed it with the idea of using it for importing images to be engraved with a cnc engraver / miniature mill to create signs and such.  It works reasonably well for that purpose, but it is somewhat disappointing that FreeCAD does not perform well in terms of speed when working with images beyond low resolution examples, such as the butterfly image, and even with that one it can be a struggle.
+It is hoped some users will find this macro to be of some usefulness.  I developed it with the idea of using it for importing images to be engraved with a cnc engraver / miniature mill to create signs and such.  It works reasonably well for that purpose, but it is somewhat disappointing that FreeCAD does not perform well in terms of speed when working with images beyond low resolution examples, such as the butterfly image, and even with that one it can be a struggle.  There are a couple features that I highly recommend you use after importing your image as a Wire: Apply Midpoints, and Remove Colinear.  Both of these are accessed via the Select Button right-click context menu.
 
 Still, it's another option, another tool, something we can never have too many of.  Even if you never use it to import images, consider looking at the Select Objects and Wire Point Editing Tools, which can potentially come in handy in other contexts while using FreeCAD.
 
