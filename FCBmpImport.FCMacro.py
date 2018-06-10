@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.10" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.10a" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -157,7 +157,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.importAsWireButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.offsetsGroupBox = QtGui.QGroupBox(self.centralwidget)
-        self.offsetsGroupBox.setGeometry(QtCore.QRect(10, 349, 391, 141))
+        self.offsetsGroupBox.setGeometry(QtCore.QRect(10, 349, 421, 141))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(FONT_POINT_SIZE)
@@ -264,9 +264,7 @@ class Ui_MainWindow(object):
         self.cheatFactorEdit.setFont(font)
         self.cheatFactorEdit.setObjectName("cheatFactorEdit")
         self.verticalLayout_8.addWidget(self.cheatFactorEdit)
-        self.gridLayout.addLayout(self.verticalLayout_8, 0, 4, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 0, 2, 1, 1)
+        self.gridLayout.addLayout(self.verticalLayout_8, 0, 3, 1, 1)
         self.verticalLayout_7 = QtGui.QVBoxLayout()
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.baseNameLabel = QtGui.QLabel(self.offsetsGroupBox)
@@ -297,7 +295,7 @@ class Ui_MainWindow(object):
         self.cheatFactorLabel.setFont(font)
         self.cheatFactorLabel.setObjectName("cheatFactorLabel")
         self.verticalLayout_7.addWidget(self.cheatFactorLabel)
-        self.gridLayout.addLayout(self.verticalLayout_7, 0, 3, 1, 1)
+        self.gridLayout.addLayout(self.verticalLayout_7, 0, 2, 1, 1)
         self.progressGroupBox = QtGui.QGroupBox(self.centralwidget)
         self.progressGroupBox.setGeometry(QtCore.QRect(10, 50, 161, 101))
         font = QtGui.QFont()
@@ -527,13 +525,13 @@ importAsShapeButtonTip = u'Imports as Extruded Shapes'
 blackForegroundCheckboxText = u'Black Foreground'
 imagePreviewLabelText = u'Image Preview'
 offsetsGroupBoxText = u'Various Options (mouse over for tool tip help)'
-scaleLabelText = u'Scale Factor'
-recomputeIntervalLabelText = u'Recompute Interval'
+scaleLabelText = u'Scale Fctr'
+recomputeIntervalLabelText = u'Recompute Int'
 xOffsetLabelText = u'X Offset'
 yOffsetLabelText = u'Y Offset'
 zOffsetLabelText = u'Z Offset'
 staysOnTopText = u'Keep Window on Top'
-baseNameLabelText = u'Base Name Label'
+baseNameLabelText = u'Base Name Lbl'
 shapeHeightLabelText = u'Part Height'
 sfTip = u'Select all the Part.Faces, Part.Edges, or Part.Vertexes objects that are at the same level relative to selected axis X,Y, or Z as currently selected object.  Useful for selecting faces for creating pocket paths.'
 iasbTip = u'Imports image as a solid using Wedge primitives, which can optionaly be combined into a single compound, or fused into a single solid.'

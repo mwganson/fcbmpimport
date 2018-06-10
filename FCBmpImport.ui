@@ -174,7 +174,7 @@
      <rect>
       <x>10</x>
       <y>349</y>
-      <width>391</width>
+      <width>421</width>
       <height>141</height>
      </rect>
     </property>
@@ -298,7 +298,7 @@
        </item>
       </layout>
      </item>
-     <item row="0" column="4">
+     <item row="0" column="3">
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
         <widget class="QLineEdit" name="baseNameEdit">
@@ -349,25 +349,6 @@
       </layout>
      </item>
      <item row="0" column="2">
-      <spacer name="verticalSpacer_2">
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="3">
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
         <widget class="QLabel" name="baseNameLabel">
