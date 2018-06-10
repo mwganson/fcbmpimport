@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.09" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.10" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -556,7 +556,7 @@ reorderPointsActionText = u'Reorder Points'
 reversePointsActionText = u'Reverse (Uncross) Points'
 globalUndoActionText = u'Undo'
 globalRedoActionText = u'Redo'
-applyMidpointsActionText=u'Apply Midpoints (average out lines)'
+applyMidpointsStopAllText = u'Do not do this one or any of the remaining, if any.'
 shiftSelectActionText = u'Shift-Select (all points)'
 ctrlSelectActionText = u'Ctrl-Select (smart select)'
 previewButtonTip = u'Loads an image for preview in the preview panel, displays red and green cross to indicate origin (0,0) position'
@@ -633,7 +633,8 @@ makeDWireGoText = u'Looks Good, keep going.'
 makeDWireStopText = u'No, something is not right.'
 makeDWireTitleText = u'Continue?'
 makeDWireMessageText = u'Continue replacing existing structure with this line?'
-
+applyMidpointsActionText=u'Apply Midpoints (average out lines)'
+applyMidpointsDoAllText=u'Just do them all without asking.'
 importAsSketchButtonTip = u'Import image as Sketch made up exclusively of unconstrained line segments.'
 cantImportText = u'Sorry, can\'t import as this type if Cheat Factor is set to 0'
 meshObjectText = u'MESH OBJECT'
@@ -686,6 +687,7 @@ RADIANS_INDICATOR = 'r'
 DISCRETIZE_NUMBER = 50 #number of discrete points to use when creating DWire from curve (unless AUTO_DISCRETIZE_COUNT = True)
 AUTO_DISCRETIZE_COUNT = True #uses length (in mm) of edge * AUTO_DISCRETIZE_POINTS_PER_MM as DISCRETIZE_NUMBER suggestion
 AUTO_DISCRETIZE_POINTS_PER_MM = 0.5
+AUTO_DISCRETIZE_MINIMUM_SUGGESTED = 12
 FONT_POINT_SIZE=11
 
 
@@ -1051,6 +1053,15 @@ def insertPoint(bShiftKey=False): # add new point on wire in between the 2 selec
     subObjs = selObj.SubObjects
     objectName = selObj.ObjectName #e.g. 'DWire'
     picked = selObj.SubObjects
+    pickedTmp = [] #convert Edge objects to points
+    for p in picked:
+        if hasattr(p,'ShapeType'):
+            if p.ShapeType == 'Edge':
+                for v in p.Vertexes:
+                   pickedTmp.append(v)
+            elif p.ShapeType == 'Vertex':
+                pickedTmp.append(p)
+    picked = pickedTmp 
     if len(picked) != 2:
         msgDialog(select2PointsText)
         return
@@ -1128,7 +1139,15 @@ def cutSelected():
 
     subObjs = selObj.SubObjects
     picked = selObj.SubObjects
-
+    pickedTmp = [] #convert Edge objects to points
+    for p in picked:
+        if hasattr(p,'ShapeType'):
+            if p.ShapeType == 'Edge':
+                for v in p.Vertexes:
+                   pickedTmp.append(v)
+            elif p.ShapeType == 'Vertex':
+                pickedTmp.append(p)
+    picked = pickedTmp 
     doc = Gui.activeDocument()
     obj = doc.getObject(selObj.ObjectName)
     if not hasattr(obj.Object,'Points'):
@@ -1226,9 +1245,11 @@ def makeDWire(): #make a DWire object based on the selected object
                         return
                     if AUTO_DISCRETIZE_COUNT == True:
                         discretePoints = int(obj.Object.Shape.Length * AUTO_DISCRETIZE_POINTS_PER_MM)
+                        if discretePoints < AUTO_DISCRETIZE_MINIMUM_SUGGESTED:
+                            discretePoints = AUTO_DISCRETIZE_MINIMUM_SUGGESTED
                     else:
                         discretePoints = DISCRETIZE_NUMBER
-                    num, okPressed = QtGui.QInputDialog.getInt(MainWindow, "Discretize Number","Vertices for "+objectName+":",discretePoints, 2, 100000, 10)
+                    num, okPressed = QtGui.QInputDialog.getInt(MainWindow, "Discretize Number","Vertices for "+objectName+":",discretePoints, 2, 100000, 1)
                     if not okPressed:
                         return False #tells makeArc user is canceling
                     w = shape.discretize(Number=num)
@@ -1254,6 +1275,15 @@ def reversePoints(): #reverse the order of all selected points
     subObjs = selObj.SubObjects
     objectName = selObj.ObjectName #e.g. 'DWire'
     picked = selObj.SubObjects
+    pickedTmp = [] #convert Edge objects to points
+    for p in picked:
+        if hasattr(p,'ShapeType'):
+            if p.ShapeType == 'Edge':
+                for v in p.Vertexes:
+                   pickedTmp.append(v)
+            elif p.ShapeType == 'Vertex':
+                pickedTmp.append(p)
+    picked = pickedTmp 
     if len(picked)<2:
         msgDialog(u'Select the points you wish to reverse.')
         return
@@ -1296,6 +1326,15 @@ def reorderPoints(): #make the selected point Vertex1
     subObjs = selObj.SubObjects
     objectName = selObj.ObjectName #e.g. 'DWire'
     picked = selObj.SubObjects
+    pickedTmp = [] #convert Edge objects to points
+    for p in picked:
+        if hasattr(p,'ShapeType'):
+            if p.ShapeType == 'Edge':
+                for v in p.Vertexes:
+                   pickedTmp.append(v)
+            elif p.ShapeType == 'Vertex':
+                pickedTmp.append(p)
+    picked = pickedTmp 
     if len(picked)!=1:
         msgDialog(u'Select one point on the DWire object you wish to reorder.  That selected point will become Vertex1.')
         return
@@ -1425,12 +1464,23 @@ def removeColinear(): #remove extra colinear points along all straight edges
         counter += 1
         subObjs = selObj.SubObjects
         picked = selObj.SubObjects
+        pickedTmp = [] #convert Edge objects to points
+        for p in picked:
+            if hasattr(p,'ShapeType'):
+                if p.ShapeType == 'Edge':
+                    for v in p.Vertexes:
+                       pickedTmp.append(v)
+                elif p.ShapeType == 'Vertex':
+                    pickedTmp.append(p)
+        picked = pickedTmp 
         doc = Gui.activeDocument()
         obj = doc.getObject(selObj.ObjectName)
 
         if not hasattr(obj.Object,'Points'):
             msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#object not compatible
             return
+        if len(picked)<=1:
+            picked=obj.Object.Points
         if bUndo:
             if len(undoPoints)==0:
                 msgDialog(u'Sorry, undo buffer is empty.')
@@ -1450,6 +1500,10 @@ def removeColinear(): #remove extra colinear points along all straight edges
         undoObject = obj.Object
         for ii in range(0,len(allPoints)):
             for p in picked:
+                if hasattr(p,'ShapeType'):
+                    if p.ShapeType != 'Vertex':
+                        msgDialog(u'Invalid selection, this tool only works with selected points.')
+                        return
                 if hasattr(p,'Point'):
                     if comparePoints(allPoints[ii],p.Point):
                         indices.append(ii)
@@ -1467,12 +1521,13 @@ def removeColinear(): #remove extra colinear points along all straight edges
     #now go from lowIdx to highIdx and get the colinear points to be removed
         colinearPoints = []
 
-        for ii in range(lowIdx,highIdx-2):
+        for ii in range(lowIdx-3,highIdx-2):
             startPoint = allPoints[ii]
             midPoint = allPoints[ii+1]
             endPoint = allPoints[ii+2]
             if DraftVecUtils.isColinear([startPoint,midPoint,endPoint]):
                 colinearPoints.append(midPoint)
+        
         if len(colinearPoints)==0:
             FreeCAD.Console.PrintMessage("Found: "+str(len(colinearPoints))+ " colinear points to be removed.\n")
             continue
@@ -1519,12 +1574,16 @@ def applyMidpoints():
         counter += 1
         subObjs = selObj.SubObjects
         picked = selObj.SubObjects
+
         doc = Gui.activeDocument()
         obj = doc.getObject(selObj.ObjectName)
 
         if not hasattr(obj.Object,'Points'):
             msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#object not compatible
             return
+        if len(picked)<=1:
+            picked=obj.Object.Points
+
         if bUndo:
             if len(undoPoints)==0:
                 msgDialog(u'Sorry, undo buffer is empty.')
@@ -1544,6 +1603,10 @@ def applyMidpoints():
         undoObject = obj.Object
         for ii in range(0,len(allPoints)):
             for p in picked:
+                if hasattr(p,'ShapeType'):
+                    if p.ShapeType != 'Vertex':
+                        msgDialog(u'Invalid selection, this tool only works with selected points.')
+                        return
                 if hasattr(p,'Point'):
                     if comparePoints(allPoints[ii],p.Point):
                         indices.append(ii)
@@ -1585,8 +1648,7 @@ def applyMidpoints():
         dwireName = dwire.Label
         dwPoints = dwire.Points
         
-        applyMidpointsDoAllText=u'Just do them all without asking.'
-        applyMidpointsStopAllText = u'Do not do this one or any of the remaining, if any.'
+
         if not bStopAsking:
             items = (makeDWireGoText, makeDWireStopText,applyMidpointsDoAllText,applyMidpointsStopAllText)
             item, okPressed = QtGui.QInputDialog.getItem(MainWindow, makeDWireTitleText, makeDWireMessageText, items, 0, False)
@@ -1695,7 +1757,15 @@ def makeLine(boolUndo = False):
 
     subObjs = selObj.SubObjects
     picked = selObj.SubObjects
-
+    pickedTmp = [] #convert Edge objects to points
+    for p in picked:
+        if hasattr(p,'ShapeType'):
+            if p.ShapeType == 'Edge':
+                for v in p.Vertexes:
+                   pickedTmp.append(v)
+            elif p.ShapeType == 'Vertex':
+                pickedTmp.append(p)
+    picked = pickedTmp 
     if not bUndo and len(picked)<=1:
         msgDialog(u'Select at least 2 points and try again.')
         return
@@ -1799,6 +1869,15 @@ def makeArc(boolUndo = False):
 
     subObjs = selObj.SubObjects
     picked = selObj.SubObjects
+    pickedTmp = [] #convert Edge objects to points
+    for p in picked:
+        if hasattr(p,'ShapeType'):
+            if p.ShapeType == 'Edge':
+                for v in p.Vertexes:
+                   pickedTmp.append(v)
+            elif p.ShapeType == 'Vertex':
+                pickedTmp.append(p)
+    picked = pickedTmp 
 
     if not bUndo and len(picked)!= 3:
         msgDialog(u'Select 3 rim points along the arc and try again.')
@@ -1952,6 +2031,15 @@ def selectOddPoints(idx=None,bShiftKey=False,bCtrlKey=False): #user selects 2 po
         return
     subObjs = selObj.SubObjects
     picked = selObj.PickedPoints #the point(s) the user selected
+    pickedTmp = [] #convert Edge objects to points
+    for p in picked:
+        if hasattr(p,'ShapeType'):
+            if p.ShapeType == 'Edge':
+                for v in p.Vertexes:
+                   pickedTmp.append(v)
+            elif p.ShapeType == 'Vertex':
+                pickedTmp.append(p)
+    picked = pickedTmp 
     objectName = selObj.ObjectName #e.g. 'DWire'
     doc = Gui.activeDocument()
     obj = doc.getObject(objectName)
@@ -1980,8 +2068,6 @@ def selectOddPoints(idx=None,bShiftKey=False,bCtrlKey=False): #user selects 2 po
                 startEndIndices.append(jj)
 
 
-   
-        
     start = None
     end = None
 
@@ -2101,9 +2187,16 @@ def moveSelected(newVector = None, bCtrlKey=False,bShiftKey=False):
 
 
     subObjs = selObj.SubObjects
-    #picked = selObj.PickedPoints #the ones the user selected
     picked = selObj.SubObjects
-
+    pickedTmp = [] #convert Edge objects to points
+    for p in picked:
+        if hasattr(p,'ShapeType'):
+            if p.ShapeType == 'Edge':
+                for v in p.Vertexes:
+                   pickedTmp.append(v)
+            elif p.ShapeType == 'Vertex':
+                pickedTmp.append(p)
+    picked = pickedTmp 
     doc = Gui.activeDocument()
     obj = doc.getObject(selObj.ObjectName)
     if not hasattr(obj.Object,'Points'):
