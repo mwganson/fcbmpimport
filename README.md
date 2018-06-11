@@ -43,6 +43,7 @@
       <li><a href='#Make Line, Replace Existing'>Make Line, Replace Existing</a></li>
       <li><a href='#Remove Colinear'>Remove Colinear</a></li>
       <li><a href='#Apply Midpoints'>Apply Midpoints</a></li>
+        <li><a href='#Reference Moves'>Reference Moves</a></li>
       <li><a href='#Undo'>Undo</a></li>
       <li><a href='#Redo'>Redo</a></li>
         </u>
@@ -295,7 +296,13 @@ New for version 2018.05.26, there is now a right-click context menu associated w
 
 <h5 id='Select Button Context Menu'>Select Button Context Menu</h5>
 
-Context menu options include: Make DWire from Selected Object, Reorder Points, Reverse Points, Make Arc from 3 selected points, "Make Line, Replace Existing", and Undo.  
+Context menu options can be accessed by right clicking on the Select button in the Wire Points Editing section.  
+
+<h6 id='Reference Moves'>Reference Moves</h6>
+
+There are 3 reference move operations: X, Y, and XY.  (Z axis is not supported, although you can manually enter them into the Z Offset line edit widget.)  The first point you select is used as a reference.  The 2nd point is used to calculate the offset.  The first point is not moved, but the 2nd point (and any other points also selected) will be moved by that offset on that axis.  For example, let's suppose you have 2 points A (0,0,0) and B (5,5,0).  If you select A, then B, then choose the Reference Move X operation, B will be moved to the same X position that A is on.  Thus you'd have A (0,0,0) and B (0,5,0).  If B is part of a separate DWire object you can select all the other points on B's object (after selecting B and before choosing the Reference Move operation) to move the entire DWire.
+
+<img src="fcbmpimport-refmove.gif" alt="animated gif">
 
 <h6 id='Make DWire from Selected Object'>Make DWire from Selected Object</h6>
 
