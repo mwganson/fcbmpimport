@@ -240,7 +240,12 @@ SEPARATOR = locale.localeconv()['decimal_point']
 SEPARATOR_STANDIN = 'p'
 DEGREES_INDICATOR = 'd'
 RADIANS_INDICATOR = 'r'
-DISCRETIZE_NUMBER = 50
+DISCRETIZE_NUMBER = 50 #number of discrete points to use when creating DWire from curve (unless AUTO_DISCRETIZE_COUNT = True)
+AUTO_DISCRETIZE_COUNT = True #uses length (in mm) of edge * AUTO_DISCRETIZE_POINTS_PER_MM as DISCRETIZE_NUMBER suggestion
+AUTO_DISCRETIZE_POINTS_PER_MM = 0.5
+AUTO_DISCRETIZE_MINIMUM_SUGGESTED = 12
+FONT_POINT_SIZE=11
+
 </pre>
 Note: if the SEPARATOR ('.' or ',', depending on your locale) isn't correct (or isn't what you would prefer) you can change it manually to something like:
 
@@ -306,7 +311,7 @@ There are 3 reference move operations: X, Y, and XY.  (Z axis is not supported, 
 
 <h6 id='Make DWire from Selected Object'>Make DWire from Selected Object</h6>
 
-Since the Wire Point Editing Tools only work with DWire objects, some objects need to be converted to DWire objects before these functions will work with them.  New object will have makeFace = False (unless original had makeFace set to true --sometimes) and closed = False, so you might need to set those properties to True in the Combo Box Data tab in FreeCAD.  Circles and Arcs are discretized by default to have 50 vertices (changeable during operation).  If you would prefer a number other than 50, you can edit the defaults.  See the documentation for the <a href='#Defaults Button'>Defaults Button</a> for more details on macro defaults.
+Since the Wire Point Editing Tools only work with DWire objects, some objects need to be converted to DWire objects before these functions will work with them.  New object will have makeFace = False (unless original had makeFace set to true --sometimes) and closed = False, so you might need to set those properties to True in the Combo Box Data tab in FreeCAD.  Circles and Arcs are discretized by default to have from 12 to 0.5 vertices per millimeter, whichever is larger (changeable during operation).  If you would prefer a number other than what is offered as a suggestion, you can change it at the time you do the discretization.  You can also change the defaults by editing the source code.  See the documentation for the <a href='#Defaults Button'>Defaults Button</a> for more details on macro defaults.
 
 <h6 id='Reorder Points'>Reorder Points</h6>
 
