@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.10a" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.11" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -549,14 +549,9 @@ selectErrorMessage = u'You must first select an existing face, edge, or vertex, 
 abortedText = u'Aborted by user'
 placingText = u"Processing "
 previewButtonText = u'Preview Image'
-makeArcActionText=u'Make Arc from 3 points'
-reorderPointsActionText = u'Reorder Points'
-reversePointsActionText = u'Reverse (Uncross) Points'
-globalUndoActionText = u'Undo'
-globalRedoActionText = u'Redo'
+
 applyMidpointsStopAllText = u'Do not do this one or any of the remaining, if any.'
-shiftSelectActionText = u'Shift-Select (all points)'
-ctrlSelectActionText = u'Ctrl-Select (smart select)'
+
 previewButtonTip = u'Loads an image for preview in the preview panel, displays red and green cross to indicate origin (0,0) position'
 graphicsExceptionText = u'\nGraphics exception displaying preview image.\n'
 invalidFileText = u'File must be a monochrome BMP (black and white, monochrome, 1 bit-per-pixel only).'
@@ -631,7 +626,7 @@ makeDWireGoText = u'Looks Good, keep going.'
 makeDWireStopText = u'No, something is not right.'
 makeDWireTitleText = u'Continue?'
 makeDWireMessageText = u'Continue replacing existing structure with this line?'
-applyMidpointsActionText=u'Apply Midpoints (average out lines)'
+
 applyMidpointsDoAllText=u'Just do them all without asking.'
 importAsSketchButtonTip = u'Import image as Sketch made up exclusively of unconstrained line segments.'
 cantImportText = u'Sorry, can\'t import as this type if Cheat Factor is set to 0'
@@ -642,12 +637,36 @@ moveButtonText = u'Move'
 moveButtonWaitingText = u'Waiting...'
 moveButtonTipText=u'Move currently selected point by x,y,z offset, SHIFT+CLICK to go opposite direction (UNDO), CTRL+CLICK to setup mouse click destination, CLICK again to cancel.'
 selectOddPointsButtonText=u'Select'
-selectOddPointsButtonTipText = u'Select points on a DWire object, CLICK = every other point, SHIFT+CLICK = every point, CTRL+CLICK = smart select'
+selectOddPointsButtonTipText = u'Select points on a DWire object, CLICK = every other point, SHIFT+CLICK = every point, CTRL+CLICK = smart select, RIGHT-CLICK for context menu.'
+
+shiftSelectActionText = u'Shift-Select (all points)'
+ctrlSelectActionText = u'Ctrl-Select (smart select)'
+makeArcActionText=u'Make Arc from 3 points'
+reorderPointsActionText = u'Reorder Points'
+reversePointsActionText = u'Reverse (Uncross) Points'
+globalUndoActionText = u'Undo'
+globalRedoActionText = u'Redo'
 makeDWireActionText = u'Make DWire from Selected Object'
 makeLineActionText = u'Make Line, Replace Existing'
 shiftMoveActionText=u'Shift-Move (opposite direction)'
 shiftInsertActionText=u'Shift-Insert (insert from cut buffer)'
 ctrlMoveActionText=u'Ctrl-Move (click destination)'
+applyMidpointsActionText=u'Apply Midpoints (average out lines)'
+refMoveXActionText = u'Reference Move X Axis'
+refMoveYActionText = u'Reference Move Y Axis'
+refMoveXYActionText=u'Reference Move XY Axes'
+removeColinearActionText = u'Remove Colinear Points'
+refMoveXYActionTip = u'Moves selected point(s) to the XY location of the reference (first selected) point'
+ctrlMoveActionTip = u'Select a point first, and then use this operation.  Click anywhere in 3D space to finish the move, or click the Move (Waiting...) button to cancel.'
+refMoveXActionTip = u'Moves selected point(s) to x position of first selected reference point.'
+refMoveYActionTip = u'Moves selected point(s) to y position of first selected reference point.'
+reorderPointsActionTip = u'Makes selected point Vertex1.'
+reversePointsActionTip = u'Reverses Vertex index numbers for selected points, can be used to uncross crossed wires.'
+makeArcActionTip = u'Makes an arc using 3 selected rim points as a reference. All points and edges between and including the 2 outer points gets replaced by the arc.'
+makeLineActionTip = u'Makes line(s) out of selected points to replace all points and edges between and including the 2 outer points.'
+removeColinearActionTip = u'Removes extraneous colinear points, reducing size and complexity of DWire object. \nThis operation usually follows the Apply Midpoints operation.'
+applyMidpointsActionTip = u'Smooths out jagged, pixellated edges by replacing the first point of every set of 2 consecutive points with the midpoint between them.\n\
+It is recommended to import as a Wire object(s), and apply this operation to all imported Wires, followed by the Remove Colinear operation.'
 deleteButtonText = u'Cut'
 deleteButtonTipText = u'Cuts previously selected points from DWire object (SHIFT+CLICK to undo last cut operation)'
 insertButtonText = u'Insert'
@@ -738,7 +757,7 @@ recompute_interval = RECOMPUTE_INTERVAL
 cheat_factor = CHEAT_FACTOR
 window_stays_on_top = WINDOW_STAYS_ON_TOP
 part_height = PART_HEIGHT
-
+selectPopupMenu = None
 
 # for evaluating math expressions in gui input text fields
 # credit "jfs" of stackoverflow for these 2 functions, which I modified for my needs
@@ -880,10 +899,10 @@ class GraphicsView(QtGui.QGraphicsView): #subclass so we can handle mouse wheel 
 
 #for CTRL+MOVE operation in wire point editing tools
 class ViewObserver:
-   def __init__(self, view):
+    def __init__(self, view):
        self.view = view
    
-   def logPosition(self, info):
+    def offsetMove(self, info):
        down = (info["State"] == "DOWN")
        pos = info["Position"]
        btn = info["Button"]
@@ -899,8 +918,7 @@ class ViewObserver:
            info = self.view.getObjectInfo(pos)
            v=Gui.activeDocument().activeView()
            v.removeEventCallback("SoMouseButtonEvent",mouseEventCallBack) 
-
-
+   
 
 #helper function for selecting multiple faces, edges, or points (on the same x, y, or zmin/zmax) of a
 #complex object
@@ -1366,6 +1384,7 @@ def reorderPoints(): #make the selected point Vertex1
 
 def select_context_menu(point):
     # create context menu
+    global selectPopupMenu
     selectPopupMenu = QtGui.QMenu(MainWindow)
 
     shiftSelectAction = QtGui.QAction(shiftSelectActionText, MainWindow)
@@ -1376,17 +1395,33 @@ def select_context_menu(point):
     ctrlSelectAction.triggered.connect(doCtrlSelect)
     selectPopupMenu.addAction(ctrlSelectAction)
 
+    shiftInsertAction = QtGui.QAction(shiftInsertActionText, MainWindow)
+    shiftInsertAction.triggered.connect(doShiftInsert)
+    selectPopupMenu.addAction(shiftInsertAction)
+
     ctrlMoveAction = QtGui.QAction(ctrlMoveActionText, MainWindow)
     ctrlMoveAction.triggered.connect(doCtrlMove)
+    ctrlMoveAction.setToolTip(ctrlMoveActionTip)
     selectPopupMenu.addAction(ctrlMoveAction)
 
     shiftMoveAction = QtGui.QAction(shiftMoveActionText, MainWindow)
     shiftMoveAction.triggered.connect(doShiftMove)
     selectPopupMenu.addAction(shiftMoveAction)
 
-    shiftInsertAction = QtGui.QAction(shiftInsertActionText, MainWindow)
-    shiftInsertAction.triggered.connect(doShiftInsert)
-    selectPopupMenu.addAction(shiftInsertAction)
+    refMoveXAction = QtGui.QAction(refMoveXActionText, MainWindow)
+    refMoveXAction.triggered.connect(doRefMoveX)
+    refMoveXAction.setToolTip(refMoveXActionTip)
+    selectPopupMenu.addAction(refMoveXAction)
+
+    refMoveYAction = QtGui.QAction(refMoveYActionText, MainWindow)
+    refMoveYAction.triggered.connect(doRefMoveY)
+    refMoveYAction.setToolTip(refMoveYActionTip)
+    selectPopupMenu.addAction(refMoveYAction)
+
+    refMoveXYAction = QtGui.QAction(refMoveXYActionText, MainWindow)
+    refMoveXYAction.triggered.connect(doRefMoveXY)
+    refMoveXYAction.setToolTip(refMoveXYActionTip)
+    selectPopupMenu.addAction(refMoveXYAction)
 
     selectPopupMenu.addSeparator()
 
@@ -1396,27 +1431,33 @@ def select_context_menu(point):
 
     reorderPointsAction = QtGui.QAction(reorderPointsActionText,MainWindow)
     reorderPointsAction.triggered.connect(reorderPoints)
+    reorderPointsAction.setToolTip(reorderPointsActionTip)
     selectPopupMenu.addAction(reorderPointsAction)
 
     reversePointsAction = QtGui.QAction(reversePointsActionText,MainWindow)
     reversePointsAction.triggered.connect(reversePoints)
+    reversePointsAction.setToolTip(reversePointsActionTip)
     selectPopupMenu.addAction(reversePointsAction)
 
     makeArcAction = QtGui.QAction(makeArcActionText,MainWindow)
     makeArcAction.triggered.connect(makeArc)
+    makeArcAction.setToolTip(makeArcActionTip)
     selectPopupMenu.addAction(makeArcAction)
 
     makeLineAction = QtGui.QAction(makeLineActionText,MainWindow)
     makeLineAction.triggered.connect(makeLine)
+    makeLineAction.setToolTip(makeLineActionTip)
     selectPopupMenu.addAction(makeLineAction)
 
-    removeColinearActionText = u'Remove Colinear Points'
+
     removeColinearAction = QtGui.QAction(removeColinearActionText,MainWindow)
     removeColinearAction.triggered.connect(removeColinear)
+    removeColinearAction.setToolTip(removeColinearActionTip)
     selectPopupMenu.addAction(removeColinearAction)
 
     applyMidpointsAction = QtGui.QAction(applyMidpointsActionText,MainWindow)
     applyMidpointsAction.triggered.connect(applyMidpoints)
+    applyMidpointsAction.setToolTip(applyMidpointsActionTip)
     selectPopupMenu.addAction(applyMidpointsAction)
 
     selectPopupMenu.addSeparator()
@@ -1437,7 +1478,15 @@ def select_context_menu(point):
     else:
         globalRedoAction.setEnabled(True)
 
+    selectPopupMenu.hovered.connect(handleMenuHovered)
+    selectPopupMenu.toolTipsVisible=True
+
     selectPopupMenu.exec_(ui.selectOddPointsButton.mapToGlobal(point))
+
+def handleMenuHovered(action):
+    QtGui.QToolTip.showText(
+    QtGui.QCursor.pos(), action.toolTip(),
+    selectPopupMenu, selectPopupMenu.actionGeometry(action))
 
 def removeColinear(): #remove extra colinear points along all straight edges
     global undoPoints
@@ -2212,7 +2261,7 @@ def moveSelected(newVector = None, bCtrlKey=False,bShiftKey=False):
     if modifiers == QtCore.Qt.ControlModifier or bCtrlKey: #if user ctrl-clicks move we setup observer and return, on click the observer calls moveSelected again with newVector set
         v=Gui.activeDocument().activeView()
         o = ViewObserver(v)
-        mouseEventCallBack = v.addEventCallback("SoMouseButtonEvent",o.logPosition)
+        mouseEventCallBack = v.addEventCallback("SoMouseButtonEvent",o.offsetMove)
         selPointIndex = toBeMoved[0]
         ui.moveButton.setText(moveButtonWaitingText)
         return
@@ -2243,6 +2292,118 @@ def moveSelected(newVector = None, bCtrlKey=False,bShiftKey=False):
     undoObject = obj.Object
     obj.Object.Points = allPoints
     App.ActiveDocument.recompute()
+
+def doRefMoveX():
+    moveToReference(axis='X')
+
+def doRefMoveY():
+    moveToReference(axis='Y')
+
+def doRefMoveXY():
+    moveToReference(axis='XY')
+
+
+def moveToReference(axis = 'X'):
+    global mouseEventCallBack
+    global selPointIndex #point selected when Ctrl-clicked move button
+    global undoPoints
+    global undoObject
+    processEvents()
+    checkOffsets() #ensure offset values are registered
+
+
+    selectionObject = Gui.Selection.getSelectionEx()
+    if selectionObject:
+        refObj = selectionObject[0]
+        targObj = selectionObject[-1] #usually the same, but allow user to use the reference point from a different DWire
+    else:
+        msgDialog(selectOddPointsErrorMessage,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
+        return
+
+
+    ref = refObj.SubObjects[0]
+    if hasattr(ref,'ShapeType'):
+        if ref.ShapeType == 'Edge':
+           ref = ref.Vertexes[0]
+
+    doc = Gui.activeDocument()
+    obj = doc.getObject(targObj.ObjectName)
+    picked = targObj.SubObjects
+    if not hasattr(obj.Object,'Points'):
+        msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#invalid object selected
+        return  
+    pickedTmp = [] #convert Edge objects to points
+    for p in picked:
+        if hasattr(p,'ShapeType'):
+            if p.ShapeType == 'Edge':
+                for v in p.Vertexes:
+                   pickedTmp.append(v)
+            elif p.ShapeType == 'Vertex':
+                pickedTmp.append(p)
+    picked = pickedTmp
+
+    if len(picked)<2 and refObj == targObj:
+        msgDialog(u'Select a point to use as a reference, then any additional points you wish to move to that reference point\'s X,Y,or Z position.')
+        return
+    
+    newVector = App.Vector(ref.X,ref.Y,ref.Z)
+
+    
+    if axis=='X':
+        newVector.y = 0
+    elif axis=='Y':
+        newVector.x = 0
+
+    allPoints = obj.Object.Points #all the points in the selected wire
+
+    toBeMoved=[]
+    pickedStart = 0
+    if refObj == targObj:
+        pickedStart = 1
+    for jj in range(0, len(allPoints)):
+        for ii in range(pickedStart, len(picked)):
+            if allPoints[jj].x == picked[ii].X and allPoints[jj].y == picked[ii].Y and allPoints[jj].z == picked[ii].Z:
+                toBeMoved.append(jj)
+
+    cur = picked[0]   #setup an undo operation using shift+move 
+    if targObj == refObj:
+        cur=picked[1]
+    if axis=='X':
+        import_x_offset = newVector[0]-cur.X
+        ui.xOffsetEdit.setText(str(import_x_offset))
+        import_y_offset = 0
+        ui.yOffsetEdit.setText('0')
+    elif axis=='Y':
+        import_y_offset = newVector[1]-cur.Y
+        ui.yOffsetEdit.setText(str(import_y_offset))
+        import_x_offset = 0
+        ui.xOffsetEdit.setText('0')
+    elif axis=='XY':
+        import_x_offset = newVector[0]-cur.X
+        ui.xOffsetEdit.setText(str(import_x_offset))
+        import_y_offset = newVector[1]-cur.Y
+        ui.yOffsetEdit.setText(str(import_y_offset))
+
+    for tbm in toBeMoved: 
+        if axis=='X':
+            allPoints[tbm].x += import_x_offset
+        elif axis=='Y':
+            allPoints[tbm].y += import_y_offset
+        elif axis=='XY':
+            allPoints[tbm].x += import_x_offset
+            allPoints[tbm].y += import_y_offset
+
+
+    undoPoints = obj.Object.Points
+    undoObject = obj.Object
+    obj.Object.Points = allPoints
+    App.ActiveDocument.recompute()
+
+
+
+
+
+
 
 #PROGRESS BAR STUFF
 
