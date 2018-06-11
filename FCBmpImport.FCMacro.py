@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.11" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.11a" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -758,7 +758,7 @@ cheat_factor = CHEAT_FACTOR
 window_stays_on_top = WINDOW_STAYS_ON_TOP
 part_height = PART_HEIGHT
 selectPopupMenu = None
-
+boolMakeDWireSuccess = False #communication between makeArc and makeDWire (whether user canceled)
 # for evaluating math expressions in gui input text fields
 # credit "jfs" of stackoverflow for these 2 functions, which I modified for my needs
 # supported operators
@@ -1221,6 +1221,7 @@ def movePoint(p,bOpposite): #apply offsets and return new point
 
 def makeDWire(): #make a DWire object based on the selected object
     global madeFace
+    global boolMakeDWireSuccess
     selectionObject = Gui.Selection.getSelectionEx()
     if selectionObject:
         selObjs = selectionObject
@@ -1235,20 +1236,23 @@ def makeDWire(): #make a DWire object based on the selected object
             shape = obj.Object.Shape
             if not hasattr(shape,'Wires'):
                 msgDialog(selectedObjectNotDWireCandidateErrorText)
-                return
+                continue
             else:
-                if not hasattr(obj.Object,'Proxy'):
+                if not hasattr(obj.Object,'Proxy') and len(shape.Wires)!=0:
                     for w in shape.Wires:
                         Draft.makeWire(w,closed=False,face=madeFace)
                         Draft.autogroup(w)
 
-                elif 'Draft._Circle' not in str(obj.Object.Proxy) and 'Draft._Ellipse' not in str(obj.Object.Proxy) and 'Draft._BSpline' not in str(obj.Object.Proxy) and 'Draft._BezCurve' not in str(obj.Object.Proxy):
-                    for w in shape.Wires:
-                        if hasattr(obj.Proxy.Object,'MakeFace'):
-                            madeFace = obj.Proxy.Object.MakeFace
-                        Draft.makeWire(w,closed=False,face=madeFace)
-                        Draft.autogroup(w)
-                        madeFace = None
+                elif hasattr(obj.Object,'Proxy') and ('Draft._Circle' not in str(obj.Object.Proxy) and 'Draft._Ellipse' not in str(obj.Object.Proxy) and 'Draft._BSpline' not in str(obj.Object.Proxy) and 'Draft._BezCurve' not in str(obj.Object.Proxy)):
+                    if len(shape.Wires)!=0:
+                        for w in shape.Wires:
+                            if hasattr(obj.Proxy.Object,'MakeFace'):
+                                madeFace = obj.Proxy.Object.MakeFace
+                            Draft.makeWire(w,closed=False,face=madeFace)
+                            Draft.autogroup(w)
+                            madeFace = None
+                    else:
+                        msgDialog(u'Wire count is zero for this object.')
                 else: #handle curve objects
 
 
@@ -1258,7 +1262,7 @@ def makeDWire(): #make a DWire object based on the selected object
                         App.ActiveDocument.recompute()
                         makeDWire()
                         madeFace = None
-                        return
+                        continue
                     if AUTO_DISCRETIZE_COUNT == True:
                         discretePoints = int(obj.Object.Shape.Length * AUTO_DISCRETIZE_POINTS_PER_MM)
                         if discretePoints < AUTO_DISCRETIZE_MINIMUM_SUGGESTED:
@@ -1267,7 +1271,10 @@ def makeDWire(): #make a DWire object based on the selected object
                         discretePoints = DISCRETIZE_NUMBER
                     num, okPressed = QtGui.QInputDialog.getInt(MainWindow, "Discretize Number","Vertices for "+objectName+":",discretePoints, 2, 100000, 1)
                     if not okPressed:
-                        return False #tells makeArc user is canceling
+                        boolMakeDWireSuccess=False #tells makeArc user is canceling
+                        continue
+                    else:
+                        boolMakeDWireSuccess=True 
                     w = shape.discretize(Number=num)
                     Draft.makeWire(w,closed=False,face=False)
                     Draft.autogroup(w)
@@ -1276,7 +1283,7 @@ def makeDWire(): #make a DWire object based on the selected object
 
                 obj.Visibility=False
                 App.ActiveDocument.recompute()
-                return True #tells makeArc() user gave us the go ahead
+                
 
 
 def reversePoints(): #reverse the order of all selected points
@@ -1902,6 +1909,7 @@ def makeLine(boolUndo = False):
 def makeArc(boolUndo = False):
     global undoPoints
     global undoObject
+    global boolMakeDWireSuccess
     modifiers = QtGui.QApplication.keyboardModifiers()
     if modifiers == QtCore.Qt.ShiftModifier or boolUndo:
         bUndo = True
@@ -2021,8 +2029,10 @@ def makeArc(boolUndo = False):
         draftArc = Draft.makeCircle(radius, placement, False, endAngle, startAngle)
         Draft.select([draftArc])
         draftArcName = App.ActiveDocument.ActiveObject.Label
+    boolMakeDWireSuccess=False
+    makeDWire()
+    bContinue = boolMakeDWireSuccess
 
-    bContinue = makeDWire()
     if not bContinue: #user canceled
         App.ActiveDocument.removeObject(draftArcName)
         return
@@ -2178,7 +2188,8 @@ def selectOddPoints(idx=None,bShiftKey=False,bCtrlKey=False): #user selects 2 po
                 ii+=2
         #end smart select
     else:
-        toBeAdded.append(names[idx])
+        if len(names)>idx:
+            toBeAdded.append(names[idx])
         Gui.Selection.clearSelection()
 
 
