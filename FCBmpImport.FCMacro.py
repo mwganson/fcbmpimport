@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.11a" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.12" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -1217,6 +1217,68 @@ def movePoint(p,bOpposite): #apply offsets and return new point
         newPoint[2]-=import_z_offset
     return newPoint
 
+def mergeDWire():
+    selObject = Gui.Selection.getSelectionEx()
+    if len(selObject)<2:
+        msgDialog(u'Select 2 or more DWire objects to merge.')
+        return
+    doc = Gui.activeDocument()
+    dwires=[]
+    objects = []
+    for sel in selObject:
+        dwires.append(doc.getObject(sel.ObjectName))
+        objects.append(doc.getObject(sel.ObjectName))
+
+    pointsArray=[]
+    for dw in dwires:
+        if not hasattr(dw.Object,'Points'):
+            msgDialog(u'Only DWire objects are supported for this operation.  You might be able to convert your objects to DWires by using Make DWire from Selected Objects.')
+            for dw2 in dwires:
+                dw2.Visibility=True
+            return
+        dw.Visibility=False
+
+    
+    newPoints =dwires[0].Object.Points
+
+    dwires.pop(0)
+    bConnection = True
+    while bConnection:
+        bConnection = False
+        for ii in range(0,len(dwires)):
+            if newPoints[-1] == dwires[ii].Object.Points[0]:
+                bConnection = True
+                newPoints.extend(dwires[ii].Object.Points[1:])
+                dwires.pop(ii)
+                break
+            elif newPoints[-1] == dwires[ii].Object.Points[-1]:
+                bConnection = True
+                newPoints.extend(reversed(dwires[ii].Object.Points[:-1]))
+                dwires.pop(ii)
+                break
+            elif newPoints[0] == dwires[ii].Object.Points[0]:
+                bConnection = True
+                newPoints=dwires[ii].Object.Points[1:]+newPoints
+                dwires.pop(ii)
+                break
+            elif newPoints[0] == dwires[ii].Object.Points[-1]:
+                bConnection = True
+                newPoints=reversed(dwires[ii].Object.Points[:-1])+newPoints
+                dwires.pop(ii)
+                break
+
+    if len(dwires)!=0:
+        msgDialog(u'Unable to merge one or more Dwires.  Ensure all wires are connected and try again.') 
+        for o in objects:
+            o.Visibility=True
+        return             
+    Draft.makeWire(newPoints)
+
+
+
+
+
+
 
 
 def makeDWire(): #make a DWire object based on the selected object
@@ -1435,6 +1497,13 @@ def select_context_menu(point):
     makeDWireAction = QtGui.QAction(makeDWireActionText, MainWindow)
     makeDWireAction.triggered.connect(makeDWire)
     selectPopupMenu.addAction(makeDWireAction)
+
+    mergeDWireActionText = u'Merge DWires'
+    mergeDWireActionTip = u'Merges 2 or more selected DWire objects (must already be connected at ends).'
+    mergeDWireAction = QtGui.QAction(mergeDWireActionText, MainWindow)
+    mergeDWireAction.triggered.connect(mergeDWire)
+    mergeDWireAction.setToolTip(mergeDWireActionTip)
+    selectPopupMenu.addAction(mergeDWireAction)
 
     reorderPointsAction = QtGui.QAction(reorderPointsActionText,MainWindow)
     reorderPointsAction.triggered.connect(reorderPoints)
@@ -2314,7 +2383,7 @@ def doRefMoveXY():
     moveToReference(axis='XY')
 
 
-def moveToReference(axis = 'X'):
+def moveToReference(axis):
     global mouseEventCallBack
     global selPointIndex #point selected when Ctrl-clicked move button
     global undoPoints
@@ -2338,7 +2407,7 @@ def moveToReference(axis = 'X'):
            ref = ref.Vertexes[0]
 
     doc = Gui.activeDocument()
-    obj = doc.getObject(targObj.ObjectName)
+    obj = doc.getObject(targObj.ObjectName) #targObj is the one with the points to be moved
     picked = targObj.SubObjects
     if not hasattr(obj.Object,'Points'):
         msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#invalid object selected
