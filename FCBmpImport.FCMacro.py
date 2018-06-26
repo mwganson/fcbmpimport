@@ -40,7 +40,7 @@ __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.12" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.06.25" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -1021,6 +1021,9 @@ def selectObjects():
 
 #end of selectObjects()
 
+#picked points have been modified by placement
+#allPoints have not been
+
 #WIRE POINT EDITING TOOLS
 
 def globalUndo():
@@ -1074,9 +1077,9 @@ def insertPoint(bShiftKey=False): # add new point on wire in between the 2 selec
         if hasattr(p,'ShapeType'):
             if p.ShapeType == 'Edge':
                 for v in p.Vertexes:
-                   pickedTmp.append(v)
+                   pickedTmp.append(v.Point.sub(v.Placement.Base))
             elif p.ShapeType == 'Vertex':
-                pickedTmp.append(p)
+                pickedTmp.append(p.Point.sub(p.Placement.Base))
     picked = pickedTmp 
     if len(picked) != 2:
         msgDialog(select2PointsText)
@@ -1086,6 +1089,7 @@ def insertPoint(bShiftKey=False): # add new point on wire in between the 2 selec
     if not hasattr(obj.Object,'Points'):
         msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#no object selected
         return
+    
     allPoints = obj.Object.Points #all the points in the selected wire
     modifiers = QtGui.QApplication.keyboardModifiers()
 
@@ -1094,7 +1098,7 @@ def insertPoint(bShiftKey=False): # add new point on wire in between the 2 selec
 
     for jj in range(len(allPoints)-1,-1,-1):
         for ii in range(len(picked)-1,-1,-1):
-            if allPoints[jj].x == picked[ii].X and allPoints[jj].y == picked[ii].Y and allPoints[jj].z == picked[ii].Z:
+            if comparePoints(allPoints[jj],picked[ii]):
                 outerPoints.append(jj)
 
     start = outerPoints[0]
@@ -1217,7 +1221,7 @@ def movePoint(p,bOpposite): #apply offsets and return new point
         newPoint[2]-=import_z_offset
     return newPoint
 
-def mergeDWire():
+def mergeDWires():
     selObject = Gui.Selection.getSelectionEx()
     if len(selObject)<2:
         msgDialog(u'Select 2 or more DWire objects to merge.')
@@ -1498,12 +1502,12 @@ def select_context_menu(point):
     makeDWireAction.triggered.connect(makeDWire)
     selectPopupMenu.addAction(makeDWireAction)
 
-    mergeDWireActionText = u'Merge DWires'
-    mergeDWireActionTip = u'Merges 2 or more selected DWire objects (must already be connected at ends).'
-    mergeDWireAction = QtGui.QAction(mergeDWireActionText, MainWindow)
-    mergeDWireAction.triggered.connect(mergeDWire)
-    mergeDWireAction.setToolTip(mergeDWireActionTip)
-    selectPopupMenu.addAction(mergeDWireAction)
+    mergeDWiresActionText = u'Merge DWires'
+    mergeDWiresActionTip = u'Merges 2 or more selected DWire objects (must already be connected at ends).'
+    mergeDWiresAction = QtGui.QAction(mergeDWiresActionText, MainWindow)
+    mergeDWiresAction.triggered.connect(mergeDWires)
+    mergeDWiresAction.setToolTip(mergeDWiresActionTip)
+    selectPopupMenu.addAction(mergeDWiresAction)
 
     reorderPointsAction = QtGui.QAction(reorderPointsActionText,MainWindow)
     reorderPointsAction.triggered.connect(reorderPoints)
@@ -2407,9 +2411,9 @@ def moveToReference(axis):
            ref = ref.Vertexes[0]
 
     doc = Gui.activeDocument()
-    obj = doc.getObject(targObj.ObjectName) #targObj is the one with the points to be moved
+    tObj = doc.getObject(targObj.ObjectName) #targObj is the one with the points to be moved
     picked = targObj.SubObjects
-    if not hasattr(obj.Object,'Points'):
+    if not hasattr(tObj.Object,'Points'):
         msgDialog(selectOddPointsErrorMessage2,u'FCBmpImport',QtGui.QMessageBox.Critical)#invalid object selected
         return  
     pickedTmp = [] #convert Edge objects to points
@@ -2417,9 +2421,9 @@ def moveToReference(axis):
         if hasattr(p,'ShapeType'):
             if p.ShapeType == 'Edge':
                 for v in p.Vertexes:
-                   pickedTmp.append(v)
+                   pickedTmp.append(v.Point)
             elif p.ShapeType == 'Vertex':
-                pickedTmp.append(p)
+                pickedTmp.append(p.Point)
     picked = pickedTmp
 
     if len(picked)<2 and refObj == targObj:
@@ -2434,7 +2438,7 @@ def moveToReference(axis):
     elif axis=='Y':
         newVector.x = 0
 
-    allPoints = obj.Object.Points #all the points in the selected wire
+    allPoints = tObj.Object.Points #all the points in the selected wire
 
     toBeMoved=[]
     pickedStart = 0
@@ -2442,26 +2446,26 @@ def moveToReference(axis):
         pickedStart = 1
     for jj in range(0, len(allPoints)):
         for ii in range(pickedStart, len(picked)):
-            if allPoints[jj].x == picked[ii].X and allPoints[jj].y == picked[ii].Y and allPoints[jj].z == picked[ii].Z:
+            if comparePoints(allPoints[jj],picked[ii]):
                 toBeMoved.append(jj)
 
     cur = picked[0]   #setup an undo operation using shift+move 
     if targObj == refObj:
         cur=picked[1]
     if axis=='X':
-        import_x_offset = newVector[0]-cur.X
+        import_x_offset = newVector[0]-cur.x
         ui.xOffsetEdit.setText(str(import_x_offset))
         import_y_offset = 0
         ui.yOffsetEdit.setText('0')
     elif axis=='Y':
-        import_y_offset = newVector[1]-cur.Y
+        import_y_offset = newVector[1]-cur.y
         ui.yOffsetEdit.setText(str(import_y_offset))
         import_x_offset = 0
         ui.xOffsetEdit.setText('0')
     elif axis=='XY':
-        import_x_offset = newVector[0]-cur.X
+        import_x_offset = newVector[0]-cur.x
         ui.xOffsetEdit.setText(str(import_x_offset))
-        import_y_offset = newVector[1]-cur.Y
+        import_y_offset = newVector[1]-cur.y
         ui.yOffsetEdit.setText(str(import_y_offset))
 
     for tbm in toBeMoved: 
@@ -2474,9 +2478,11 @@ def moveToReference(axis):
             allPoints[tbm].y += import_y_offset
 
 
-    undoPoints = obj.Object.Points
-    undoObject = obj.Object
-    obj.Object.Points = allPoints
+
+
+    undoPoints = tObj.Object.Points
+    undoObject = tObj.Object
+    tObj.Object.Points = allPoints
     App.ActiveDocument.recompute()
 
 
@@ -2797,6 +2803,189 @@ def preview():
     except:
         App.Console.PrintMessage(graphicsExceptionText)
     
+
+def doGrayScale():
+    global bit_array #will hold the pixel gray scales in the form of a decimal value between 0 (darker) and 1 (lighter)
+    global raster_lines
+    global pixels_per_line
+    global foreground_color
+    global black_foreground
+    global import_z_offset
+
+    bit_array = [[]]
+    global boxes
+    boxes = []
+    global vlines
+    vlines = []
+    global hlines
+    hlines = []
+    global pixmap
+
+
+
+
+    checkOffsets() #validate and update globals in offsets options group
+    if import_z_offset == 0:
+        setTo1Text = u'Set it to 1'
+        continueAnywayText = u'Continue anyway'
+        cancelText = u'Cancel'
+        needZText = u'Need a Z offset for the back plate height'
+        items=(setTo1Text,continueAnywayText,cancelText)
+        item, okpressed = QtGui.QInputDialog.getItem(MainWindow,needZText,needZText, items, 0, False)
+
+        if not okpressed:
+            return
+        elif item==cancelText:
+            return
+        elif item == setTo1Text:
+            import_z_offset = 1
+            ui.zOffsetEdit.setText('1')
+            processEvents()
+    #display preview image
+    if imageName == None:
+        preview() #sets global name variable to new fileName
+    try:
+        scene.clear()
+        pixmap = QtGui.QPixmap(name)
+        qImage = QtGui.QImage(name)
+
+        scalePreview(pixmap, ui.graphicsView, 1.0)
+
+
+
+
+    except:
+        App.Console.PrintMessage(graphicsExceptionText)
+    if len(name) > 0:
+        with open(name, "rb") as binary_file:
+            data = binary_file.read()
+        
+        unpacked = struct.unpack_from("B" * len(data), data)
+   
+        byte0 = unpacked[0] #should be 0x42 'B'
+        byte1 = unpacked[1] #should be 0x4d 'M'
+        byte1c = unpacked[0x1c] #bits per pixel (must be 1)
+        if byte0 != 0x42 or byte1 != 0x4d:# or byte1c != 0x08: #'BM' in first 2 bytes signifies this is a .BMP file, 0x08 at 0x1c means 8 bits per pixel
+            msgDialog(invalidFileText,'FCBmpImport', QtGui.QMessageBox.Critical)
+            return
+            
+        else: #parse the .BMP file
+            #4 bytes (little endian) beginning at 0x0a gives the offset into
+                         #the
+                     #pixel array
+            offset = unpacked[0x0a] + unpacked[0x0b] * 256 + unpacked[0x0c] * 256 * 256 + unpacked[0x0d] * 256 * 256 * 256
+            #horizontal pixel count (pixels per row) provided in 4 bytes
+            #(little
+            #endian) beginning at 0x12
+            pixels_per_line = unpacked[0x12] + unpacked[0x13] * 256 + unpacked[0x14] * 256 * 256 + unpacked[0x15] * 256 * 256 * 256
+            #vertical pixels (rows) at 0x16, again 4 bytes little endian
+            raster_lines = unpacked[0x16] + unpacked[0x17] * 256 + unpacked[0x18] * 256 * 256 + unpacked[0x19] * 256 * 256 * 256
+            bit_array = [[0 for y in range(raster_lines)] for x in range(pixels_per_line) ] #initialize bit_array
+            #bytes_per_row = (pixels_per_line + 31) / 32 * 4 #rows get padded out to multiples of 32 bits (4 bytes)
+            #non_padded_bytes = math.floor(pixels_per_line / 8)
+            #if (pixels_per_line % 8) != 0:
+            #    non_padded_bytes += 1
+            #non_padded_bytes = int(non_padded_bytes)        
+            #color_1_Blue = unpacked[0x36] #monochrome images don't necessarily have to be black and white
+            #color_1_Green = unpacked[0x37] #could be for example red and white, blue and green, whatever
+            #color_1_Red = unpacked[0x38] #but vast majority will be black and white
+            #color_2_Blue = unpacked[0x3a] #we assume ours will be black and white
+            #color_2_Green = unpacked[0x3b]
+            #color_2_Red = unpacked[0x3c]
+            #color_1_isBlack = False
+            #if color_1_Blue == 0 and color_1_Green == 0 and color_1_Red == 0:
+            #    color_1_isBlack = True
+
+
+            initProgressBar(u'Loading image file', raster_lines)
+            for yy in range(0, raster_lines):
+                updateProgressBar(yy)
+                for xx in range(0, pixels_per_line): #npb = non-padded-byte
+                    pixColor = QtGui.QColor(qImage.pixel(xx,yy))
+                    our_byte= 1-((pixColor.red()+pixColor.green()+pixColor.blue())/3.0/255.0)
+                 
+                    bit_array[xx][yy] = our_byte
+
+
+
+ 
+    else:
+        return #no file selected
+
+    if App.ActiveDocument == None:
+        App.newDocument("Unnamed")
+        App.setActiveDocument("Unnamed")
+        App.ActiveDocument = App.getDocument("Unnamed")
+        Gui.ActiveDocument = Gui.getDocument("Unnamed")
+
+    initProgressBar(parsingBmpText, raster_lines - 1)
+         
+    backPlate = Part.makeBox(pixels_per_line,raster_lines, part_height)
+    f = App.ActiveDocument.addObject("Part::Feature","BackPlate")
+    f.Shape=backPlate
+    f.Placement = App.Placement(App.Vector(import_x_offset,import_y_offset,0), App.Rotation(App.Vector(0,0,1),0),App.Vector(0,0,0)) #backplate is at z=0, litho starts at z offset
+    fusion = None
+    for y in range(0,raster_lines):
+        sleep(0.01)
+        updateProgressBar(y)
+        wedges=[]
+       # App.ActiveDocument.recompute()
+
+
+        #we'll make rectangular parts to keep part count down for better
+        #performance
+
+        
+          
+        L = []    
+        for x in range(0, pixels_per_line):    
+            L.append(bit_array[x][y])
+
+        grouped_L = [(k, sum(1 for i in g)) for k,g in groupby(L)] #credit: Josh Caswell of stackoverflow for this line of code
+                                                                    #takes a list like [1,1,1,0,0,1,0,1,1,1] and turns it into a
+                                                                    #list of tuples[(1,3),(0,2),(1,1),(0,1),(1,3)]
+                                                                                                                                           
+        current_x = 0 #tracks the x-coordinate for each new contiguous pixel group on this row
+        wedges=[]
+        for g in range(len(grouped_L)-1,-1,-1): #each g is a tuple in the form (pixel, count)
+            sleep(0.001)
+            updateProgressBar(y)
+            pixel = grouped_L[g][0]#pixel gray scale as a percentage of 255,e.g. 0.396215
+            count = grouped_L[g][1]#how many in a row in this group?
+
+            box = Box()
+            box.width = 1
+            box.height = part_height*pixel+import_z_offset
+            box.length = count
+            box.x = current_x+import_x_offset
+            box.y = y+import_y_offset
+            box.z = import_z_offset
+            obj = Part.makeWedge(box.x, box.y, box.z, box.z, box.x, box.x+box.length, box.y+box.width, box.z+box.height, box.z+box.height, box.x+box.length)
+            wedges.append(obj)
+            current_x = current_x + count
+        
+        lineName = "Line"+str(y)
+        comp = Part.makeCompound(wedges)
+        App.ActiveDocument.addObject("Part::Feature",lineName+'wedges')
+        compObj = App.ActiveDocument.getObject(lineName+'wedges')
+        compObj.Shape=comp
+        App.activeDocument().addObject("Part::MultiFuse",lineName)
+        fusion = getattr(App.activeDocument(),lineName)
+        fusion.Shapes = [compObj,]
+        App.ActiveDocument.recompute()
+
+
+        shapes=[]
+
+
+    #makeOurPart(0,0,0,0,0,0,True) #0's just place holders, no new part will be made this final run
+    
+   # compound = Part.makeCompound(wedgeLines)
+    #f = App.ActiveDocument.addObject("Part::Feature", shape_basename)
+    #f.Shape = compound.removeSplitter()
+    #Part.show(compound)
+    App.ActiveDocument.recompute()
+    Gui.SendMsgToActiveView("ViewFit") 
 
 
 def doImport():
@@ -3395,10 +3584,14 @@ def doSolid():
     import_as_mesh = False
 
 
-
-    items = (multipleSolidsText, compoundSolidText, solidObjectText)
+    grayScaleLithophaneText=u'GRAY SCALE LITHOPHANE'
+    items = (multipleSolidsText, compoundSolidText, solidObjectText, grayScaleLithophaneText)
     item, ok = QtGui.QInputDialog.getItem(MainWindow, solidImportText, solidImportText, items, 0, False)
     if ok:
+        if item==grayScaleLithophaneText:
+            doGrayScale()
+            return
+
         if item == solidObjectText:
             one_solid = True
             make_compound_solid = False
