@@ -23,24 +23,13 @@
 ***************************************************************************
 """
 
-#OS: Windows 10
-#Word size of OS: 64-bit
-#Word size of FreeCAD: 64-bit
-#Version: 0.17.13509 (Git)
-#Build type: Release
-#Branch: releases/FreeCAD-0-17
-#Hash: 0258808ccb6ba3bd5ea9312f79cd023f1a8671b7
-#Python version: 2.7.14
-#Qt version: 4.8.7
-#Coin version: 4.0.0a
-#OCC version: 7.2.0
-#Locale: English/UnitedStates (en_US)
+
 
 __title__ = "FCBmpImport"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/fcbmpimport"
 __Wiki__ = "https://github.com/mwganson/fcbmpimport/blob/master/README.md"
-__date__ = "2018.06.25" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2021.09.21" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -2524,9 +2513,10 @@ def progressAbort():
     progress_abort = True   
 
 def processEvents():
-     sleep(0.001)
-     #QtGui.qApp.processEvents() #so FreeCAD stays responsive to user input
-     QtGui.QApplication.processEvents()
+    sleep(0.001)
+    #QtGui.qApp.processEvents() #so FreeCAD stays responsive to user input
+    #QtGui.QApplication.processEvents()
+    FreeCADGui.updateGui()
 
 def msgDialog(msg, title='FCBmpImport', icon=QtGui.QMessageBox.Information):
 
@@ -3055,7 +3045,7 @@ def doImport():
             #vertical pixels (rows) at 0x16, again 4 bytes little endian
             raster_lines = unpacked[0x16] + unpacked[0x17] * 256 + unpacked[0x18] * 256 * 256 + unpacked[0x19] * 256 * 256 * 256
             bit_array = [[0 for y in range(raster_lines)] for x in range(pixels_per_line) ] #initialize bit_array
-            bytes_per_row = (pixels_per_line + 31) / 32 * 4 #rows get padded out to multiples of 32 bits (4 bytes)
+            bytes_per_row = int((pixels_per_line + 31) / 32) * 4 #rows get padded out to multiples of 32 bits (4 bytes)
             non_padded_bytes = math.floor(pixels_per_line / 8)
             if (pixels_per_line % 8) != 0:
                 non_padded_bytes += 1
@@ -3075,7 +3065,9 @@ def doImport():
             for rr in range(0, raster_lines):
                 updateProgressBar(rr)
                 for npb in range(0, non_padded_bytes): #npb = non-padded-byte
-                    our_byte = unpacked[offset + npb + rr * bytes_per_row]                  
+                    if int(offset+npb+rr*bytes_per_row)>len(unpacked):
+                        continue
+                    our_byte = unpacked[int(offset + npb + rr * bytes_per_row)]                  
                     byte_string = bin(our_byte)[2:].rjust(8, '0') #credit Daniel G at stackoverflow for this line of code
                     whichBit = 0                
                     for bit in byte_string:
