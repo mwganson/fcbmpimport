@@ -2,11 +2,10 @@
 <a href="https://www.freecadweb.org">FreeCAD</a> Macro for importing black and white bmp images as FreeCAD objects.
 
 <img src="screencap.gif" alt="animated screen capture">
-
 <ul>
-  <li><a href='#Installation'>Installation</a></li>
-  <li><a href='#Icon'>Icon</a></li>
-  <li><a href='#Limitations'>Limitations</a></li>
+  <li><a href='#installation'>Installation</a></li>
+  <li><a href='#icon'>Icon</a></li>
+  <li><a href='#limitations'>Limitations</a></li>
   <li><a href='#ipv'>Image Preview Panel</a></li>
   <li><a href='#Various Options Boxes'>Various Options Boxes</a></li>
   <ul>
@@ -47,11 +46,11 @@
       <li><a href='#Reference Moves'>Reference Moves</a></li>
       <li><a href='#Undo'>Undo</a></li>
       <li><a href='#Redo'>Redo</a></li>
-        </ul>
+      </ul>
     </ul>
-    <li><a href='#Cut Button'>Cut Button</a></li>
-    <li><a href='#Move Button'>Move Button</a></li>
-    <li><a href='#Insert Button'>Insert Button</a></li>
+  <li><a href='#Cut Button'>Cut Button</a></li>
+  <li><a href='#Move Button'>Move Button</a></li>
+  <li><a href='#Insert Button'>Insert Button</a></li>
   </ul>
   <li><a href='#Converting Images'>Converting Images</a></li>
   <li><a href='#Importing'>Importing</a></li>
@@ -65,14 +64,13 @@
   <li><a href='#Final Thoughts'>Final Thoughts</a></li>
 </ul>
 
-<h3 id='Installation'>Installation</h3>
-
+      <h3 id='installation'>Installation </h3>
 To install place FCBmpImport.FCMacro in your macros folder in FreeCAD.  If you don't know the location of the macros folder, go to the Macros menu, select Macros... and you will find at the bottom of the dialog your user macros location.  You may also simply create a new macro using the Macro -> Macros.. -> Create button, name the new file FCBmpImport.FCMacro.py, and copy/paste the macro code from FCBmpImport.FCMacro.py into your new file.  Don't forget to save the file.
       
-<h3 id='Icon'>Icon</h3>
-<img src= "FCBmpImportLogo.svg" alt="logo">
+<h3 id='icon'>Icon</h3>
+      <a href=<img src="FCBmpImportLogo.svg" alt="icon">>Toolbar Icon</a>
 
-<h3 id='Limitations'>Limitations</h3>
+<h3 id='limitations'>Limitations</h3>
 
 The only image file format supported is Black and White (1 bit-per-pixel) Windows BMP.
 
