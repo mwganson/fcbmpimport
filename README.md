@@ -44,10 +44,10 @@
       <li><a href='#Make Line, Replace Existing'>Make Line, Replace Existing</a></li>
       <li><a href='#Remove Colinear'>Remove Colinear</a></li>
       <li><a href='#Apply Midpoints'>Apply Midpoints</a></li>
-        <li><a href='#Reference Moves'>Reference Moves</a></li>
+      <li><a href='#Reference Moves'>Reference Moves</a></li>
       <li><a href='#Undo'>Undo</a></li>
       <li><a href='#Redo'>Redo</a></li>
-        </u>
+        </ul>
     </ul>
     <li><a href='#Cut Button'>Cut Button</a></li>
     <li><a href='#Move Button'>Move Button</a></li>
@@ -58,8 +58,6 @@
   <ul>
     <li><a href='#Sketch'>Sketch</a></li>
     <li><a href='#Solid'>Solid</a></li>
-    <li><a href='#Mesh'>Mesh</a></li>
-    <li><a href='#Extruded'>Extruded</a></li>
     <li><a href='#Wires'>Wires</a></li>
     <li><a href='#Points'>Points</a></li>
     <li><a href="#Removed Import Options'>Removed IMport Options</a></li>
