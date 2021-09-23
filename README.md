@@ -59,16 +59,16 @@
     <li><a href='#Solid'>Solid</a></li>
     <li><a href='#Wires'>Wires</a></li>
     <li><a href='#Points'>Points</a></li>
-    <li><a href="#Removed Import Options'>Removed IMport Options</a></li>
+    <li><a href='#Removed Import Options'>Removed IMport Options</a></li>
   </ul>
   <li><a href='#Final Thoughts'>Final Thoughts</a></li>
 </ul>
 
-      <h3 id='installation'>Installation </h3>
+ <h3 id='installation'>Installation </h3>
 To install place FCBmpImport.FCMacro in your macros folder in FreeCAD.  If you don't know the location of the macros folder, go to the Macros menu, select Macros... and you will find at the bottom of the dialog your user macros location.  You may also simply create a new macro using the Macro -> Macros.. -> Create button, name the new file FCBmpImport.FCMacro.py, and copy/paste the macro code from FCBmpImport.FCMacro.py into your new file.  Don't forget to save the file.
-      
+
 <h3 id='icon'>Icon</h3>
-      <a href=<img src="FCBmpImportLogo.svg" alt="icon">>Toolbar Icon</a>
+Download the toolbar icon: <a href="FCBmpImportLogo.svg"><img src="FCBmpImportLogo.svg" alt = "icon"></a>
 
 <h3 id='limitations'>Limitations</h3>
 
