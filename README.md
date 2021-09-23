@@ -75,7 +75,7 @@ The only image file format supported is Black and White (1 bit-per-pixel) Window
 
 While the macro does not impose any size/complexity limitations, there are practical limitations in what FreeCAD is able to handle in terms of the number and types of FreeCAD objects in the same document.  FreeCAD was not designed for hundreds, thousands, or even 10's of thousands of objects, which can easily be produced when importing images even of modest resolution.  The macro is best used with relatively simple images, such as cartoon type drawings, clipart, etc., rather than more complex images, such as photographs.
 
-<img src= "screenshot.png" alt="screenshot">
+<img src= "FCBmpImportScreenshot.png" alt="screenshot">
 
 <h3 id='ipv'>Image Preview Panel</h3>
 
